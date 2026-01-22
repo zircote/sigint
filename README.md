@@ -10,6 +10,26 @@ Comprehensive market research toolkit for Claude Code with report generation, Gi
   <img src=".github/readme-infographic.svg" alt="sigint workflow" width="800">
 </p>
 
+## Quick Start
+
+```bash
+# 1. Start research with a topic
+/sigint:start AI-powered code review tools
+
+# 2. Answer elicitation questions (decision context, audience, priorities)
+
+# 3. Check progress
+/sigint:status
+
+# 4. Generate report
+/sigint:report
+
+# 5. Create GitHub issues (optional)
+/sigint:issues
+```
+
+See [docs/quick-start.md](docs/quick-start.md) for a detailed walkthrough.
+
 ## Features
 
 - **Iterative Research Workflow**: Start, refine, and finalize market research through commands
