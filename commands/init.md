@@ -1,0 +1,80 @@
+---
+description: Manually initialize or reload Subcog context for sigint
+argument-hint: [--full] [--topic <topic>]
+allowed-tools: Read, Write, Grep, Glob
+---
+
+Manually initialize the Subcog memory context for sigint research.
+
+**Arguments:**
+- `--full` - Load all sigint-related memories (not just current session)
+- `--topic` - Load memories for a specific topic
+
+**Process:**
+
+1. **Initialize Subcog namespace:**
+   Ensure sigint namespace is available in Subcog.
+   Namespaces used:
+   - `sigint:research` - Research session state and findings
+   - `sigint:methodology` - Learned methodologies and approaches
+   - `sigint:sources` - Trusted sources and data quality notes
+   - `sigint:patterns` - Recognized market patterns
+
+2. **Load relevant memories:**
+   Query Subcog for:
+   - Active research sessions
+   - Recent findings and insights
+   - Methodology preferences
+   - Source reliability notes
+
+3. **If `--topic` specified:**
+   Load only memories related to that topic.
+   Include related topics if semantically similar.
+
+4. **If `--full` specified:**
+   Load comprehensive sigint memory context.
+   May use more context window but provides full history.
+
+5. **Load user configuration:**
+   Read `.claude/sigint.local.md` if exists:
+   - Default repository
+   - Preferred report format
+   - Audience preferences
+   - Custom research context
+
+6. **Display loaded context:**
+   ```
+   Subcog Context Loaded
+   ─────────────────────
+   Research Sessions: [count]
+   Active Session: [topic or "none"]
+   Methodology Notes: [count]
+   Source Notes: [count]
+   Patterns: [count]
+
+   Configuration:
+   - Default Repo: [repo or "not set"]
+   - Report Format: [format]
+   - Audiences: [list]
+   ```
+
+7. **Suggest next action:**
+   - If active session: suggest `/sigint:status`
+   - If no session: suggest `/sigint:start <topic>`
+   - If stale session: suggest `/sigint:update`
+
+**Note:** This command is also run automatically on SessionStart via hook.
+Use this command to manually reload context mid-session or after configuration changes.
+
+**Output:**
+- Confirmation of context loaded
+- Summary of available memories
+- Configuration status
+- Suggested next action
+
+**Example usage:**
+```
+/sigint:init
+/sigint:init --full
+/sigint:init --topic "AI assistants"
+```
