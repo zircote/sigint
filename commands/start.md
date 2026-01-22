@@ -2,7 +2,7 @@
 description: Begin a new market research session with comprehensive scoping
 version: 0.1.0
 argument-hint: [<topic>]
-allowed-tools: Read, Write, Grep, Glob, WebSearch, WebFetch, TodoWrite, AskUserQuestion
+allowed-tools: Read, Write, Grep, Glob, TodoWrite, AskUserQuestion
 ---
 
 Initialize a new sigint research session through structured elicitation.
@@ -267,8 +267,19 @@ Only after elicitation complete and confirmed:
    - Depth calibrated to timeline
    - Focus areas matching stated priorities
 
-5. **Begin discovery phase:**
-   Start research with elicitation context guiding every search and analysis.
+5. **Delegate to market-researcher agent:**
+   Use the Task tool to launch the market-researcher agent:
+   - `subagent_type`: `"sigint:market-researcher"`
+   - `prompt`: Include the topic, research brief summary, and path to state.json
+   - `description`: "Market research for [topic]"
+
+   The agent will:
+   - Load state.json and use elicitation context to shape all research
+   - Execute discovery, data collection, analysis, and synthesis phases
+   - Store findings back to state.json
+   - Return a summary of key findings when complete
+
+   **Do NOT execute research directly in this context.** The market-researcher agent runs in isolated context with appropriate tools (WebSearch, WebFetch) for comprehensive research.
 
 ---
 

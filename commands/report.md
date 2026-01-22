@@ -2,7 +2,7 @@
 description: Generate comprehensive research report in multiple formats
 version: 0.1.0
 argument-hint: [--format <type>] [--audience <type>] [--sections <list>]
-allowed-tools: Read, Write, Grep, Glob, WebFetch, TodoWrite
+allowed-tools: Read, Write, Grep, Glob, TodoWrite
 ---
 
 Generate a comprehensive market research report from current findings.
@@ -63,27 +63,25 @@ Generate a comprehensive market research report from current findings.
 
 **Generation Process:**
 
-1. **Load research state:**
-   Read all findings from state.json.
-   Load related Subcog memories.
+1. **Parse arguments:**
+   Extract format, audience, and sections from command arguments.
 
-2. **Use report-writing skill:**
-   Apply executive report best practices.
-   Tailor language to specified audience.
+2. **Delegate to report-synthesizer agent:**
+   Use the Task tool to launch the report-synthesizer agent:
+   - `subagent_type`: `"sigint:report-synthesizer"`
+   - `prompt`: Include the parsed arguments (format, audience, sections) and path to state.json
+   - `description`: "Generate research report"
 
-3. **Generate visualizations:**
-   Create all Mermaid diagrams:
-   - Competitive positioning map
-   - Trend scenario graphs
-   - SWOT quadrant
-   - Risk matrix
+   The agent will:
+   - Load state.json and elicitation context
+   - Apply executive report best practices
+   - Tailor language to specified audience
+   - Generate all Mermaid visualizations
+   - Write report files to `./reports/[topic]/`
+   - Create one-page executive brief
+   - Return summary when complete
 
-4. **Write report files:**
-   - `./reports/[topic]/YYYY-MM-DD-report.md`
-   - `./reports/[topic]/YYYY-MM-DD-report.html` (if requested)
-
-5. **Generate summary:**
-   Create one-page executive brief.
+   **Do NOT generate the report directly in this context.** The report-synthesizer agent handles all synthesis, formatting, and file generation.
 
 **Output:**
 - Full report in specified format(s)

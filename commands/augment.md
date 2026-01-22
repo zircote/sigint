@@ -2,7 +2,7 @@
 description: Deep-dive into a specific area of current research
 version: 0.1.0
 argument-hint: <area> [--methodology <type>]
-allowed-tools: Read, Write, Grep, Glob, WebSearch, WebFetch, TodoWrite
+allowed-tools: Read, Write, Grep, Glob, TodoWrite
 ---
 
 Augment the current research session with deeper analysis of a specific area.
@@ -27,9 +27,16 @@ Augment the current research session with deeper analysis of a specific area.
    - Revenue/economics → financial-analysis skill
    - Compliance/legal → regulatory-review skill
 
-3. **Execute deep research:**
-   Apply the selected methodology using WebSearch and WebFetch.
-   Gather specific data points, quotes, and evidence.
+3. **Delegate to market-researcher agent:**
+   Use the Task tool to launch the market-researcher agent:
+   - `subagent_type`: `"sigint:market-researcher"`
+   - `prompt`: Include the area to investigate, selected methodology, and path to state.json
+   - `description`: "Deep research on [area]"
+
+   The agent will apply the selected methodology using WebSearch and WebFetch,
+   gathering specific data points, quotes, and evidence in isolated context.
+
+   **Do NOT execute research directly in this context.**
 
 4. **Generate transitional scenario graph:**
    For trend-related augmentations, create Mermaid diagrams showing:
