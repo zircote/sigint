@@ -100,6 +100,41 @@ Additional research context or preferences...
 - Subcog MCP server for memory persistence
 - WebSearch/WebFetch tools for research
 
+## References
+
+### Primary Research
+
+This plugin's trend modeling methodology is based on:
+
+> Bočková, N., Volná, B., & Dohnal, M. (2025). "Optimisation of complex product innovation processes based on trend models with three-valued logic." *arXiv:2601.10768v1*. https://arxiv.org/abs/2601.10768
+
+Key concepts adapted from this research:
+- **Three-valued logic (INC/DEC/CONST)**: Minimally information-intensive quantifiers for trend analysis
+- **Transitional scenario graphs**: Visual representation of possible state transitions
+- **Qualitative modeling**: Analysis under information scarcity without precise numerical parameters
+
+### Frameworks & Methodologies
+
+- **Porter's Five Forces**: Porter, M.E. (1979). "How Competitive Forces Shape Strategy." *Harvard Business Review*, 57(2), 137-145.
+- **SWOT Analysis**: Learned, E.P., Christensen, C.R., Andrews, K.R., & Guth, W.D. (1965). *Business Policy: Text and Cases*. Homewood, IL: Irwin.
+- **TAM/SAM/SOM**: Blank, S. & Dorf, B. (2012). *The Startup Owner's Manual*. K&S Ranch.
+
+### Market Research Methods
+
+- **Competitive Analysis**: Fleisher, C.S. & Bensoussan, B.E. (2015). *Business and Competitive Analysis: Effective Application of New and Classic Methods*. FT Press.
+- **Customer Research & Personas**: Cooper, A. (1999). *The Inmates Are Running the Asylum*. Sams Publishing.
+- **Technology Assessment**: Coates, J.F. (1976). "Technology Assessment." *American Scientist*, 59(4), 412-418.
+
+### Trend Modeling
+
+- **Three-Valued Logic Foundations**: Kleene, S.C. (1952). *Introduction to Metamathematics*. North-Holland.
+- **Scenario Planning**: Schwartz, P. (1991). *The Art of the Long View*. Doubleday.
+
+### Financial Analysis
+
+- **Unit Economics**: Ries, E. (2011). *The Lean Startup*. Crown Business.
+- **Revenue Modeling**: Osterwalder, A. & Pigneur, Y. (2010). *Business Model Generation*. Wiley.
+
 ## License
 
 MIT

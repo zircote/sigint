@@ -1,5 +1,6 @@
 ---
 description: Show current research session state and progress
+version: 0.1.0
 argument-hint: [--verbose]
 allowed-tools: Read, Grep, Glob
 ---

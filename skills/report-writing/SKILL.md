@@ -250,6 +250,8 @@ Before finalizing:
 ## Additional Resources
 
 For detailed templates, see:
+- `templates/report-template.md` - Full report template with variables
+- `templates/executive-brief.md` - Executive brief template
 - `references/report-templates.md` - Format templates
 - `references/visualization-guide.md` - Chart selection
 - `examples/executive-brief.md` - Sample brief

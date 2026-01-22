@@ -1,3 +1,19 @@
+---
+name: Market Research Report
+description: Comprehensive market research report template with market sizing, competitive analysis, trend forecasting, and strategic recommendations
+variables:
+  - TOPIC: Research topic or market name
+  - DATE: Report generation date
+  - START_DATE/END_DATE: Research period
+  - TAM/SAM/SOM values and trends
+  - Competitor data (PLAYER_*, SHARE_*, etc.)
+  - Trend indicators (MACRO_*, MICRO_*)
+  - SWOT elements
+  - Recommendations and risks
+use-case: Full market analysis deliverable for stakeholders
+output-format: Markdown with Mermaid diagrams
+---
+
 # Market Research Report: {{TOPIC}}
 
 **Generated**: {{DATE}}

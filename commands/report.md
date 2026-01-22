@@ -1,5 +1,6 @@
 ---
 description: Generate comprehensive research report in multiple formats
+version: 0.1.0
 argument-hint: [--format <type>] [--audience <type>] [--sections <list>]
 allowed-tools: Read, Write, Grep, Glob, WebFetch, TodoWrite
 ---

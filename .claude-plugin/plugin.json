@@ -2,6 +2,7 @@
   "name": "sigint",
   "version": "0.1.0",
   "description": "Signal Intelligence - Comprehensive market research toolkit with report generation, GitHub issue creation, and trend-based analysis using three-valued logic",
+  "license": "Apache-2.0",
   "author": {
     "name": "zircote"
   },

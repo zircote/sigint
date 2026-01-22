@@ -1,3 +1,20 @@
+---
+name: Executive Brief
+description: Concise one-page executive summary for leadership decision-making
+variables:
+  - TOPIC: Research topic or market name
+  - DATE: Brief generation date
+  - ONE_SENTENCE_SUMMARY: Bottom-line statement
+  - TAM/SAM/SOM: Market sizing metrics
+  - FINDING_*: Key findings (3)
+  - PRIMARY_REC: Main recommendation
+  - PRIMARY_RISK: Key risk to highlight
+  - DECISION_STATEMENT: What decision is needed
+  - OPTION_*: Decision options (3)
+use-case: Executive-level summary requiring decision or action
+output-format: Single-page Markdown with pie chart
+---
+
 # Executive Brief: {{TOPIC}}
 
 **Date**: {{DATE}} | **Prepared by**: sigint

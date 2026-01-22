@@ -1,7 +1,8 @@
 ---
 description: Create GitHub issues from research findings as atomic deliverables
+version: 0.1.0
 argument-hint: [--repo <owner/repo>] [--dry-run] [--labels <list>]
-allowed-tools: Read, Write, Bash, Grep, Glob, ToolSearch
+allowed-tools: Read, Write, Bash, Grep, Glob
 ---
 
 Convert research findings into sprint-sized GitHub issues.

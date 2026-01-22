@@ -1,5 +1,6 @@
 ---
 description: Manually initialize or reload Subcog context for sigint
+version: 0.1.0
 argument-hint: [--full] [--topic <topic>]
 allowed-tools: Read, Write, Grep, Glob
 ---

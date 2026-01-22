@@ -1,5 +1,6 @@
 ---
 description: Resume a previous research session from Subcog or files
+version: 0.1.0
 argument-hint: [<topic>] [--list]
 allowed-tools: Read, Write, Grep, Glob
 ---
