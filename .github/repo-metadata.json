@@ -1,0 +1,16 @@
+{
+  "description": "Market intelligence toolkit for Claude Code. Comprehensive research workflows with trend modeling, competitive analysis, TAM/SAM/SOM sizing, and executive report generation. Converts findings to GitHub issues.",
+  "topics": [
+    "claude-code-plugin",
+    "market-research",
+    "competitive-intelligence",
+    "business-intelligence",
+    "market-analysis",
+    "trend-analysis",
+    "research-toolkit",
+    "ai-tools",
+    "report-generation",
+    "github-issues"
+  ],
+  "apply_command": "gh repo edit zircote/sigint --description \"$(jq -r .description .github/repo-metadata.json)\" && for topic in $(jq -r '.topics[]' .github/repo-metadata.json); do gh repo edit --add-topic \"$topic\"; done"
+}

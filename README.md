@@ -1,6 +1,14 @@
 # sigint - Signal Intelligence
 
+[![Claude Code Plugin](https://img.shields.io/badge/Claude_Code-Plugin-06b6d4?style=flat-square&logo=anthropic&logoColor=white)](https://github.com/anthropics/claude-code)
+[![License: MIT](https://img.shields.io/badge/License-MIT-8b5cf6?style=flat-square)](LICENSE)
+[![Version](https://img.shields.io/badge/version-0.1.0-22c55e?style=flat-square)](CHANGELOG.md)
+
 Comprehensive market research toolkit for Claude Code with report generation, GitHub issue creation, and trend-based analysis.
+
+<p align="center">
+  <img src=".github/readme-infographic.svg" alt="sigint workflow" width="800">
+</p>
 
 ## Features
 
