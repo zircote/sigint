@@ -1,0 +1,20 @@
+# Auto detect text files and normalize line endings
+* text=auto eol=lf
+
+# Explicit text files
+*.md text
+*.json text
+*.yaml text
+*.yml text
+
+# Windows batch files need CRLF
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# Binary files
+*.jpg binary
+*.png binary
+*.svg binary
+
+# Preserve exact formatting for templates
+skills/*/templates/* linguist-detectable=false
