@@ -7,6 +7,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- Reorganized plugin structure with comprehensive elicitation workflow
+- Enhanced `/sigint:start` command with structured research brief questions
+
+### Added
+- User documentation in `docs/` directory:
+  - `quick-start.md` - 5-minute getting started guide
+  - `workflow-guide.md` - Complete research lifecycle documentation
+  - `troubleshooting.md` - Common issues and solutions
+- GitHub social preview image (`.github/social-preview.svg`)
+- README infographic showing research workflow
+- Quick Start section in README with example workflow
+- `CONTRIBUTING.md` - Contribution guidelines and development setup
+- `SECURITY.md` - Security policy and vulnerability reporting
+- `.gitattributes` - Line ending normalization
+
+### Fixed
+- License field in `plugin.json` corrected from Apache-2.0 to MIT
+- LICENSE file year updated to 2026
+
 ## [0.1.0] - 2026-01-22
 
 ### Added
@@ -64,7 +84,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Documentation
 - README with plugin overview and quick start guide
 - Research methodology citations (arXiv:2601.10768)
-- Apache 2.0 license
+- MIT license
 
 [Unreleased]: https://github.com/zircote/sigint/compare/v0.1.0...HEAD
 [0.1.0]: https://github.com/zircote/sigint/releases/tag/v0.1.0
