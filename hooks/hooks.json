@@ -1,0 +1,24 @@
+{
+  "SessionStart": [
+    {
+      "matcher": "*",
+      "hooks": [
+        {
+          "type": "prompt",
+          "prompt": "Initialize sigint market research context:\n\n1. Load any active research sessions from ./reports/*/state.json\n2. Load Subcog memories from sigint:research namespace\n3. Check for user configuration in .claude/sigint.local.md\n4. If active research session exists, note current status\n\nReport available context silently. Only mention sigint if user has active research or if they ask about market analysis.\n\nDo NOT output anything about this initialization unless relevant to user's first message."
+        }
+      ]
+    }
+  ],
+  "UserPromptSubmit": [
+    {
+      "matcher": "market|competitive|competitor|TAM|SAM|SOM|market size|industry analysis|trend|business opportunity|pricing strategy|customer segment|regulatory|compliance",
+      "hooks": [
+        {
+          "type": "prompt",
+          "prompt": "The user's message contains market research related keywords. Consider whether the sigint plugin capabilities would be helpful:\n\n- /sigint:start - Begin new market research\n- /sigint:augment - Deep-dive into specific area\n- /sigint:status - Check current research state\n- market-researcher agent - Comprehensive analysis\n\nIf the user seems to want market research or analysis, you may suggest using sigint tools. Be helpful but not pushy - only suggest if genuinely relevant.\n\nDo NOT automatically start research. Suggest the capability and let user decide."
+        }
+      ]
+    }
+  ]
+}
