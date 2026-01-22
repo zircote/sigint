@@ -1,0 +1,16 @@
+# Generated research data
+reports/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor files
+*.swp
+*.swo
+*~
+.idea/
+.vscode/
+
+# Local configuration (contains user-specific settings)
+.claude/sigint.local.md
