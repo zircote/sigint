@@ -5,10 +5,10 @@ Complete guide to the sigint research workflow.
 ## Research Lifecycle
 
 ```
-┌─────────────┐    ┌──────────┐    ┌────────┐    ┌────────┐
-│ /sigint:start │ → │ Research │ → │ Report │ → │ Issues │
-│ (Elicitation) │    │ (Agents) │    │ (Synth)│    │ (Arch) │
-└─────────────┘    └──────────┘    └────────┘    └────────┘
+┌───────────────┐     ┌──────────┐    ┌─────────┐     ┌────────┐
+│ /sigint:start │  →  │ Research │  → │ Report  │  →  │ Issues │
+│ (Elicitation) │     │ (Agents) │    │ (Synth) │     │ (Arch) │
+└───────────────┘     └──────────┘    └─────────┘     └────────┘
 ```
 
 ## Phase 1: Elicitation
