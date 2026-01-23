@@ -6,7 +6,7 @@
         "hooks": [
           {
             "type": "prompt",
-            "prompt": "Check for active sigint research sessions in ./reports/*/state.json and load any Subcog memories from sigint:research namespace. Load configuration from ~/.claude/sigint.local.md (global) and ./.claude/sigint.local.md (project override). Do not output anything unless user asks about market research."
+            "prompt": "Initialize sigint market research context:\n\n1. Load any active research sessions from ./reports/*/state.json\n2. Load Subcog memories from sigint:research namespace\n3. Load configuration (cascading, project overrides global):\n   - Global defaults: ~/.claude/sigint.local.md\n   - Project overrides: ./.claude/sigint.local.md\n4. If active research session exists, note current status\n\nReport available context silently. Only mention sigint if user has active research or if they ask about market analysis.\n\nDo NOT output anything about this initialization unless relevant to user's first message."
           }
         ]
       }
@@ -17,7 +17,7 @@
         "hooks": [
           {
             "type": "prompt",
-            "prompt": "The user's message contains market research keywords. The sigint plugin provides market research capabilities. If relevant, mention that sigint skills are available. Do not start research automatically."
+            "prompt": "The user's message contains market research related keywords. Consider whether the sigint plugin capabilities would be helpful:\n\n- /sigint:start - Begin new market research\n- /sigint:augment - Deep-dive into specific area\n- /sigint:status - Check current research state\n- market-researcher agent - Comprehensive analysis\n\nIf the user seems to want market research or analysis, you may suggest using sigint tools. Be helpful but not pushy - only suggest if genuinely relevant.\n\nDo NOT automatically start research. Suggest the capability and let user decide."
           }
         ]
       }
