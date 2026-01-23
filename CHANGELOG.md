@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.1] - 2026-01-23
+
+### Fixed
+- Agent delegation: Commands now delegate to specialized agents instead of executing research/reports directly in the main REPL
+
 ## [0.2.0] - 2026-01-22
 
 ### Changed
@@ -88,6 +93,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Research methodology citations (arXiv:2601.10768)
 - MIT license
 
-[Unreleased]: https://github.com/zircote/sigint/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/zircote/sigint/compare/v0.2.1...HEAD
+[0.2.1]: https://github.com/zircote/sigint/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/zircote/sigint/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/zircote/sigint/releases/tag/v0.1.0

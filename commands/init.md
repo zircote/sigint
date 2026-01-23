@@ -36,12 +36,24 @@ Manually initialize the Subcog memory context for sigint research.
    Load comprehensive sigint memory context.
    May use more context window but provides full history.
 
-5. **Load user configuration:**
-   Read `.claude/sigint.local.md` if exists:
+5. **Load user configuration (cascading):**
+   Configuration is loaded from two locations, with project-level overriding global:
+
+   a. **Global defaults** (`~/.claude/sigint.local.md`):
+      - User-wide default settings
+      - Shared across all projects
+
+   b. **Project overrides** (`./.claude/sigint.local.md` in current working directory):
+      - Project-specific settings
+      - Overrides global defaults
+
+   Configuration options:
    - Default repository
    - Preferred report format
    - Audience preferences
    - Custom research context
+
+   **Resolution order**: Project config > Global config > Built-in defaults
 
 6. **Display loaded context:**
    ```

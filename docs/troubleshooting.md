@@ -9,9 +9,13 @@ Common issues and solutions.
 **Symptom:** `/sigint:start` not recognized
 
 **Solutions:**
-1. Verify plugin is in correct location:
+1. Verify plugin is loaded. Check one of:
    ```bash
+   # If installed globally
    ls ~/.claude/plugins/sigint/.claude-plugin/plugin.json
+
+   # If using --plugin-dir flag
+   ls /path/to/sigint/.claude-plugin/plugin.json
    ```
 
 2. Restart Claude Code after installation
@@ -25,9 +29,9 @@ Common issues and solutions.
 
 **Symptom:** Plugin loads but commands don't show
 
-**Solution:** Commands are in `commands/` directory. Verify:
+**Solution:** Commands are in `commands/` directory. Verify they exist in your plugin location:
 ```bash
-ls ~/.claude/plugins/sigint/commands/
+ls <plugin-path>/commands/
 ```
 
 Should show: `start.md`, `augment.md`, `report.md`, etc.
@@ -129,12 +133,17 @@ Should show: `start.md`, `augment.md`, `report.md`, etc.
 
 **Symptom:** Issues created in wrong repo
 
-**Solution:** Configure default repo in `.claude/sigint.local.md`:
+**Solution:** Configure default repo in `sigint.local.md`:
+
 ```yaml
 ---
 default_repo: owner/repo
 ---
 ```
+
+Configuration locations (project overrides global):
+- **Global**: `~/.claude/sigint.local.md`
+- **Project**: `./.claude/sigint.local.md`
 
 Or specify at runtime:
 ```

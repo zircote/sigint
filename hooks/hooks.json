@@ -5,7 +5,7 @@
       "hooks": [
         {
           "type": "prompt",
-          "prompt": "Initialize sigint market research context:\n\n1. Load any active research sessions from ./reports/*/state.json\n2. Load Subcog memories from sigint:research namespace\n3. Check for user configuration in .claude/sigint.local.md\n4. If active research session exists, note current status\n\nReport available context silently. Only mention sigint if user has active research or if they ask about market analysis.\n\nDo NOT output anything about this initialization unless relevant to user's first message."
+          "prompt": "Initialize sigint market research context:\n\n1. Load any active research sessions from ./reports/*/state.json\n2. Load Subcog memories from sigint:research namespace\n3. Load configuration (cascading, project overrides global):\n   - Global defaults: ~/.claude/sigint.local.md\n   - Project overrides: ./.claude/sigint.local.md\n4. If active research session exists, note current status\n\nReport available context silently. Only mention sigint if user has active research or if they ask about market analysis.\n\nDo NOT output anything about this initialization unless relevant to user's first message."
         }
       ]
     }

@@ -42,10 +42,13 @@ See [docs/quick-start.md](docs/quick-start.md) for a detailed walkthrough.
 ## Installation
 
 ```bash
-# Option 1: Local testing
+# Option 1: Plugin Marketplace (recommended)
+/plugins add sigint
+
+# Option 2: Local development
 claude --plugin-dir /path/to/sigint
 
-# Option 2: Copy to plugins directory
+# Option 3: Manual install to plugins directory
 cp -r sigint ~/.claude/plugins/
 ```
 
@@ -107,7 +110,20 @@ Reports include:
 
 ## Configuration
 
-Create `.claude/sigint.local.md` for custom settings:
+Configuration uses a cascading system where project settings override global defaults.
+
+### Configuration Locations
+
+| Location | Scope | Purpose |
+|----------|-------|---------|
+| `~/.claude/sigint.local.md` | Global | User-wide defaults for all projects |
+| `./.claude/sigint.local.md` | Project | Project-specific overrides |
+
+**Resolution order**: Project > Global > Built-in defaults
+
+### Configuration File Format
+
+Create `sigint.local.md` in either location:
 
 ```yaml
 ---
@@ -120,6 +136,31 @@ auto_subcog: true
 ---
 
 Additional research context or preferences...
+```
+
+### Example Setup
+
+```bash
+# Global defaults (applies to all projects)
+mkdir -p ~/.claude
+cat > ~/.claude/sigint.local.md << 'EOF'
+---
+report_format: markdown
+audiences:
+  - executives
+---
+EOF
+
+# Project-specific override
+mkdir -p .claude
+cat > .claude/sigint.local.md << 'EOF'
+---
+default_repo: myorg/myrepo
+audiences:
+  - developers
+  - product-managers
+---
+EOF
 ```
 
 ## Dependencies

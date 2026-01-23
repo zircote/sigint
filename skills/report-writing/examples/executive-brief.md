@@ -143,10 +143,10 @@
 
 | Document | Summary |
 |----------|---------|
-| [Full Market Analysis](./market-sizing-report.md) | Detailed TAM/SAM/SOM methodology |
-| [Competitive Deep Dive](./competitive-analysis-report.md) | Competitor profiles and positioning |
-| [Trend Report](./trend-report.md) | Macro and micro trend analysis |
-| [Financial Analysis](./financial-analysis.md) | Unit economics and projections |
+| [Full Market Analysis](../../market-sizing/examples/market-sizing-report.md) | Detailed TAM/SAM/SOM methodology |
+| [Competitive Deep Dive](../../competitive-analysis/examples/competitive-analysis-report.md) | Competitor profiles and positioning |
+| [Trend Report](../../trend-analysis/examples/trend-report.md) | Macro and micro trend analysis |
+| [Financial Analysis](../../financial-analysis/examples/financial-analysis.md) | Unit economics and projections |
 
 ---
 
