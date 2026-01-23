@@ -55,6 +55,23 @@ Manually initialize the Subcog memory context for sigint research.
 
    **Resolution order**: Project config > Global config > Built-in defaults
 
+   **If project config doesn't exist**, create `./.claude/sigint.local.md` with default template:
+   ```yaml
+   ---
+   # Sigint Plugin Configuration
+   # Project-specific settings (overrides ~/.claude/sigint.local.md)
+
+   # default_repo: owner/repo
+   report_format: markdown
+   audiences:
+     - technical
+   ---
+
+   <!-- Project-specific research context can be added here -->
+   ```
+
+   Ensure the `.claude/` directory exists before creating the file.
+
 6. **Display loaded context:**
    ```
    Subcog Context Loaded
