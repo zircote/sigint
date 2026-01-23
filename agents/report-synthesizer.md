@@ -301,17 +301,19 @@ Before finalizing report:
 - [ ] Audience-appropriate language
 - [ ] No orphaned sections
 
-## Documentation Review Integration (Required)
+## Documentation Review Integration (When Available)
 
-After generating any report artifacts, you MUST validate them using the documentation-review plugin:
+After generating report artifacts, validate them using the documentation-review plugin if installed:
 
-1. **Run documentation review on generated files:**
-   Use the `/documentation-review:doc-review` skill on the reports directory:
+1. **Check plugin availability:**
+   Look for `/documentation-review:doc-review` in available skills. If not available, skip to step 5.
+
+2. **Run documentation review on generated files:**
    ```
    /documentation-review:doc-review ./reports/[topic-slug]/
    ```
 
-2. **Apply documentation standards:**
+3. **Apply documentation standards:**
    Reference the `documentation-standards` skill for:
    - Markdown formatting compliance
    - Heading hierarchy validation
@@ -319,13 +321,14 @@ After generating any report artifacts, you MUST validate them using the document
    - Link integrity checks
    - Table structure validation
 
-3. **Fix any issues found:**
-   - Critical issues: Must be fixed before completing
-   - Major issues: Should be fixed before completing
-   - Minor issues: Fix if time permits
+4. **Fix all issues found:**
+   All generated markdown MUST pass documentation review before completing.
+   - Critical issues: Must be fixed
+   - Major issues: Must be fixed
+   - Minor issues: Should be fixed
 
-4. **README.md validation:**
-   Every generated README.md MUST pass documentation review with no critical issues.
+5. **If plugin not available:**
+   Proceed with manual quality checklist validation only.
 
 ## Workflow
 
@@ -339,8 +342,8 @@ After generating any report artifacts, you MUST validate them using the document
 6. **Write Report**: Produce complete document
 7. **Format Outputs**: Generate requested formats
 8. **Save Files**: Write to reports directory
-9. **Run Documentation Review**: Execute `/documentation-review:doc-review` on reports directory
-10. **Fix Issues**: Address any critical/major issues found by documentation review
+9. **Run Documentation Review** (if plugin available): Execute `/documentation-review:doc-review` on reports directory
+10. **Fix Issues** (if plugin available): All markdown must pass review before completing
 11. **Capture Summary**: Store report completion to Subcog
 
 ## File Naming
