@@ -175,13 +175,32 @@ All research stored locally:
 
 ```
 ./reports/
+├── README.md                   # Master index of all research
 └── <topic-slug>/
+    ├── README.md               # Topic research index
     ├── state.json              # Research state + elicitation
     ├── YYYY-MM-DD-research.md  # Raw findings
     ├── YYYY-MM-DD-report.md    # Generated report
     ├── YYYY-MM-DD-report.html  # HTML version
     └── YYYY-MM-DD-issues.json  # Issue manifest
 ```
+
+### Master Index (`./reports/README.md`)
+
+The root reports folder includes a master index that:
+- Lists all research topics with status and dates
+- Provides quick links to active and completed research
+- Shows brief summaries for each topic
+
+### Topic Index (`./reports/<topic>/README.md`)
+
+Each research folder includes a topic README.md that provides:
+- **Research query**: Original topic and question
+- **Configuration**: Elicitation settings (audience, scope, priorities)
+- **Artifact links**: Links to all generated files
+- **Key findings**: Top 3 insights from the research
+
+This makes it easy to browse research folders and understand what each contains.
 
 ## Subcog Integration
 

@@ -7,6 +7,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-01-23
+
+### Added
+- Cascading configuration support: global defaults (`~/.claude/sigint.local.md`) with project overrides (`./.claude/sigint.local.md`)
+- Marketplace installation option (`/plugins add sigint`)
+- **README.md generation for report folders**:
+  - Master index (`./reports/README.md`) listing all research topics with status and summaries
+  - Topic index (`./reports/<topic>/README.md`) with:
+    - Research query summary
+    - Configuration/elicitation settings used
+    - Links to all artifacts (reports, state, issues)
+    - Key findings summary
+
+### Changed
+- Configuration resolution order: Project > Global > Built-in defaults
+- Updated installation documentation with three options (marketplace, local dev, manual)
+- market-researcher agent now generates README.md on initial research
+- report-synthesizer agent updates README.md when generating reports
+
+### Fixed
+- Broken links in executive-brief.md example (now correctly reference cross-skill examples)
+- Documentation clarity for configuration paths across all docs
+
 ## [0.2.1] - 2026-01-23
 
 ### Fixed
@@ -93,7 +116,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Research methodology citations (arXiv:2601.10768)
 - MIT license
 
-[Unreleased]: https://github.com/zircote/sigint/compare/v0.2.1...HEAD
+[Unreleased]: https://github.com/zircote/sigint/compare/v0.3.0...HEAD
+[0.3.0]: https://github.com/zircote/sigint/compare/v0.2.1...v0.3.0
 [0.2.1]: https://github.com/zircote/sigint/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/zircote/sigint/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/zircote/sigint/releases/tag/v0.1.0
