@@ -26,7 +26,7 @@ Display the current sigint research session status and progress.
 2b. **Check blackboard for live progress:**
     If a research session is active, check blackboard for real-time team status:
     ```
-    blackboard_read(task_id="{topic-slug}", key="team_status")
+    blackboard_read(scope="{topic-slug}", key="team_status")
     ```
     If blackboard data exists, show live analyst progress in the dashboard.
 

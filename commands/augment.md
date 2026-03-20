@@ -31,7 +31,7 @@ Augment the current research session with deeper analysis of a specific area.
    Use the Agent tool to launch a single dimension-analyst:
    - `name`: `"dimension-analyst-{dimension}"`
    - `description`: "Deep research on {area}"
-   - `prompt`: Include the area to investigate, selected methodology/skill, path to state.json, and the blackboard task_id if one exists
+   - `prompt`: Include the area to investigate, selected methodology/skill, path to state.json, and the blackboard scope if one exists
 
    The analyst will apply the selected methodology using WebSearch and WebFetch,
    gathering specific data points, quotes, and evidence in isolated context.

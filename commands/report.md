@@ -74,7 +74,7 @@ Generate a comprehensive market research report from current findings.
 
    The agent will:
    - Load state.json and elicitation context
-   - Read findings from blackboard if available: `blackboard_read(task_id, "findings_*")`
+   - Read findings from blackboard if available: `blackboard_read(scope="{topic-slug}", key="findings_*")`
    - Apply executive report best practices
    - Tailor language to specified audience
    - Generate all Mermaid visualizations
