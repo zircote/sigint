@@ -32,7 +32,6 @@ tools:
   - WebSearch
   - WebFetch
   - Skill
-  - Agent
   - SendMessage
   - TaskCreate
   - TaskUpdate
@@ -79,17 +78,13 @@ Use WebSearch and WebFetch following skill methodology:
 - Extract specific data points, quotes, and evidence
 
 ### Step 3: Handle Large Documents
-If a fetched source exceeds ~15K tokens, delegate to the source-chunker agent:
-```
-Agent(
-  name="source-chunker",
-  description="Chunk large document for {dimension}",
-  prompt="Process this large document for {dimension} analysis.
-    URL/path: {source}
-    Dimension methodology: {skill guidance}
-    Extract: findings relevant to {dimension} research"
-)
-```
+If a fetched source exceeds ~15K tokens, process it in chunks yourself:
+1. Split the document at section headings (H1/H2) or every ~3K words
+2. Process each chunk, extracting findings relevant to your dimension
+3. Deduplicate findings that appear in overlapping sections
+4. Merge partial findings that span chunk boundaries
+
+**Note:** You cannot spawn sub-agents. Process large documents directly using Read with offset/limit parameters to handle them in manageable sections.
 
 ### Step 4: Structure Findings
 Format findings as structured JSON:
