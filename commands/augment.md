@@ -27,17 +27,26 @@ Augment the current research session with deeper analysis of a specific area.
    - Revenue/economics → financial-analysis skill
    - Compliance/legal → regulatory-review skill
 
-3. **Spawn a dimension-analyst agent:**
-   Use the Agent tool to launch a single dimension-analyst:
-   - `name`: `"dimension-analyst-{dimension}"`
-   - `description`: "Deep research on {area}"
-   - `prompt`: Include the area to investigate, selected methodology/skill, path to state.json, and the blackboard scope if one exists
+3. **Spawn a dimension-analyst agent (MANDATORY — do NOT skip this):**
+   Use the Agent tool with these EXACT parameters:
+   ```
+   Agent(
+     subagent_type="sigint:dimension-analyst",
+     name="dimension-analyst-{dimension}",
+     description="Deep research on {area}",
+     run_in_background=true,
+     prompt="You are a dimension-analyst for {dimension} research.
+       IMPORTANT: Use WebSearch and WebFetch for real web research. Minimum 5 searches.
+       State file: ./reports/{topic-slug}/state.json
+       Skill to load: skills/{skill-directory}/SKILL.md
+       Blackboard scope: {topic-slug} (if exists)
+       Write findings to: ./reports/{topic-slug}/{dimension}-findings.md"
+   )
+   ```
 
-   The analyst will apply the selected methodology using WebSearch and WebFetch,
-   gathering specific data points, quotes, and evidence in isolated context.
-   For large source documents (>15K tokens), it delegates to the source-chunker agent.
+   **You MUST include `subagent_type: "sigint:dimension-analyst"`.** Without it, the agent won't have WebSearch/WebFetch.
 
-   **Do NOT execute research directly in this context.**
+   **Do NOT execute research directly.** You do not have WebSearch or WebFetch tools. Only the dimension-analyst agent does.
 
 4. **Generate transitional scenario graph:**
    For trend-related augmentations, create Mermaid diagrams showing:

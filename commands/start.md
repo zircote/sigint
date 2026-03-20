@@ -273,21 +273,60 @@ Only after elicitation complete and confirmed:
    - Depth calibrated to timeline
    - Focus areas matching stated priorities
 
-5. **Spawn the research-orchestrator agent:**
-   Use the Agent tool to launch the research-orchestrator:
-   - `name`: `"research-orchestrator"`
-   - `description`: "Research: {topic}"
-   - `run_in_background`: true
-   - `prompt`: Include the topic, research brief summary, path to state.json, and the user's prioritized dimensions list
+5. **Create blackboard for team coordination:**
+   ```
+   blackboard_create(scope="{topic-slug}", ttl=86400)
+   blackboard_write(scope="{topic-slug}", key="elicitation", value={elicitation object from state.json})
+   blackboard_write(scope="{topic-slug}", key="team_status", value={analysts: {dim1: "pending", dim2: "pending", ...}})
+   ```
 
-   The orchestrator will:
-   - Create a blackboard for team coordination
-   - Spawn parallel dimension-analysts for each prioritized research area
-   - Monitor progress via blackboard alerts
-   - Merge findings into state.json
-   - Return a summary of key findings when complete
+6. **Spawn dimension-analysts directly — one per priority, ALL in a SINGLE message:**
+   For each prioritized dimension, make a REAL Agent tool call. Include ALL Agent calls in ONE message so they launch in parallel:
 
-   **Do NOT execute research directly in this context.** The research-orchestrator runs a parallel swarm in isolated context.
+   ```
+   Agent(
+     subagent_type="sigint:dimension-analyst",
+     name="dimension-analyst-{dimension}",
+     description="{dimension} analysis: {topic}",
+     run_in_background=true,
+     prompt="You are a dimension-analyst for {dimension} research on '{topic}'.
+       IMPORTANT: Use WebSearch and WebFetch for real web research. Minimum 5 searches. Do NOT fabricate findings.
+       Blackboard scope: {topic-slug}
+       State file: ./reports/{topic-slug}/state.json
+       Skill to load: skills/{skill-directory}/SKILL.md
+       Your blackboard key: findings_{dimension}
+       Procedure:
+       1. blackboard_read(scope='{topic-slug}', key='elicitation')
+       2. Read skills/{skill-directory}/SKILL.md
+       3. recall_memories(query='sigint {topic} {dimension}')
+       4. WebSearch + WebFetch — minimum 5 searches
+       5. blackboard_write(scope='{topic-slug}', key='findings_{dimension}', value={structured findings})
+       6. Write findings to ./reports/{topic-slug}/{dimension}-findings.md"
+   )
+   ```
+
+   **Dimension-to-skill mapping:**
+   | Dimension | Skill Directory |
+   |-----------|----------------|
+   | competitive | competitive-analysis |
+   | sizing | market-sizing |
+   | trends | trend-analysis |
+   | customer | customer-research |
+   | tech | tech-assessment |
+   | financial | financial-analysis |
+   | regulatory | regulatory-review |
+
+   Maximum 5 concurrent analysts. If more than 5 priorities, batch the rest after the first batch completes.
+
+7. **Wait for all analysts to complete, then merge:**
+   You will receive notifications as each background agent finishes. Once ALL are done:
+   - Read findings from blackboard or from `./reports/{topic-slug}/*-findings.md`
+   - Merge into state.json (update findings array, sources array, phase, last_updated)
+   - Capture summary to Atlatl: `capture_memory(namespace="_semantic/knowledge", tags=["sigint-research", "{topic-slug}"])`
+   - Present merged findings summary to user
+
+   **Do NOT execute research yourself.** Only the dimension-analyst agents have WebSearch/WebFetch.
+   **Do NOT spawn a research-orchestrator.** Spawn the dimension-analysts directly from this command.
 
 ---
 
