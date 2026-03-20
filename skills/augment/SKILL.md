@@ -1,0 +1,294 @@
+---
+name: augment
+description: Deep-dive into a specific area of current research. Orchestrates a single dimension-analyst using full swarm pattern (TeamCreate, TaskCreate, SendMessage). Use when the user wants to augment current research with deeper analysis of a specific area.
+argument-hint: "<area> [--methodology <type>]"
+allowed-tools:
+  - Read
+  - Write
+  - Edit
+  - Grep
+  - Glob
+  - Agent
+  - TeamCreate
+  - TeamDelete
+  - SendMessage
+  - TaskCreate
+  - TaskUpdate
+  - TaskList
+  - TaskGet
+  - AskUserQuestion
+  - mcp__atlatl__capture_memory
+  - mcp__atlatl__recall_memories
+  - mcp__atlatl__enrich_memory
+  - mcp__atlatl__blackboard_create
+  - mcp__atlatl__blackboard_write
+  - mcp__atlatl__blackboard_read
+  - mcp__atlatl__blackboard_alert
+  - mcp__atlatl__blackboard_pending_alerts
+  - mcp__atlatl__blackboard_ack_alert
+  - mcp__claude_ai_Mermaid_Chart__validate_and_render_mermaid_diagram
+  - mcp__claude_ai_Mermaid_Chart__get_mermaid_syntax_document
+---
+
+# Sigint Augment Skill (Swarm Orchestration)
+
+You are the team lead for a focused research augmentation session. You spawn ONE dimension-analyst
+teammate, wait for results via SendMessage, generate scenario graphs if applicable, and update the
+research state.
+
+**Arguments parsed from $ARGUMENTS:**
+- `$1` — area to investigate (e.g., "competitor pricing", "regulatory landscape")
+- `--methodology <type>` — optional: competitive, sizing, trends, customer, tech, financial, regulatory
+
+---
+
+## Phase 0: Pre-flight + Initialize
+
+### Step 0.1: Resolve active research session
+
+1. Find the active research state file:
+   ```
+   Glob("./reports/*/state.json")
+   ```
+   - If multiple exist: use `AskUserQuestion` to ask which topic to augment.
+   - If none exist: respond "No active research session found. Run /sigint:start first." and stop.
+
+2. Read the state file. Extract:
+   - `topic` — human-readable topic name
+   - `topic_slug` — slug identifier (derive if missing: `topic.toLowerCase().replace(/[^a-z0-9]+/g,'-').slice(0,40)`)
+   - `elicitation` — full elicitation context
+
+3. Recall prior memories:
+   ```
+   recall_memories(query="sigint {topic} {area}", tags=["sigint-research"])
+   ```
+   Apply any matching findings to inform the analyst's task description.
+
+### Step 0.2: Identify methodology
+
+Map `area` to dimension and skill directory:
+
+| Area keywords | Dimension | Skill Dir |
+|---------------|-----------|-----------|
+| competitor, competitive, market players, positioning | competitive | competitive-analysis |
+| size, TAM, SAM, SOM, opportunity, market size | sizing | market-sizing |
+| trend, pattern, future, forecast, scenario | trends | trend-analysis |
+| user, customer, persona, buyer, segment | customer | customer-research |
+| technology, tech, feasibility, stack, build vs buy | tech | tech-assessment |
+| revenue, economics, pricing, unit economics, SaaS | financial | financial-analysis |
+| compliance, regulatory, legal, privacy, GDPR | regulatory | regulatory-review |
+
+If `--methodology` flag was provided, use that dimension directly.
+
+If the area doesn't map clearly, use `AskUserQuestion`:
+> "Which research methodology best fits '{area}'? Options: competitive / sizing / trends / customer / tech / financial / regulatory"
+
+Store resolved values as `dimension` and `skill_dir`.
+
+### Step 0.3: Create team and task
+
+```
+team_name = "sigint-{topic_slug}-augment"
+TeamCreate({ name: team_name })
+```
+
+If TeamCreate fails, retry once. If it fails again, report the error and stop.
+
+```
+task_id = TaskCreate({
+  subject: "Augment: {area} [{dimension}] — {topic}",
+  owner: "dimension-analyst-{dimension}"
+})
+```
+
+Write elicitation to blackboard if a blackboard exists for this topic:
+```
+blackboard_write(scope="{topic_slug}", key="elicitation", value={elicitation object from state.json})
+```
+
+---
+
+## Phase 0.2: Task Discovery Protocol (embed in analyst prompt)
+
+```
+BLACKBOARD: {topic_slug}
+TASK DISCOVERY PROTOCOL:
+1. Call TaskList to find tasks assigned to you (owner = your name).
+2. Call TaskGet on your task to read the full description.
+3. Do the work.
+4. When done:
+   a. TaskUpdate(taskId, status: 'completed')
+   b. SendMessage(to: 'team-lead', message: {...}, summary: '...')
+   c. Call TaskList again to check for more work.
+5. If no tasks assigned, wait for the next SendMessage from team lead.
+6. NEVER commit code via git.
+```
+
+---
+
+## Phase 1: Spawn Dimension-Analyst
+
+Spawn ONE dimension-analyst with full team and task context:
+
+```
+Agent(
+  subagent_type: "sigint:dimension-analyst",
+  team_name: "{team_name}",
+  name: "dimension-analyst-{dimension}",
+  run_in_background: true,
+  prompt: "You are a dimension-analyst for {dimension} research on '{topic}'.
+
+  BLACKBOARD: {topic_slug}
+  Read key: elicitation (or fall back to ./reports/{topic_slug}/state.json)
+  Skill to load: skills/{skill_dir}/SKILL.md
+  Your task ID: {task_id}
+
+  Focus area: {area}
+  Prior context from memories: {summary of recalled memories, if any}
+
+  IMPORTANT: Use WebSearch and WebFetch for real web research. Minimum 5 searches.
+  Do NOT fabricate findings. Every finding must be backed by a retrieved source.
+
+  Write findings to:
+    - Blackboard: blackboard_write(scope='{topic_slug}', key='findings_{dimension}', value={structured JSON})
+    - File: ./reports/{topic_slug}/{dimension}-findings.md
+
+  {TASK DISCOVERY PROTOCOL from Phase 0.2}
+
+  When complete:
+    1. TaskUpdate({task_id}, status: 'completed')
+    2. SendMessage(
+         to: 'team-lead',
+         message: {
+           dimension: '{dimension}',
+           topic_slug: '{topic_slug}',
+           findings_key: 'findings_{dimension}',
+           findings_path: './reports/{topic_slug}/{dimension}-findings.md',
+           finding_count: N,
+           confidence_avg: 'high|medium|low',
+           gaps: ['areas needing more research']
+         },
+         summary: '{dimension} augment complete — N findings'
+       )"
+)
+```
+
+Immediately after spawning, send the task assignment:
+```
+SendMessage(
+  to: "dimension-analyst-{dimension}",
+  message: "Task #{task_id} assigned: augment research on '{area}' for topic '{topic}'. Start now.",
+  summary: "Start {dimension} augment research"
+)
+```
+
+---
+
+## Phase 2: Wait for Results
+
+Wait for `SendMessage` from `dimension-analyst-{dimension}`.
+
+When message arrives:
+1. Extract `findings_path` and `finding_count` from message.
+2. Read `blackboard_read(scope="{topic_slug}", key="findings_{dimension}")` for structured findings.
+
+---
+
+## Phase 3: Post-Processing
+
+### Step 3.1: Scenario graph (trend augmentations only)
+
+If `dimension == "trends"`:
+
+Check if Mermaid MCP is available:
+- **If available** (`mcp__claude_ai_Mermaid_Chart__validate_and_render_mermaid_diagram` accessible):
+  Generate a transitional scenario graph using the findings:
+  ```
+  mcp__claude_ai_Mermaid_Chart__validate_and_render_mermaid_diagram({
+    code: "stateDiagram-v2\n    [*] --> Current\n    Current --> {scenario1}: {trend1} (INC)\n    ..."
+  })
+  ```
+- **If unavailable**:
+  Write a Mermaid code block in the findings summary for the user to render separately.
+
+Example Mermaid template for trend scenarios:
+```mermaid
+stateDiagram-v2
+    [*] --> Current
+    Current --> GrowthScenario: {driver1} (INC)
+    Current --> ConsolidationScenario: {driver2} (CONST)
+    Current --> DisruptionScenario: {driver3} (varies)
+    GrowthScenario --> ScaleLeader: First mover
+    ConsolidationScenario --> NichePlayer: Specialization
+    DisruptionScenario --> NewParadigm: Successful adaptation
+    DisruptionScenario --> Obsolete: Failed adaptation
+```
+
+### Step 3.2: Update research state
+
+Edit `./reports/{topic_slug}/state.json`:
+- Append new findings to `findings` array
+- Append new sources to `sources` array
+- Set `last_updated` to current ISO timestamp
+- Update `phase` to "augmented" if appropriate
+
+### Step 3.3: Persist to Atlatl
+
+```
+capture_memory(
+  title: "{dimension} augment: {topic} — {area}",
+  namespace: "_semantic/knowledge",
+  memory_type: "semantic",
+  tags: ["sigint-research", "{topic_slug}", "{dimension}", "augment"],
+  confidence: 0.8,
+  content: "Key findings from {dimension} augmentation of {topic} on {area}: ..."
+)
+enrich_memory(id)
+```
+
+### Step 3.4: Present findings to user
+
+Present a summary including:
+- Number of new findings (`finding_count`)
+- Top 3-5 key insights from the findings
+- Confidence level
+- Gaps identified for further research
+- Scenario graph (if trend dimension)
+- How new findings connect to existing research
+- Suggested next steps (further augmentation, generate report, create issues)
+
+---
+
+## Phase 4: Cleanup
+
+Send shutdown to analyst and tear down the team:
+
+```
+SendMessage(
+  to: "dimension-analyst-{dimension}",
+  message: { type: "shutdown_request", reason: "Augment complete" },
+  summary: "Shutdown analyst"
+)
+```
+
+Wait for shutdown confirmation, then:
+
+```
+TeamDelete("{team_name}")
+```
+
+---
+
+## Error Handling
+
+**If analyst doesn't complete within a reasonable time:**
+1. Check blackboard: `blackboard_read(scope="{topic_slug}", key="findings_{dimension}")`
+2. If findings exist on blackboard → analyst wrote but didn't message → treat as complete, proceed to Phase 3
+3. If no findings → inform user: "Augment analysis did not complete. The analyst may have encountered an error. You can retry with /sigint:augment."
+
+**If state.json is missing:**
+- "No active research session found for this topic. Run /sigint:start first."
+
+---
+
+Begin the augment process now based on: $ARGUMENTS

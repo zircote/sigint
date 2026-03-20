@@ -1,0 +1,155 @@
+---
+name: report
+description: Generate a comprehensive market research report from current findings. Orchestrates report-synthesizer using full swarm pattern with TeamCreate, TaskCreate, SendMessage, and TeamDelete.
+argument-hint: "[--format <type>] [--audience <type>] [--sections <list>]"
+allowed-tools: Read, Write, Grep, Glob, TeamCreate, TeamDelete, SendMessage, TaskCreate, TaskUpdate, TaskList, TaskGet, AskUserQuestion
+---
+
+Generate a comprehensive market research report from current research findings.
+
+**Arguments:**
+- `--format` - Output format: `markdown` (default), `html`, `both`
+- `--audience` - Target audience: `executives`, `pm`, `investors`, `dev`, `all` (default: `all`)
+- `--sections` - Comma-separated sections to include, or `all` (default: `all`)
+
+**Available Sections:**
+1. `executive-summary` — Key findings, primary recommendation, critical risks
+2. `market-overview` — Market definition, current state, key players
+3. `market-sizing` — TAM/SAM/SOM with growth projections
+4. `competitive` — Competitor matrix, Porter's 5 Forces, positioning map (Mermaid)
+5. `trends` — Macro/micro trends, scenario graph (Mermaid), terminal scenarios
+6. `swot` — Strengths, Weaknesses, Opportunities, Threats (Mermaid quadrant)
+7. `recommendations` — Strategic recommendations, tactical steps, resource requirements
+8. `risk` — Risk matrix, mitigation strategies, monitoring indicators
+9. `appendix` — Data sources, competitor profiles, scenario analysis, research timeline
+
+---
+
+## Phase 0: Parse Arguments + Initialize
+
+Parse `$ARGUMENTS` to extract:
+- `format` → default `markdown`
+- `audience` → default `all`
+- `sections` → default `all`
+
+**Determine topic slug:**
+- Read `./reports/` directory to find the most recent report folder (or read `state.json` from the most recent session)
+- Extract `topic_slug` from state.json's `topic` or `slug` field
+- If no reports directory exists, inform the user: "No research session found. Run `/sigint:start <topic>` first."
+
+**Initialize swarm:**
+
+Step 0.1 — **TeamCreate** (blocking prerequisite):
+```
+TeamCreate with name: "sigint-{topic-slug}-report"
+```
+
+Step 0.2 — **TaskCreate** the synthesizer task:
+```
+TaskCreate({
+  subject: "Generate report: {format} / {audience}",
+  owner: "report-synthesizer",
+  description: "Synthesize all findings from state.json and blackboard into a complete report."
+})
+```
+Note the returned task ID as `{reportTaskId}`.
+
+---
+
+## Phase 1: Spawn Report-Synthesizer
+
+Launch the report-synthesizer as a persistent teammate:
+
+```
+Agent(
+  subagent_type: "sigint:report-synthesizer",
+  team_name: "sigint-{topic-slug}-report",
+  name: "report-synthesizer",
+  run_in_background: true,
+  prompt: """
+    [ATLATL CONTEXT]
+    Atlatl MCP tools are available for persistent memory.
+    Search: recall_memories(query="sigint {topic} report") before starting.
+    Capture findings after completing.
+
+    BLACKBOARD: {topic-slug}
+    Task Discovery Protocol:
+    1. TaskList → find tasks assigned to you (owner: "report-synthesizer")
+    2. TaskGet → read full task description
+    3. Work on the task
+    4. When done:
+       a. TaskUpdate(taskId, status: "completed")
+       b. SendMessage(to: "team-lead", message: {files: [...], summary: "..."}, summary: "Report generated")
+    5. NEVER commit via git
+
+    PARAMETERS:
+    - format: {format}
+    - audience: {audience}
+    - sections: {sections}
+    - state_file: ./reports/{topic-slug}/state.json
+    - blackboard scope: {topic-slug} (read findings_* keys for dimension data)
+    - output_dir: ./reports/{topic-slug}/
+
+    TASK: #{reportTaskId} — Generate report: {format} / {audience}
+
+    When complete, send:
+    SendMessage(
+      to: "team-lead",
+      message: {
+        files: ["./reports/{topic-slug}/YYYY-MM-DD-report.md", ...],
+        formats_generated: ["{format}"],
+        summary: "one-line summary of the key finding"
+      },
+      summary: "Report generated: {N} sections, {format}"
+    )
+  """
+)
+```
+
+Immediately after spawning, send the start signal:
+```
+SendMessage(
+  to: "report-synthesizer",
+  message: "Task #{reportTaskId} assigned: Generate {format} report for {audience} audience. Start now.",
+  summary: "Report task #{reportTaskId} assigned"
+)
+```
+
+---
+
+## Phase 2: Receive Results and Confirm
+
+Wait for SendMessage from `report-synthesizer` containing:
+- `files` — list of generated file paths
+- `formats_generated` — list of formats written
+- `summary` — one-line finding summary
+
+Once received:
+1. Verify files exist using Read or Glob
+2. Present to user:
+
+```
+Report generated successfully.
+
+Files:
+  - {file1}
+  - {file2}
+
+Key finding: {summary}
+
+Next steps:
+  - /sigint:issues  — Create GitHub issues from recommendations
+  - /sigint:augment <dimension>  — Deep-dive into a specific area
+```
+
+---
+
+## Phase 3: Cleanup
+
+```
+SendMessage(
+  to: "report-synthesizer",
+  message: { type: "shutdown_request", reason: "Report generation complete" }
+)
+TeamDelete("sigint-{topic-slug}-report")
+```
