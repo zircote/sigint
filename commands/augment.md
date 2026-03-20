@@ -2,7 +2,7 @@
 description: Deep-dive into a specific area of current research
 version: 0.1.0
 argument-hint: <area> [--methodology <type>]
-allowed-tools: Read, Write, Grep, Glob, TodoWrite
+allowed-tools: Read, Write, Grep, Glob
 ---
 
 Augment the current research session with deeper analysis of a specific area.
@@ -15,7 +15,7 @@ Augment the current research session with deeper analysis of a specific area.
 
 1. **Load current research state:**
    Read `./reports/[current-topic]/state.json` to understand context.
-   Load relevant Subcog memories for this research.
+   Recall relevant Atlatl memories: `recall_memories(query="sigint {topic} {area}", tags=["sigint-research"])`
 
 2. **Identify applicable methodology:**
    Based on the area specified, select the most relevant sigint skill:
@@ -27,14 +27,15 @@ Augment the current research session with deeper analysis of a specific area.
    - Revenue/economics → financial-analysis skill
    - Compliance/legal → regulatory-review skill
 
-3. **Delegate to market-researcher agent:**
-   Use the Task tool to launch the market-researcher agent:
-   - `subagent_type`: `"sigint:market-researcher"`
-   - `prompt`: Include the area to investigate, selected methodology, and path to state.json
-   - `description`: "Deep research on [area]"
+3. **Spawn a dimension-analyst agent:**
+   Use the Agent tool to launch a single dimension-analyst:
+   - `name`: `"dimension-analyst-{dimension}"`
+   - `description`: "Deep research on {area}"
+   - `prompt`: Include the area to investigate, selected methodology/skill, path to state.json, and the blackboard task_id if one exists
 
-   The agent will apply the selected methodology using WebSearch and WebFetch,
+   The analyst will apply the selected methodology using WebSearch and WebFetch,
    gathering specific data points, quotes, and evidence in isolated context.
+   For large source documents (>15K tokens), it delegates to the source-chunker agent.
 
    **Do NOT execute research directly in this context.**
 
@@ -46,7 +47,7 @@ Augment the current research session with deeper analysis of a specific area.
 
 5. **Update research state:**
    Add new findings to state.json.
-   Capture key insights to Subcog memory.
+   Capture key insights to Atlatl: `capture_memory(namespace="_semantic/knowledge", tags=["sigint-research", "{topic}", "{area}"], ...)` then `enrich_memory(id)`.
    Update the research phase if appropriate.
 
 6. **Present augmented findings:**

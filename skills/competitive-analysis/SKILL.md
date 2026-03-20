@@ -1,7 +1,7 @@
 ---
 name: Competitive Analysis
 description: This skill should be used when the user asks to "analyze competitors", "map competitive landscape", "Porter's 5 Forces analysis", "competitor comparison", "competitive positioning", "identify competitors", "competitive intelligence", or needs guidance on competitor research methodology, market positioning analysis, or competitive strategy frameworks.
-version: 0.1.0
+version: 0.2.0
 ---
 
 # Competitive Analysis
@@ -18,12 +18,36 @@ Competitive analysis systematically evaluates competitors to understand market p
 - Understanding pricing dynamics
 - Assessing competitive threats
 - Planning differentiation strategy
+- Creating board/investor-ready competitive landscape documents
+- Analyzing emerging or nascent markets with indirect/potential competitors
+
+## Handling Incomplete Prompts
+
+When the user's request lacks critical context (no market, industry, or competitors specified), do NOT fabricate an analysis. Instead:
+1. Acknowledge the request enthusiastically
+2. Ask clarifying questions about: market/industry, product, known competitors, analysis goal, target customer segment
+3. Describe what deliverables they can expect once context is provided
+4. Be helpful and engaging — never refuse outright
+
+## Adapting for Emerging Markets / New Categories
+
+When analyzing a market that does not yet exist or has no direct competitors:
+1. **Do NOT say competitive analysis is inapplicable** — it is MORE important for new categories
+2. Identify what customers currently use as substitutes (manual processes, consultants, existing tools, DIY solutions)
+3. Map indirect competitors from adjacent markets who could pivot into the space
+4. Identify potential entrants — well-funded adjacent players most likely to enter
+5. Adapt Porter's 5 Forces: rivalry is typically low (temporary), threat of new entry is typically high, threat of substitution is typically very high
+6. Address first-mover and category creation dynamics (advantages and risks)
+7. Provide strategic recommendations focused on category definition, building switching costs, and monitoring potential entrants
 
 ## Core Frameworks
 
 ### Porter's 5 Forces
 
-Analyze industry structure through five competitive forces:
+Analyze industry structure through five competitive forces. For each force, you MUST provide:
+- An explicit rating (e.g., HIGH, MODERATE, LOW, or VERY HIGH)
+- Specific factors relevant to the industry being analyzed
+- An assessment statement explaining implications
 
 **1. Competitive Rivalry**
 - Number and size of competitors
@@ -78,7 +102,7 @@ Visualize competitive positioning on two key dimensions:
 - X-axis: Feature richness (or price)
 - Y-axis: Quality/premium positioning (or another differentiator)
 
-Generate as Mermaid quadrant chart showing relative positions.
+Generate as Mermaid quadrant chart showing relative positions. Use `quadrantChart` directive with labeled axes and all competitor names as data points. When the user specifies axes (e.g., "price vs ease of use"), use those exact dimensions. Provide a rationale table explaining each competitor's placement before the chart.
 
 ## Research Process
 
@@ -140,8 +164,10 @@ Generate as Mermaid quadrant chart showing relative positions.
 2. [Insight with implication]
 
 ## Strategic Recommendations
-- [Recommendation based on analysis]
+- [Recommendation based on analysis — specific, actionable, tailored to the user's context]
 ```
+
+**IMPORTANT**: When the user specifies a context (e.g., "small dev teams", "board presentation", "differentiation opportunities"), tailor every section to that context. Generic analysis is not acceptable — recommendations must be specific to the user's stated situation, audience, and goals.
 
 ## Trend Indicators
 
@@ -165,3 +191,20 @@ For detailed frameworks and templates, see:
 - `references/porters-five-forces.md` - Complete Porter's framework
 - `references/competitive-matrix-template.md` - Matrix templates
 - `examples/competitive-analysis-report.md` - Sample report
+
+## Orchestration Hints
+
+- **Blackboard key**: `findings_competitive`
+- **Cross-reference dimensions**: sizing (validate market share figures), customer (switching costs, satisfaction gaps)
+- **Alert triggers**:
+  - Major undiscovered competitor with >10% market share
+  - Market share shift >20% in last 12 months
+  - New entrant with disruptive positioning
+- **Confidence rules**:
+  - High: 3+ independent sources confirm
+  - Medium: 2 sources or 1 highly reliable source
+  - Low: Single source or analyst estimate
+- **Conflict detection**:
+  - Market share totals vs sizing dimension's TAM figures
+  - Competitor revenue claims vs financial dimension's estimates
+  - Feature comparison vs tech dimension's feasibility assessment

@@ -150,35 +150,69 @@ Or specify at runtime:
 /sigint:issues --repo owner/repo
 ```
 
-## Subcog Issues
+## Atlatl Memory Issues
 
 ### Memory Not Persisting
 
 **Symptom:** Research doesn't recall previous sessions
 
 **Causes:**
-- Subcog MCP server not running
-- Different namespace
+- Atlatl MCP server not running
+- Different namespace or tags
 
 **Solutions:**
 
-1. Check Subcog status:
+1. Check Atlatl status:
    ```
-   /subcog:status
+   Use system_status MCP tool
    ```
 
-2. Manually initialize:
+2. Manually search:
+   ```
+   recall_memories(query="sigint research", tags=["sigint-research"])
+   ```
+
+3. Re-initialize:
    ```
    /sigint:init
    ```
 
-### Subcog Not Available
+### Atlatl Not Available
 
-**Symptom:** Subcog tools not found
+**Symptom:** Memory tools not found
 
-**Cause:** Subcog MCP server not configured
+**Cause:** Atlatl MCP server not configured
 
-**Solution:** sigint works without Subcog - memory just won't persist across sessions. Research still saves to `./reports/`.
+**Solution:** sigint works without Atlatl — memory just won't persist across sessions. Research still saves to `./reports/`.
+
+## Blackboard Issues
+
+### Team Status Not Updating
+
+**Symptom:** `/sigint:status` doesn't show analyst progress
+
+**Causes:**
+- Blackboard expired (TTL is 24h)
+- Research orchestrator hasn't started yet
+
+**Solutions:**
+1. Check if research is active — orchestrator creates blackboard on start
+2. If blackboard expired, findings are still in state.json
+3. Re-run research to create fresh blackboard
+
+### Analyst Not Completing
+
+**Symptom:** Dimension analyst stuck or not reporting back
+
+**Causes:**
+- Web search returning no results
+- Source too large for processing
+- Network issues
+
+**Solutions:**
+1. Check `/sigint:status` for which analysts are pending
+2. Re-run with `/sigint:augment {dimension}` for the stuck dimension
+3. Narrow scope in elicitation to reduce research load
 
 ## Performance Issues
 
@@ -202,6 +236,29 @@ Or specify at runtime:
 1. Run `/compact` to summarize
 2. Use agents (they run in isolated context)
 3. Break research into smaller topics
+
+## Large Document Issues
+
+### Source Chunker Not Activating
+
+**Symptom:** Large documents processed as single pass, missing content
+
+**Cause:** Document under the 15K token threshold
+
+**Solution:** Source chunker only activates for documents >15K tokens (~60K characters). For borderline documents, the single-pass analysis should be sufficient.
+
+### Chunk Processing Fails
+
+**Symptom:** Some chunks return errors during processing
+
+**Causes:**
+- Network timeout fetching large document
+- Document format not supported
+
+**Solutions:**
+1. Download the document locally first, then reference the file path
+2. Convert to markdown or plain text before processing
+3. Split manually and use `/sigint:augment` with each section
 
 ## Getting Help
 

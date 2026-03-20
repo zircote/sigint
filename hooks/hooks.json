@@ -6,7 +6,7 @@
         "hooks": [
           {
             "type": "prompt",
-            "prompt": "Sigint plugin is installed. Active research sessions may exist in ./reports/*/state.json. Subcog memories are stored in sigint:research namespace. Configuration files: ~/.claude/sigint.local.md (global), ./.claude/sigint.local.md (project)."
+            "prompt": "Sigint plugin is installed. Active research sessions may exist in ./reports/*/state.json. Atlatl memories are stored with tag sigint-research. Configuration files: ~/.claude/sigint.local.md (global), ./.claude/sigint.local.md (project)."
           }
         ]
       }

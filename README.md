@@ -2,7 +2,7 @@
 
 [![Claude Code Plugin](https://img.shields.io/badge/Claude_Code-Plugin-06b6d4?style=flat-square&logo=anthropic&logoColor=white)](https://github.com/anthropics/claude-code)
 [![License: MIT](https://img.shields.io/badge/License-MIT-8b5cf6?style=flat-square)](LICENSE)
-[![Version](https://img.shields.io/badge/version-0.3.0-22c55e?style=flat-square)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-0.4.0-22c55e?style=flat-square)](CHANGELOG.md)
 
 Comprehensive market research toolkit for Claude Code with report generation, GitHub issue creation, and trend-based analysis.
 
@@ -32,11 +32,13 @@ See [docs/quick-start.md](docs/quick-start.md) for a detailed walkthrough.
 
 ## Features
 
+- **Swarm-Orchestrated Research**: Parallel dimension-analysts coordinate via Atlatl blackboard
 - **Iterative Research Workflow**: Start, refine, and finalize market research through commands
 - **Multi-Audience Reports**: Generate reports for executives, PMs, investors, and developers
 - **Trend-Based Modeling**: Three-valued logic analysis (INC/DEC/CONST) for uncertain data
 - **GitHub Integration**: Automatically create sprint-sized issues from findings
-- **Subcog Memory**: Persist research state across sessions
+- **Atlatl Memory**: Persist research state across sessions via Atlatl MCP
+- **RLM Large Document Processing**: Source-chunker handles documents exceeding context limits
 - **Multi-Format Output**: Markdown, HTML, Mermaid diagrams
 
 ## Installation
@@ -63,11 +65,13 @@ cp -r sigint ~/.claude/plugins/
 | `/sigint:issues` | Create GitHub issues from findings |
 | `/sigint:resume` | Resume previous research session |
 | `/sigint:status` | Show current research state |
-| `/sigint:init` | Manually initialize Subcog context |
+| `/sigint:init` | Initialize plugin configuration |
 
 ## Agents
 
-- **market-researcher**: Autonomous market research and data gathering
+- **research-orchestrator**: Coordinates parallel dimension-analysts via blackboard, merges findings
+- **dimension-analyst**: Focused research on a single dimension (competitive, sizing, trends, etc.)
+- **source-chunker**: RLM processor for large documents — partitions, analyzes chunks, synthesizes
 - **issue-architect**: Converts findings to sprint-sized GitHub issues
 - **report-synthesizer**: Generates multi-format reports with visualizations
 
@@ -101,7 +105,10 @@ Reports include:
 
 ```
 ./reports/
+├── README.md                   # Master index of all research
 └── topic-name/
+    ├── README.md               # Topic research index
+    ├── state.json
     ├── YYYY-MM-DD-research.md
     ├── YYYY-MM-DD-report.md
     ├── YYYY-MM-DD-report.html
@@ -132,7 +139,7 @@ report_format: markdown
 audiences:
   - executives
   - product-managers
-auto_subcog: true
+auto_atlatl: true
 ---
 
 Additional research context or preferences...
@@ -166,7 +173,7 @@ EOF
 ## Dependencies
 
 - GitHub CLI (`gh`) for issue creation
-- Subcog MCP server for memory persistence
+- Atlatl MCP server for memory persistence and blackboard coordination
 - WebSearch/WebFetch tools for research
 
 ## References

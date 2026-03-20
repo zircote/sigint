@@ -2,7 +2,7 @@
 description: Generate comprehensive research report in multiple formats
 version: 0.1.0
 argument-hint: [--format <type>] [--audience <type>] [--sections <list>]
-allowed-tools: Read, Write, Grep, Glob, TodoWrite
+allowed-tools: Read, Write, Grep, Glob
 ---
 
 Generate a comprehensive market research report from current findings.
@@ -66,14 +66,15 @@ Generate a comprehensive market research report from current findings.
 1. **Parse arguments:**
    Extract format, audience, and sections from command arguments.
 
-2. **Delegate to report-synthesizer agent:**
-   Use the Task tool to launch the report-synthesizer agent:
-   - `subagent_type`: `"sigint:report-synthesizer"`
-   - `prompt`: Include the parsed arguments (format, audience, sections) and path to state.json
+2. **Spawn the report-synthesizer agent:**
+   Use the Agent tool to launch the report-synthesizer:
+   - `name`: `"report-synthesizer"`
    - `description`: "Generate research report"
+   - `prompt`: Include the parsed arguments (format, audience, sections) and path to state.json
 
    The agent will:
    - Load state.json and elicitation context
+   - Read findings from blackboard if available: `blackboard_read(task_id, "findings_*")`
    - Apply executive report best practices
    - Tailor language to specified audience
    - Generate all Mermaid visualizations
@@ -81,7 +82,7 @@ Generate a comprehensive market research report from current findings.
    - Create one-page executive brief
    - Return summary when complete
 
-   **Do NOT generate the report directly in this context.** The report-synthesizer agent handles all synthesis, formatting, and file generation.
+   **Do NOT generate the report directly in this context.**
 
 **Output:**
 - Full report in specified format(s)

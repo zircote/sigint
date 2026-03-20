@@ -23,6 +23,13 @@ Display the current sigint research session status and progress.
    - Sources count
    - Last activity
 
+2b. **Check blackboard for live progress:**
+    If a research session is active, check blackboard for real-time team status:
+    ```
+    blackboard_read(task_id="{topic-slug}", key="team_status")
+    ```
+    If blackboard data exists, show live analyst progress in the dashboard.
+
 3. **Calculate progress metrics:**
    - Research completeness (based on methodology coverage)
    - Data freshness (age of newest finding)
@@ -46,6 +53,11 @@ Display the current sigint research session status and progress.
    ║  ├─ Tech Assessment:     [✓ | ○ | ─]                    ║
    ║  ├─ Financial:           [✓ | ○ | ─]                    ║
    ║  └─ Regulatory:          [✓ | ○ | ─]                    ║
+   ╠══════════════════════════════════════════════════════════╣
+   ║  TEAM STATUS (if active)                               ║
+   ║  ├─ competitive:      [✓ complete | ⟳ in_progress | ─] ║
+   ║  ├─ sizing:           [✓ complete | ⟳ in_progress | ─] ║
+   ║  └─ trends:           [✓ complete | ⟳ in_progress | ─] ║
    ╠══════════════════════════════════════════════════════════╣
    ║  Sources: [count]  |  Findings: [count]                  ║
    ║  Freshness: [days since last update]                     ║

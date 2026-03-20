@@ -48,9 +48,13 @@ Update existing research with fresh data and recent developments.
    - Last updated timestamp
    - Change log
 
-7. **Capture to Subcog:**
-   Store significant changes and learnings.
-   Note any trend reversals or unexpected developments.
+7. **Capture to Atlatl:**
+   Store significant changes and learnings using `capture_memory`:
+   - `namespace`: `_semantic/knowledge`
+   - `memory_type`: `semantic`
+   - `tags`: `["sigint-research", "{topic}", "update"]`
+   - Note any trend reversals or unexpected developments
+   Then run `enrich_memory(id)`.
 
 **Output:**
 - Summary of what changed since last update

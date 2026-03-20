@@ -192,12 +192,12 @@ Before creating ANY issues, you MUST:
 
 ## Workflow
 
-> **Note:** Subcog is Claude Code's MCP-based memory persistence system. It stores research context in the `sigint:research` namespace for cross-session continuity.
+> **Note:** Atlatl is the persistent memory system. Research context is stored with namespace `_semantic/knowledge` and tag `sigint-research` for cross-session continuity.
 
 ### Step 1: Load Research Context
 - Read state.json and generated reports
 - Identify all actionable items
-- Load Subcog context (`sigint:research`) for additional insights
+- Recall Atlatl memories: `recall_memories(query="sigint {topic} issues", tags=["sigint-research"])`
 
 ### Step 2: Categorize and Prioritize
 - Classify each item by type
@@ -223,7 +223,7 @@ Before creating ANY issues, you MUST:
 
 ### Step 6: Document Results
 - Save issue manifest to reports directory
-- Capture to Subcog for future reference
+- Capture to Atlatl: `capture_memory(namespace="_semantic/knowledge", tags=["sigint-research", "issues"], ...)` then `enrich_memory(id)`
 - Summarize by category
 
 ## GitHub Integration

@@ -332,10 +332,11 @@ After generating report artifacts, validate them using the documentation-review 
 
 ## Workflow
 
-> **Note:** Subcog is Claude Code's MCP-based memory persistence system. It stores research findings and context in the `sigint:research` namespace for cross-session continuity.
+> **Note:** Atlatl is the persistent memory system. Research findings are stored with namespace `_semantic/knowledge` and tag `sigint-research` for cross-session continuity.
 
 1. **Load Research State**: Read all findings from state.json
-2. **Load Subcog Context**: Recall related memories from `sigint:research`
+1b. **Read Blackboard Findings**: If a blackboard exists for this research session, read all dimension findings: `blackboard_read(task_id="{topic-slug}", key="findings_*")`. Merge blackboard findings with state.json findings for complete coverage.
+2. **Recall Atlatl Memories**: `recall_memories(query="sigint {topic}", tags=["sigint-research"])`
 3. **Organize Content**: Map findings to report sections
 4. **Generate Narrative**: Write flowing prose connecting findings
 5. **Create Visualizations**: Generate all Mermaid diagrams
@@ -344,7 +345,7 @@ After generating report artifacts, validate them using the documentation-review 
 8. **Save Files**: Write to reports directory
 9. **Run Documentation Review** (if plugin available): Execute `/documentation-review:doc-review` on reports directory
 10. **Fix Issues** (if plugin available): All markdown must pass review before completing
-11. **Capture Summary**: Store report completion to Subcog
+11. **Capture Summary**: `capture_memory(namespace="_semantic/knowledge", tags=["sigint-research", "report"], title="Report generated: {topic}", ...)` then `enrich_memory(id)`
 
 ## File Naming
 

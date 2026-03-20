@@ -206,3 +206,20 @@ For theoretical background and advanced techniques, see:
 - `references/three-valued-logic.md` - Theoretical foundation
 - `references/scenario-generation.md` - Algorithm details
 - `examples/trend-model-example.md` - Worked example
+
+## Orchestration Hints
+
+- **Blackboard key**: `findings_trends` (shared with trend-analysis — trend-modeling extends trend-analysis findings with scenario modeling)
+- **Cross-reference dimensions**: All dimensions provide input variables for scenario modeling
+- **Alert triggers**:
+  - Scenario with >50% probability of adverse outcome
+  - Bifurcation point within planning horizon
+  - Terminal scenario that invalidates core business assumptions
+- **Confidence rules**:
+  - High: Model inputs validated by 3+ dimensions' findings
+  - Medium: Model inputs from 2 dimensions with reasonable assumptions
+  - Low: Speculative inputs or single-dimension basis
+- **Conflict detection**:
+  - Scenario probabilities vs other dimensions' confidence levels
+  - Trend direction assumptions vs actual trend-analysis findings
+  - Timeline estimates vs regulatory and technology readiness timelines

@@ -7,7 +7,7 @@ Get started with sigint in 5 minutes.
 - Claude Code installed
 - sigint plugin enabled
 - (Optional) GitHub CLI (`gh`) for issue creation
-- (Optional) Subcog MCP server for memory persistence
+- (Optional) Atlatl MCP server for memory persistence
 
 ## Your First Research Session
 

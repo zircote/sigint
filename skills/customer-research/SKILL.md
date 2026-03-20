@@ -255,3 +255,20 @@ For detailed frameworks, see:
 - `references/interview-guide.md` - Interview techniques
 - `references/persona-examples.md` - Sample personas
 - `examples/journey-map.md` - Complete journey map
+
+## Orchestration Hints
+
+- **Blackboard key**: `findings_customer`
+- **Cross-reference dimensions**: competitive (feature gaps map to unmet needs), financial (willingness to pay, price sensitivity)
+- **Alert triggers**:
+  - Unmet customer need with no existing solution in market
+  - Customer segment not previously identified in scope
+  - Switching cost barrier that invalidates competitive assumptions
+- **Confidence rules**:
+  - High: Multiple customer data sources (surveys, reviews, interviews) align
+  - Medium: 2 data sources or strong proxy indicators
+  - Low: Single source or inferred from adjacent markets
+- **Conflict detection**:
+  - Customer willingness-to-pay vs financial dimension's pricing models
+  - Feature importance ranking vs competitive dimension's feature matrices
+  - Segment sizes vs sizing dimension's SAM calculations

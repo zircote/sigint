@@ -39,11 +39,11 @@ Convert research findings into sprint-sized GitHub issues.
 1. **Parse arguments:**
    Extract repo, dry-run flag, and labels from command arguments.
 
-2. **Delegate to issue-architect agent:**
-   Use the Task tool to launch the issue-architect agent:
-   - `subagent_type`: `"sigint:issue-architect"`
-   - `prompt`: Include the parsed arguments (repo, dry-run, labels) and path to state.json
+2. **Spawn the issue-architect agent:**
+   Use the Agent tool to launch the issue-architect:
+   - `name`: `"issue-architect"`
    - `description`: "Create GitHub issues from research"
+   - `prompt`: Include the parsed arguments (repo, dry-run, labels) and path to state.json
 
    The agent will:
    - Load state.json and any generated reports
@@ -52,10 +52,10 @@ Convert research findings into sprint-sized GitHub issues.
    - Determine target repository (from args, config, or git remote)
    - Create issues via GitHub MCP or `gh` CLI (or preview if dry-run)
    - Save issue manifest to `./reports/[topic]/YYYY-MM-DD-issues.json`
-   - Capture to Subcog for future reference
+   - Capture findings to Atlatl memory for future reference
    - Return summary of created issues
 
-   **Do NOT generate or create issues directly in this context.** The issue-architect agent handles all atomization, content generation, and GitHub integration.
+   **Do NOT generate or create issues directly in this context.**
 
 **Output:**
 - List of created issues with numbers and URLs

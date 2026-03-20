@@ -1,5 +1,5 @@
 ---
-description: Resume a previous research session from Subcog or files
+description: Resume a previous research session from Atlatl or files
 version: 0.1.0
 argument-hint: [<topic>] [--list]
 allowed-tools: Read, Write, Grep, Glob
@@ -15,7 +15,7 @@ Resume a previous sigint research session.
 
 1. **If `--list` specified:**
    Scan `./reports/*/state.json` for all research sessions.
-   Query Subcog for research memories.
+   Recall Atlatl memories: `recall_memories(query="sigint research sessions", tags=["sigint-research"])`
    Display table:
    ```
    | Topic | Status | Last Updated | Phase | Findings |
@@ -24,7 +24,7 @@ Resume a previous sigint research session.
 
 2. **If topic specified:**
    Load `./reports/[topic]/state.json`.
-   Load related Subcog memories for context.
+   Recall related Atlatl memories: `recall_memories(query="sigint {topic}", tags=["sigint-research"])`
 
 3. **If no topic specified:**
    Check for single active session.
@@ -33,7 +33,7 @@ Resume a previous sigint research session.
 
 4. **Restore research context:**
    - Load all findings and sources
-   - Recall Subcog memories for this topic
+   - Recall Atlatl memories for this topic: `recall_memories(query="sigint {topic}", tags=["sigint-research"])`
    - Identify current research phase
    - List pending tasks
 

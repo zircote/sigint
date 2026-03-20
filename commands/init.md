@@ -1,11 +1,11 @@
 ---
-description: Manually initialize or reload Subcog context for sigint
+description: Manually initialize or reload Atlatl memory context for sigint
 version: 0.1.0
 argument-hint: [--full] [--topic <topic>]
 allowed-tools: Read, Write, Grep, Glob
 ---
 
-Manually initialize the Subcog memory context for sigint research.
+Manually initialize the Atlatl memory context for sigint research.
 
 **Arguments:**
 - `--full` - Load all sigint-related memories (not just current session)
@@ -13,16 +13,16 @@ Manually initialize the Subcog memory context for sigint research.
 
 **Process:**
 
-1. **Initialize Subcog namespace:**
-   Ensure sigint namespace is available in Subcog.
-   Namespaces used:
-   - `sigint:research` - Research session state and findings
-   - `sigint:methodology` - Learned methodologies and approaches
-   - `sigint:sources` - Trusted sources and data quality notes
-   - `sigint:patterns` - Recognized market patterns
+1. **Search Atlatl memories:**
+   Search for existing sigint memories using `recall_memories(query="sigint research", tags=["sigint-research"])`.
+   Atlatl namespace mapping:
+   - `_semantic/knowledge` with tag `sigint-research` - Research session state and findings
+   - `_procedural/patterns` with tag `sigint-methodology` - Learned methodologies and approaches
+   - `_semantic/knowledge` with tag `sigint-sources` - Trusted sources and data quality notes
+   - `_procedural/patterns` with tag `sigint-patterns` - Recognized market patterns
 
 2. **Load relevant memories:**
-   Query Subcog for:
+   Use `recall_memories` to retrieve:
    - Active research sessions
    - Recent findings and insights
    - Methodology preferences
@@ -74,7 +74,7 @@ Manually initialize the Subcog memory context for sigint research.
 
 6. **Display loaded context:**
    ```
-   Subcog Context Loaded
+   Atlatl Context Loaded
    ─────────────────────
    Research Sessions: [count]
    Active Session: [topic or "none"]
@@ -93,8 +93,8 @@ Manually initialize the Subcog memory context for sigint research.
    - If no session: suggest `/sigint:start <topic>`
    - If stale session: suggest `/sigint:update`
 
-**Note:** This command is also run automatically on SessionStart via hook.
-Use this command to manually reload context mid-session or after configuration changes.
+**Note:** This command supplements the SessionStart hook which provides basic awareness.
+Use this command to manually reload full Atlatl context mid-session or after configuration changes.
 
 **Output:**
 - Confirmation of context loaded

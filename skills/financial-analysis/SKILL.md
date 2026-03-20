@@ -233,3 +233,20 @@ For detailed templates, see:
 - `references/unit-economics.md` - Deep dive on LTV/CAC
 - `references/saas-metrics.md` - SaaS-specific metrics
 - `examples/financial-analysis.md` - Sample analysis
+
+## Orchestration Hints
+
+- **Blackboard key**: `findings_financial`
+- **Cross-reference dimensions**: sizing (market size validates revenue potential), competitive (competitor revenue and pricing)
+- **Alert triggers**:
+  - Unit economics infeasibility (LTV:CAC < 1)
+  - Revenue model mismatch with market expectations
+  - Margin compression trend threatening viability
+- **Confidence rules**:
+  - High: Public financial data (SEC filings, earnings) with 2+ quarters
+  - Medium: Credible analyst estimates or partial public data
+  - Low: Estimated from proxies or single data point
+- **Conflict detection**:
+  - Revenue projections vs sizing dimension's TAM/SAM figures
+  - Pricing assumptions vs customer dimension's willingness-to-pay
+  - Cost structure vs tech dimension's build-vs-buy analysis

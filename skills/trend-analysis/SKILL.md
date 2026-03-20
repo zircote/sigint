@@ -199,3 +199,20 @@ For detailed methodologies, see:
 - `references/trend-signals.md` - Signal identification techniques
 - `references/scenario-planning.md` - Scenario development methods
 - `examples/trend-report.md` - Sample trend analysis
+
+## Orchestration Hints
+
+- **Blackboard key**: `findings_trends`
+- **Cross-reference dimensions**: tech (adoption curves, technology maturity), regulatory (regulatory shifts impacting trends)
+- **Alert triggers**:
+  - Trend reversal detected (INC→DEC or DEC→INC)
+  - Emerging trend with potential to reshape market within 2 years
+  - Macro trend contradiction between sources
+- **Confidence rules**:
+  - High: 3+ independent signals confirm trend direction
+  - Medium: 2 signals or strong single indicator with historical precedent
+  - Low: Single signal or conflicting indicators
+- **Conflict detection**:
+  - Trend projections vs sizing dimension's growth rates
+  - Technology adoption curves vs tech dimension's TRL assessments
+  - Regulatory trend impacts vs regulatory dimension's timeline estimates

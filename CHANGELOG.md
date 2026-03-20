@@ -7,6 +7,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-03-20
+
+### Added
+- **Swarm-orchestrated parallel research**: New research-orchestrator agent coordinates multiple dimension-analysts running concurrently
+- **Dimension-analyst agent**: Generic research analyst parameterized by dimension (competitive, sizing, trends, customer, tech, financial, regulatory)
+- **Source-chunker agent**: RLM processor for large documents — partitions, spawns chunk analysts, synthesizes findings
+- **Atlatl blackboard coordination**: Ephemeral session blackboard for inter-agent communication during research
+- **Orchestration hints** in all 9 skill SKILL.md files for team-based research participation
+- **Live team status** in `/sigint:status` showing dimension-analyst progress via blackboard
+
+### Changed
+- **Replaced monolithic market-researcher** with research-orchestrator + dimension-analyst swarm (3→5 agents)
+- **Migrated from Subcog to Atlatl** memory system across all commands and agents
+- **Replaced TodoWrite with TaskCreate/TaskUpdate** in all commands
+- **Replaced Task/subagent_type delegation with Agent tool** in all commands
+- **Report-synthesizer** now reads blackboard findings in addition to state.json
+- **Issue-architect** now uses Atlatl instead of Subcog for memory persistence
+
+### Removed
+- **market-researcher agent** (decomposed into research-orchestrator + dimension-analyst)
+- **Subcog integration** (replaced by Atlatl MCP tools)
+- **TodoWrite usage** (replaced by TaskCreate/TaskUpdate)
+
 ## [0.3.7] - 2026-01-23
 
 ### Fixed
@@ -121,7 +144,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Research methodology citations (arXiv:2601.10768)
 - MIT license
 
-[Unreleased]: https://github.com/zircote/sigint/compare/v0.3.0...HEAD
+[Unreleased]: https://github.com/zircote/sigint/compare/v0.4.0...HEAD
+[0.4.0]: https://github.com/zircote/sigint/compare/v0.3.7...v0.4.0
+[0.3.7]: https://github.com/zircote/sigint/compare/v0.3.0...v0.3.7
 [0.3.0]: https://github.com/zircote/sigint/compare/v0.2.1...v0.3.0
 [0.2.1]: https://github.com/zircote/sigint/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/zircote/sigint/compare/v0.1.0...v0.2.0

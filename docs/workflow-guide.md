@@ -5,10 +5,11 @@ Complete guide to the sigint research workflow.
 ## Research Lifecycle
 
 ```
-┌───────────────┐     ┌──────────┐    ┌─────────┐     ┌────────┐
-│ /sigint:start │  →  │ Research │  → │ Report  │  →  │ Issues │
-│ (Elicitation) │     │ (Agents) │    │ (Synth) │     │ (Arch) │
-└───────────────┘     └──────────┘    └─────────┘     └────────┘
+┌───────────────┐     ┌──────────────────┐    ┌─────────┐     ┌────────┐
+│ /sigint:start │  →  │  Orchestrator    │  → │ Report  │  →  │ Issues │
+│ (Elicitation) │     │  ├─ Analyst ×N   │    │ (Synth) │     │ (Arch) │
+│               │     │  └─ (parallel)   │    │         │     │        │
+└───────────────┘     └──────────────────┘    └─────────┘     └────────┘
 ```
 
 ## Phase 1: Elicitation
@@ -42,17 +43,18 @@ If you want quick research without elicitation:
 ```
 Just ask: "Research the AI code review market"
 ```
-The market-researcher agent will run with generic assumptions.
+The research-orchestrator agent will run with generic assumptions.
 
 ## Phase 2: Research
 
 ### Automatic Research
 
-After elicitation, the `market-researcher` agent:
-1. Loads your elicitation context
-2. Searches web for current data
-3. Analyzes findings against your priorities
-4. Stores results in `./reports/<topic>/state.json`
+After elicitation, the `research-orchestrator` agent:
+1. Creates a blackboard for team coordination
+2. Spawns parallel `dimension-analyst` agents for each priority
+3. Each analyst loads its skill methodology and conducts web research
+4. Findings written to blackboard, merged by orchestrator
+5. Results stored in `./reports/<topic>/state.json`
 
 ### Manual Deep Dives
 
@@ -202,13 +204,11 @@ Each research folder includes a topic README.md that provides:
 
 This makes it easy to browse research folders and understand what each contains.
 
-## Subcog Integration
+## Atlatl Memory Integration
 
-If Subcog MCP server is available:
+Research findings persist across sessions via Atlatl MCP:
 
-- Research findings persist across sessions
-- Related memories recalled automatically
-- Methodology learnings captured
-- Source reliability tracked
-
-Namespace: `sigint:research`
+- Key findings stored with namespace `_semantic/knowledge` and tag `sigint-research`
+- Methodology learnings stored in `_procedural/patterns` with tag `sigint-methodology`
+- Prior research automatically recalled when starting related topics
+- Blackboard provides ephemeral coordination during active research (TTL 24h)

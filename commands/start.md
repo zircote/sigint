@@ -2,7 +2,7 @@
 description: Begin a new market research session with comprehensive scoping
 version: 0.1.0
 argument-hint: [<topic>]
-allowed-tools: Read, Write, Grep, Glob, TodoWrite, AskUserQuestion
+allowed-tools: Read, Write, Grep, Glob, TaskCreate, TaskUpdate, AskUserQuestion
 ---
 
 Initialize a new sigint research session through structured elicitation.
@@ -258,28 +258,36 @@ Only after elicitation complete and confirmed:
    }
    ```
 
-3. **Capture to Subcog:**
-   Store research brief to `sigint:research` namespace for persistence.
+3. **Capture to Atlatl:**
+   Store research brief using `capture_memory`:
+   - `namespace`: `_semantic/knowledge`
+   - `memory_type`: `semantic`
+   - `tags`: `["sigint-research", "$TOPIC_SLUG"]`
+   - `title`: "Research brief: $TOPIC"
+   - `confidence`: 0.9
+   Then run `enrich_memory(id)` on the captured memory.
 
 4. **Create prioritized research plan:**
-   Based on elicitation, create TodoWrite task list ordered by stated priorities:
+   Based on elicitation, create tasks ordered by stated priorities using `TaskCreate`:
    - Tasks aligned to decision context
    - Depth calibrated to timeline
    - Focus areas matching stated priorities
 
-5. **Delegate to market-researcher agent:**
-   Use the Task tool to launch the market-researcher agent:
-   - `subagent_type`: `"sigint:market-researcher"`
-   - `prompt`: Include the topic, research brief summary, and path to state.json
-   - `description`: "Market research for [topic]"
+5. **Spawn the research-orchestrator agent:**
+   Use the Agent tool to launch the research-orchestrator:
+   - `name`: `"research-orchestrator"`
+   - `description`: "Research: {topic}"
+   - `run_in_background`: true
+   - `prompt`: Include the topic, research brief summary, path to state.json, and the user's prioritized dimensions list
 
-   The agent will:
-   - Load state.json and use elicitation context to shape all research
-   - Execute discovery, data collection, analysis, and synthesis phases
-   - Store findings back to state.json
+   The orchestrator will:
+   - Create a blackboard for team coordination
+   - Spawn parallel dimension-analysts for each prioritized research area
+   - Monitor progress via blackboard alerts
+   - Merge findings into state.json
    - Return a summary of key findings when complete
 
-   **Do NOT execute research directly in this context.** The market-researcher agent runs in isolated context with appropriate tools (WebSearch, WebFetch) for comprehensive research.
+   **Do NOT execute research directly in this context.** The research-orchestrator runs a parallel swarm in isolated context.
 
 ---
 
