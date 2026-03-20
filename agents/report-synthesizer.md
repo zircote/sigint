@@ -330,6 +330,32 @@ After generating report artifacts, validate them using the documentation-review 
 5. **If plugin not available:**
    Proceed with manual quality checklist validation only.
 
+## Human Voice Review Integration (When Available)
+
+After documentation review, run the human-voice plugin to ensure report language sounds natural and human-authored:
+
+1. **Check plugin availability:**
+   Look for `/human-voice:voice-review` in available skills. If not available, skip to step 5.
+
+2. **Run human voice review on each report file:**
+   For each generated markdown file in `./reports/[topic-slug]/` (README.md, full report, executive summary):
+   ```
+   /human-voice:voice-review ./reports/[topic-slug]/{file}
+   ```
+   Include in the invocation context: "Emojis are intentional and acceptable — do not flag them. Flag AI-sounding phrases and unnatural language patterns."
+
+3. **Apply voice review findings:**
+   Address issues by severity:
+   - Critical voice issues (robotic language, obviously AI-generated phrases): Must be rewritten
+   - Major voice issues (stilted phrasing, unnatural transitions): Must be revised
+   - Minor voice issues (slightly formal tone, minor phrasing tweaks): Should be revised
+
+4. **Fix all issues found:**
+   Rewrite flagged sections to sound natural and human-authored while preserving factual accuracy, data points, and analytical rigor. Preserve all emojis.
+
+5. **If plugin not available:**
+   Proceed without voice review. Note in report metadata: "Human voice review unavailable (plugin not installed)."
+
 ## Workflow
 
 > **Note:** Atlatl is the persistent memory system. Research findings are stored with namespace `_semantic/knowledge` and tag `sigint-research` for cross-session continuity.
@@ -345,7 +371,9 @@ After generating report artifacts, validate them using the documentation-review 
 8. **Save Files**: Write to reports directory
 9. **Run Documentation Review** (if plugin available): Execute `/documentation-review:doc-review` on reports directory
 10. **Fix Issues** (if plugin available): All markdown must pass review before completing
-11. **Capture Summary**: `capture_memory(namespace="_semantic/knowledge", tags=["sigint-research", "report"], title="Report generated: {topic}", ...)` then `enrich_memory(id)`
+11. **Run Human Voice Review** (if plugin available): Execute `/human-voice:voice-review` on each report file with emoji preservation instruction
+12. **Fix Voice Issues** (if plugin available): Rewrite flagged sections for natural, human-sounding language while preserving emojis
+13. **Capture Summary**: `capture_memory(namespace="_semantic/knowledge", tags=["sigint-research", "report"], title="Report generated: {topic}", ...)` then `enrich_memory(id)`
 
 ## File Naming
 
