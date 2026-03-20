@@ -136,10 +136,35 @@ blackboard_alert(scope="{scope}",channel="conflict_detected", message={
 })
 ```
 
-### Step 7: Alert Completion
-```
-blackboard_alert(scope="{scope}",channel="phase_complete", message="{dimension} analysis complete")
-```
+### Step 7: Signal Completion
+
+1. **Alert via blackboard** (cross-agent awareness):
+   ```
+   blackboard_alert(scope="{scope}", channel="phase_complete", message="{dimension} analysis complete")
+   ```
+
+2. **Mark task complete** (required when spawned as a swarm teammate):
+   ```
+   TaskUpdate(taskId, status: "completed")
+   ```
+
+3. **Notify team lead via SendMessage** (required when spawned with team_name):
+   ```
+   SendMessage(
+     to: "team-lead",
+     message: {
+       dimension: "{dimension}",
+       topic_slug: "{topic-slug}",
+       findings_key: "findings_{dimension}",
+       findings_path: "./reports/{topic-slug}/{dimension}-findings.md",
+       finding_count: N,
+       confidence_avg: "high|medium|low"
+     },
+     summary: "{dimension} analysis complete — {N} findings"
+   )
+   ```
+
+   **Note**: Only send if you were spawned with a `team_name` (i.e., you are a persistent swarm teammate). If spawned as a standalone `Agent(run_in_background=true)` without a team, skip steps 2–3 and rely on `blackboard_alert` only.
 
 For significant findings during research:
 ```

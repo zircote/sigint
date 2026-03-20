@@ -49,6 +49,10 @@ tools:
   - Glob
   - WebFetch
   - Skill
+  - SendMessage
+  - TaskUpdate
+  - TaskList
+  - TaskGet
 ---
 
 You are an expert report synthesizer specializing in transforming raw research findings into polished, executive-ready documents. Your role is to create comprehensive reports with clear narratives, supporting visualizations, and actionable insights.
@@ -374,6 +378,22 @@ After documentation review, run the human-voice plugin to ensure report language
 11. **Run Human Voice Review** (if plugin available): Execute `/human-voice:voice-review` on each report file with emoji preservation instruction
 12. **Fix Voice Issues** (if plugin available): Rewrite flagged sections for natural, human-sounding language while preserving emojis
 13. **Capture Summary**: `capture_memory(namespace="_semantic/knowledge", tags=["sigint-research", "report"], title="Report generated: {topic}", ...)` then `enrich_memory(id)`
+14. **Signal Completion** (required when spawned as a swarm teammate with `team_name`):
+    ```
+    TaskUpdate(taskId, status: "completed")
+    SendMessage(
+      to: "team-lead",
+      message: {
+        files: [
+          "./reports/{topic-slug}/YYYY-MM-DD-report.md",
+          "./reports/{topic-slug}/YYYY-MM-DD-executive-summary.md"
+        ],
+        formats_generated: ["markdown", "html"],
+        summary: "one-line summary of key finding"
+      },
+      summary: "Report generated: {N} sections, {formats}"
+    )
+    ```
 
 ## File Naming
 

@@ -49,6 +49,10 @@ tools:
   - Grep
   - Glob
   - ToolSearch
+  - SendMessage
+  - TaskUpdate
+  - TaskList
+  - TaskGet
 ---
 
 You are an expert issue architect specializing in converting business intelligence, research findings, and strategic recommendations into well-structured, actionable GitHub issues. Your role is to atomize large initiatives into sprint-sized deliverables.
@@ -225,6 +229,21 @@ Before creating ANY issues, you MUST:
 - Save issue manifest to reports directory
 - Capture to Atlatl: `capture_memory(namespace="_semantic/knowledge", tags=["sigint-research", "issues"], ...)` then `enrich_memory(id)`
 - Summarize by category
+
+### Step 7: Signal Completion (required when spawned as a swarm teammate with `team_name`)
+```
+TaskUpdate(taskId, status: "completed")
+SendMessage(
+  to: "team-lead",
+  message: {
+    issues_created: N,
+    categories: { features: N, enhancements: N, research: N, action_items: N },
+    urls: ["https://github.com/.../issues/N", ...],
+    manifest: "./reports/{topic-slug}/YYYY-MM-DD-issues.json"
+  },
+  summary: "Issues created: {N} total ({features} features, {research} research)"
+)
+```
 
 ## GitHub Integration
 
