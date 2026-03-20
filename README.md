@@ -28,7 +28,7 @@ Comprehensive market research toolkit for Claude Code with report generation, Gi
 /sigint:issues
 ```
 
-See [docs/quick-start.md](docs/quick-start.md) for a detailed walkthrough.
+See the [Getting Started Tutorial](docs/tutorials/getting-started.md) for a detailed walkthrough.
 
 ## Features
 
