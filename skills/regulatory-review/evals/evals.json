@@ -1,0 +1,140 @@
+{
+  "skill_name": "regulatory-review",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "We're building a telehealth app that lets patients video-call doctors and share medical records. We want to launch in the US first and then expand to the EU. Can you do a regulatory review of what we're dealing with?",
+      "expected_output": "A comprehensive regulatory review covering HIPAA, FDA considerations, GDPR for EU expansion, data privacy frameworks, and a risk matrix with trend analysis",
+      "files": [],
+      "expectations": [
+        "The output contains a section titled 'Regulatory Landscape' or 'Regulatory Review Summary' providing an overview of applicable regulations",
+        "HIPAA is identified as a directly applicable framework for US health information privacy",
+        "GDPR is identified as applicable for the planned EU expansion with discussion of cross-border data transfer",
+        "The output includes a compliance assessment table or section with status indicators (compliant, partial, non-compliant or equivalent symbols)",
+        "A regulatory risk matrix is present with columns or fields for likelihood, impact, and trend direction (INC/DEC/CONST or equivalent)"
+      ],
+      "deterministic_checks": [
+        { "type": "output_contains", "value": "HIPAA" },
+        { "type": "output_contains", "value": "GDPR" },
+        { "type": "output_contains", "value": "Regulatory Landscape" },
+        { "type": "output_not_contains", "value": "This is not legal advice" }
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "I'm launching a fintech startup that does peer-to-peer crypto lending. We'll operate in the US and UK. What's the regulatory landscape look like? Give me the full breakdown.",
+      "expected_output": "A regulatory review covering Dodd-Frank, MiCA, FCA regulations, crypto-specific requirements, with risk assessment and jurisdiction analysis for US and UK",
+      "files": [],
+      "expectations": [
+        "Dodd-Frank is mentioned as a relevant US financial regulation framework",
+        "MiCA (Markets in Crypto-Assets) is identified as relevant for crypto asset regulation",
+        "The output includes jurisdiction analysis comparing US and UK regulatory environments with complexity or barrier assessments",
+        "A risk matrix is present that identifies enforcement risk as increasing (INC) for the crypto/fintech space",
+        "The output includes recommendations with at least one immediate action and one monitoring action",
+        "Consumer protection regulations are discussed as applicable to peer-to-peer lending"
+      ],
+      "deterministic_checks": [
+        { "type": "output_contains", "value": "Dodd-Frank" },
+        { "type": "output_contains", "value": "MiCA" },
+        { "type": "output_contains", "value": "INC" },
+        { "type": "output_contains", "value": "Recommendation" }
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "We have an AI hiring tool that screens resumes and ranks candidates. We're based in NYC and serve clients across the US. What regulatory risks should we be aware of?",
+      "expected_output": "A regulatory review focused on AI employment regulations including NYC Local Law 144, EU AI Act considerations, anti-discrimination laws, and data privacy requirements",
+      "files": [],
+      "expectations": [
+        "NYC Local Law 144 is specifically identified as directly applicable to AI in employment decisions",
+        "The EU AI Act is mentioned with its risk classification framework, noting that employment AI is high-risk",
+        "The output discusses anti-discrimination or bias audit requirements for AI hiring tools",
+        "A trend analysis section identifies AI/ML regulation as increasing (INC)",
+        "The output includes a compliance gap analysis or assessment table with priority levels"
+      ],
+      "deterministic_checks": [
+        { "type": "output_contains", "value": "Local Law 144" },
+        { "type": "output_contains", "value": "EU AI Act" },
+        { "type": "output_contains", "value": "bias" },
+        { "type": "output_contains", "value": "INC" }
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "Do a GDPR compliance gap analysis for our SaaS platform. We collect user emails, names, usage analytics, and payment info. We use AWS eu-west-1 for hosting but our support team is in India and can access customer data. We don't have a DPO yet.",
+      "expected_output": "A detailed GDPR compliance gap analysis with specific gaps identified for DPO appointment, cross-border data transfer to India, consent mechanisms, and data subject rights",
+      "files": [],
+      "expectations": [
+        "The output identifies the missing Data Protection Officer (DPO) as a compliance gap with high priority",
+        "Cross-border data transfer to India is flagged as a gap requiring Standard Contractual Clauses or equivalent safeguards",
+        "The gap analysis uses a table format with columns for requirement, current state, gap, priority, and remediation",
+        "Data subject rights (access, deletion, portability) are assessed for compliance status",
+        "A compliance cost estimation section is present with categories for technology, personnel, legal, and training"
+      ],
+      "deterministic_checks": [
+        { "type": "output_contains", "value": "DPO" },
+        { "type": "output_contains", "value": "India" },
+        { "type": "output_contains", "value": "Standard Contractual Clauses" },
+        { "type": "output_contains", "value": "Gap" },
+        { "type": "output_contains", "value": "Priority" }
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "regulatory review for a kids' mobile game that collects usernames and chat messages, available in US app stores",
+      "expected_output": "A regulatory review emphasizing COPPA, CCPA minor provisions, children's data privacy requirements, and content moderation obligations",
+      "files": [],
+      "expectations": [
+        "COPPA (Children's Online Privacy Protection Act) is identified as a primary applicable regulation",
+        "The output discusses parental consent requirements for collecting data from children under 13",
+        "CCPA provisions related to minors' data are mentioned",
+        "The risk matrix rates compliance risk as high given the sensitive nature of children's data",
+        "Recommendations include specific actions for age verification or parental consent mechanisms"
+      ],
+      "deterministic_checks": [
+        { "type": "output_contains", "value": "COPPA" },
+        { "type": "output_contains", "value": "parental consent" },
+        { "type": "output_contains", "value": "Recommendation" }
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "Can you compare the regulatory barriers for entering the US vs EU vs APAC markets with a medical device (a Bluetooth-connected blood pressure monitor)?",
+      "expected_output": "A jurisdiction analysis comparing US FDA 21 CFR, EU MDR, and APAC regulatory requirements with complexity ratings, barrier levels, and cross-border considerations",
+      "files": [],
+      "expectations": [
+        "FDA 21 CFR is identified as the applicable US medical device regulation framework",
+        "EU MDR (Medical Device Regulation) is identified for the European market",
+        "A jurisdiction comparison table is present with columns for key regulations, complexity, and barrier level",
+        "APAC is discussed with acknowledgment of variable regulatory requirements across different countries",
+        "The output includes cross-border considerations such as licensing reciprocity and certification transferability",
+        "The output provides a clear ranking or comparison of market entry difficulty across the three regions"
+      ],
+      "deterministic_checks": [
+        { "type": "output_contains", "value": "FDA" },
+        { "type": "output_contains", "value": "MDR" },
+        { "type": "output_contains", "value": "APAC" },
+        { "type": "output_contains", "value": "Barrier" }
+      ]
+    },
+    {
+      "id": 7,
+      "prompt": "What are the regulatory trends I should watch for my e-commerce platform that sells supplements online in California?",
+      "expected_output": "A regulatory trend analysis covering CCPA/CPRA for California data privacy, FDA dietary supplement regulations, FTC advertising standards, and emerging state-level regulations",
+      "files": [],
+      "expectations": [
+        "CCPA or CPRA is identified as directly applicable California data privacy regulation",
+        "FDA regulation of dietary supplements is discussed as an industry-specific requirement",
+        "FTC advertising standards or consumer protection rules are mentioned for supplement marketing claims",
+        "A trend analysis section uses INC/DEC/CONST indicators for each regulatory area",
+        "Monitoring indicators are provided, such as regulatory body announcements or legislative calendars to track"
+      ],
+      "deterministic_checks": [
+        { "type": "output_contains", "value": "CCPA" },
+        { "type": "output_contains", "value": "FDA" },
+        { "type": "output_contains", "value": "FTC" },
+        { "type": "output_contains", "value": "Monitoring" }
+      ]
+    }
+  ]
+}

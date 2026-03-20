@@ -1,0 +1,172 @@
+[
+  {
+    "id": "exec-brief-happy-path",
+    "description": "Generate a standard executive brief from research findings",
+    "prompt": "I just finished researching the cloud infrastructure market and need to write an executive brief for the CEO. Key data: market is $85B growing 18% CAGR, AWS has 32% share, Azure 23%, GCP 11%. Our product fits in the observability niche which is $12B. Main finding is that enterprises are consolidating vendors. Recommendation is to build integrations with top 3 providers. Risk is vendor lock-in concerns slowing adoption. Can you write this up as an executive brief?",
+    "expectations": [
+      "Output contains an Executive Summary or Bottom Line section that appears before detailed analysis sections",
+      "Output includes a markdown table with market sizing data (TAM, SAM, or market size figures)",
+      "Output includes a clear, actionable recommendation section with the integrations recommendation",
+      "Output includes a risk section mentioning vendor lock-in",
+      "Output contains a Mermaid diagram (pie chart for market share or quadrant chart for positioning)"
+    ],
+    "deterministic_checks": [
+      { "type": "file_contains", "path": "output.md", "value": "## " },
+      { "type": "file_contains", "path": "output.md", "value": "$85B" },
+      {
+        "type": "file_contains",
+        "path": "output.md",
+        "value": "vendor lock-in"
+      },
+      { "type": "file_contains", "path": "output.md", "value": "```mermaid" },
+      { "type": "file_not_contains", "path": "output.md", "value": "{{" }
+    ]
+  },
+  {
+    "id": "full-report-structure",
+    "description": "Generate a comprehensive full report with all required sections",
+    "prompt": "write a full market research report on the EV battery recycling market. here's what I have: TAM is $18B by 2030, growing 25% CAGR. Key players are Redwood Materials (35% share), Li-Cycle (20%), Umicore (15%). Macro trends: government mandates for recycling, raw material scarcity driving costs up 40%, and new hydrometallurgical processes reducing costs. SWOT: strength is first-mover tech, weakness is capital intensity, opportunity is EU Battery Regulation, threat is Chinese competition. Recommend entering via partnership with existing recycler. Include the full template structure with competitive positioning, trend analysis, scenarios, risk matrix, everything.",
+    "expectations": [
+      "Output follows pyramid structure: executive summary first, then detailed sections",
+      "Output contains Table of Contents or clear section hierarchy with at least 6 major sections",
+      "Output includes competitive positioning using a Mermaid quadrant chart",
+      "Output includes a state diagram or scenario analysis section with Mermaid diagram",
+      "Recommendations section has numbered items each with What/Why/How/Risk structure",
+      "Output includes an Appendix section with methodology notes or data sources"
+    ],
+    "deterministic_checks": [
+      {
+        "type": "file_contains",
+        "path": "output.md",
+        "value": "Executive Summary"
+      },
+      {
+        "type": "file_contains",
+        "path": "output.md",
+        "value": "quadrantChart"
+      },
+      { "type": "file_contains", "path": "output.md", "value": "stateDiagram" },
+      { "type": "file_contains", "path": "output.md", "value": "Appendix" },
+      {
+        "type": "file_contains",
+        "path": "output.md",
+        "value": "Redwood Materials"
+      },
+      { "type": "file_contains", "path": "output.md", "value": "$18B" }
+    ]
+  },
+  {
+    "id": "audience-tailoring-investors",
+    "description": "Test audience tailoring for investor-focused report",
+    "prompt": "I need to present our fintech market analysis to potential Series B investors next week. They want to see the opportunity size, our competitive moat, and risks. Market is $340B, we're in the payments infrastructure slice at $45B. We have 2% share but growing 80% YoY. Main competitors are Stripe (40% share) and Adyen (15%). Our edge is real-time settlement which no one else does. Risks are regulatory changes and Stripe potentially adding this feature. Write this as a research summary targeted at investors, about 3-5 pages.",
+    "expectations": [
+      "Report leads with opportunity size ($340B or $45B market) in the first section",
+      "Competitive advantage (real-time settlement) is highlighted prominently, not buried",
+      "Financial metrics are present: growth rate (80% YoY), market share percentages",
+      "Risks are addressed in a dedicated section, not omitted despite investor audience",
+      "Report length is appropriate for research summary (not a 1-pager, not 30 pages)"
+    ],
+    "deterministic_checks": [
+      {
+        "type": "file_contains",
+        "path": "output.md",
+        "value": "real-time settlement"
+      },
+      { "type": "file_contains", "path": "output.md", "value": "80%" },
+      { "type": "file_contains", "path": "output.md", "value": "$45B" },
+      { "type": "file_contains", "path": "output.md", "value": "Stripe" }
+    ]
+  },
+  {
+    "id": "visualization-selection",
+    "description": "Test correct visualization type selection for different data types",
+    "prompt": "I have several datasets I need visualized in a report about the SaaS security market:\n1. Market share breakdown: CrowdStrike 18%, Palo Alto 15%, Fortinet 12%, Zscaler 8%, Others 47%\n2. Revenue trend over 5 years: 2020 $28B, 2021 $35B, 2022 $44B, 2023 $52B, 2024 $63B\n3. Competitive positioning on price vs. feature completeness axes\n4. Three possible market scenarios: consolidation, fragmentation, or platform shift\n\nWrite the visualization section of a report with the right chart type for each dataset. Use Mermaid where possible.",
+    "expectations": [
+      "Market share data uses a pie chart (not bar chart or table)",
+      "Competitive positioning uses a quadrant chart with price and features as axes",
+      "Market scenarios use a state diagram showing transitions between states",
+      "All Mermaid diagrams use valid syntax (proper diagram type declarations)",
+      "Revenue trend data is presented (as table or description since Mermaid lacks line charts)"
+    ],
+    "deterministic_checks": [
+      { "type": "file_contains", "path": "output.md", "value": "pie" },
+      {
+        "type": "file_contains",
+        "path": "output.md",
+        "value": "quadrantChart"
+      },
+      { "type": "file_contains", "path": "output.md", "value": "stateDiagram" },
+      { "type": "file_contains", "path": "output.md", "value": "CrowdStrike" },
+      { "type": "file_contains", "path": "output.md", "value": "```mermaid" }
+    ]
+  },
+  {
+    "id": "writing-quality-pyramid",
+    "description": "Test pyramid writing principles and active voice usage",
+    "prompt": "I have these raw findings from our competitive analysis of the project management tools market and I need them restructured into a proper report section. Here are my notes:\n- Looked at 15 tools over 3 months\n- Found that Jira is losing share to newer tools\n- Linear grew 200% YoY\n- Monday.com acquired a small AI startup\n- The trend is toward AI-powered project management\n- Teams under 50 people prefer simpler tools\n- Enterprise still needs Jira's customization\n- Asana launched AI features in Q3\n- Overall market is $7.5B\n\nPlease write this up following best practices from the report writing skill. I want to see proper pyramid structure, active voice, and quantified claims.",
+    "expectations": [
+      "Each section or paragraph leads with the insight/conclusion, not background or methodology",
+      "Active voice is predominantly used (e.g., 'Linear grew' not 'growth was experienced by')",
+      "Claims are quantified where data exists (200% YoY, $7.5B, 15 tools, 3 months)",
+      "Findings connect to 'so what' implications, not presented as orphan facts",
+      "No section starts with methodology description (methodology belongs in appendix per skill guidelines)"
+    ],
+    "deterministic_checks": [
+      { "type": "file_contains", "path": "output.md", "value": "200%" },
+      { "type": "file_contains", "path": "output.md", "value": "$7.5B" },
+      {
+        "type": "file_not_contains",
+        "path": "output.md",
+        "value": "We looked at"
+      },
+      {
+        "type": "file_not_contains",
+        "path": "output.md",
+        "value": "were analyzed"
+      }
+    ]
+  },
+  {
+    "id": "incomplete-data-handling",
+    "description": "Test how the skill handles sparse/incomplete data without fabricating",
+    "prompt": "write an executive brief on the quantum computing market. I only have limited data: IBM and Google are the main players but I don't have market share numbers. The market is estimated somewhere between $1B and $5B depending on the source. I know it's growing fast but I don't have exact CAGR. There's something about quantum advantage being demonstrated but I'm fuzzy on details. Just work with what I have and don't make up numbers.",
+    "expectations": [
+      "Report uses hedging language appropriately (e.g., 'estimated', 'data suggests', 'range of') for uncertain claims",
+      "Market size is presented as a range ($1B-$5B) rather than a single fabricated number",
+      "No fabricated market share percentages appear for IBM or Google",
+      "Report still follows executive brief structure despite limited data",
+      "Report identifies data gaps or limitations explicitly rather than silently omitting"
+    ],
+    "deterministic_checks": [
+      { "type": "file_contains", "path": "output.md", "value": "$1B" },
+      { "type": "file_contains", "path": "output.md", "value": "$5B" },
+      { "type": "file_contains", "path": "output.md", "value": "IBM" },
+      { "type": "file_contains", "path": "output.md", "value": "Google" },
+      { "type": "file_not_contains", "path": "output.md", "value": "IBM: 45%" },
+      {
+        "type": "file_not_contains",
+        "path": "output.md",
+        "value": "Google: 30%"
+      }
+    ]
+  },
+  {
+    "id": "technical-audience-report",
+    "description": "Test audience tailoring for technical/analyst audience",
+    "prompt": "I need a research summary for our data engineering team about the real-time data streaming market. Data: Kafka dominates with 70% adoption, Flink growing at 45% YoY, Pulsar is the newcomer at ~5% adoption. Market is $15B. Key architectural trend is moving from batch to stream processing. We tested latency: Kafka avg 5ms, Flink 2ms, Pulsar 8ms at 100K msg/sec. Include methodology details and assumptions since the audience is technical. Should be 3-5 pages.",
+    "expectations": [
+      "Report includes a methodology section in the body (not just appendix) with details on how latency was tested",
+      "Technical details are preserved: specific latency numbers (5ms, 2ms, 8ms) and throughput (100K msg/sec)",
+      "Data sources or assumptions are explained rather than just stated",
+      "Jargon is used appropriately without over-explaining for technical audience (e.g., batch vs stream processing not defined from scratch)",
+      "Report includes comparison table with technical metrics"
+    ],
+    "deterministic_checks": [
+      { "type": "file_contains", "path": "output.md", "value": "5ms" },
+      { "type": "file_contains", "path": "output.md", "value": "2ms" },
+      { "type": "file_contains", "path": "output.md", "value": "100K" },
+      { "type": "file_contains", "path": "output.md", "value": "Kafka" },
+      { "type": "file_contains", "path": "output.md", "value": "|" }
+    ]
+  }
+]

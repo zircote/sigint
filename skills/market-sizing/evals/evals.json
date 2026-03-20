@@ -1,0 +1,378 @@
+[
+  {
+    "id": "happy-path-saas-top-down",
+    "description": "Standard top-down TAM/SAM/SOM analysis for a SaaS product",
+    "prompt": "I need a market sizing for a B2B SaaS tool that automates invoice processing for mid-market companies in North America. Can you do a TAM SAM SOM analysis?",
+    "expectations": [
+      {
+        "description": "Output contains a Market Sizing Summary table with TAM, SAM, and SOM rows",
+        "deterministic_checks": [
+          {
+            "type": "output_contains",
+            "value": "Market Sizing Summary"
+          },
+          {
+            "type": "output_contains",
+            "value": "TAM"
+          },
+          {
+            "type": "output_contains",
+            "value": "SAM"
+          },
+          {
+            "type": "output_contains",
+            "value": "SOM"
+          }
+        ]
+      },
+      {
+        "description": "Output includes dollar values for all three tiers (TAM > SAM > SOM)",
+        "deterministic_checks": [
+          {
+            "type": "output_matches",
+            "pattern": "\\$[0-9]+\\.?[0-9]*[BMK]"
+          }
+        ]
+      },
+      {
+        "description": "Output identifies top-down as the methodology used",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["Top-down", "Top-Down", "top-down"]
+          }
+        ]
+      },
+      {
+        "description": "Output includes a Key Assumptions section listing at least two numbered assumptions",
+        "deterministic_checks": [
+          {
+            "type": "output_contains",
+            "value": "Key Assumptions"
+          }
+        ]
+      },
+      {
+        "description": "Output includes a Data Sources section referencing at least one source",
+        "deterministic_checks": [
+          {
+            "type": "output_contains",
+            "value": "Data Sources"
+          }
+        ]
+      },
+      {
+        "description": "Output includes a Confidence Level assessment (High/Medium/Low)"
+      }
+    ]
+  },
+  {
+    "id": "bottom-up-methodology",
+    "description": "User explicitly requests bottom-up approach with unit economics",
+    "prompt": "Do a bottom-up market sizing for a mobile pet grooming service targeting urban areas in the US. I want to start from the number of pet owners and work up. We charge about $75 per grooming session.",
+    "expectations": [
+      {
+        "description": "Output uses bottom-up methodology starting from customer count and pricing",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["Bottom-up", "Bottom-Up", "bottom-up"]
+          }
+        ]
+      },
+      {
+        "description": "Output references the $75 per session price point provided by the user",
+        "deterministic_checks": [
+          {
+            "type": "output_contains",
+            "value": "$75"
+          }
+        ]
+      },
+      {
+        "description": "Output includes step-by-step calculation building from unit economics to total market",
+        "deterministic_checks": [
+          {
+            "type": "output_contains",
+            "value": "TAM"
+          },
+          {
+            "type": "output_contains",
+            "value": "SOM"
+          }
+        ]
+      },
+      {
+        "description": "Output quantifies the target customer base (pet owners in urban US areas)"
+      },
+      {
+        "description": "Output does NOT contain placeholder values like $X.XB or [insert]",
+        "deterministic_checks": [
+          {
+            "type": "output_not_contains",
+            "value": "$X.XB"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "[insert"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "trend-indicators",
+    "description": "Market sizing that requires trend analysis with INC/CONST/DEC indicators",
+    "prompt": "Size the market for AI-powered code review tools. I need growth trends and CAGR projections included. Is this market increasing or plateauing?",
+    "expectations": [
+      {
+        "description": "Output includes trend indicators using INC, CONST, or DEC terminology",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": [
+              "INC",
+              "CONST",
+              "DEC",
+              "Increasing",
+              "Constant",
+              "Decreasing"
+            ]
+          }
+        ]
+      },
+      {
+        "description": "Output includes CAGR percentage for at least one market tier",
+        "deterministic_checks": [
+          {
+            "type": "output_matches",
+            "pattern": "CAGR"
+          }
+        ]
+      },
+      {
+        "description": "Output contains a summary table with Trend column",
+        "deterministic_checks": [
+          {
+            "type": "output_contains",
+            "value": "Trend"
+          }
+        ]
+      },
+      {
+        "description": "Output provides evidence supporting the trend assessment (e.g., analyst projections, adoption rates)"
+      },
+      {
+        "description": "TAM, SAM, and SOM values are all present with dollar amounts",
+        "deterministic_checks": [
+          {
+            "type": "output_contains",
+            "value": "TAM"
+          },
+          {
+            "type": "output_contains",
+            "value": "SAM"
+          },
+          {
+            "type": "output_contains",
+            "value": "SOM"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "scenario-modeling",
+    "description": "User requests scenario-based market sizing with bear/base/bull cases",
+    "prompt": "I'm pitching to VCs next month. Can you do a market sizing for a direct-to-consumer plant-based protein snack brand? I need bear, base, and bull scenarios since this market is volatile.",
+    "expectations": [
+      {
+        "description": "Output includes a scenario table with Bear, Base, and Bull rows",
+        "deterministic_checks": [
+          {
+            "type": "output_contains",
+            "value": "Bear"
+          },
+          {
+            "type": "output_contains",
+            "value": "Base"
+          },
+          {
+            "type": "output_contains",
+            "value": "Bull"
+          }
+        ]
+      },
+      {
+        "description": "Bear scenario TAM/SAM/SOM values are strictly lower than Bull scenario values"
+      },
+      {
+        "description": "Output includes rationale explaining what drives each scenario (e.g., consumer adoption, competition)"
+      },
+      {
+        "description": "Output contains a Market Sizing Summary section",
+        "deterministic_checks": [
+          {
+            "type": "output_contains",
+            "value": "Market Sizing"
+          }
+        ]
+      },
+      {
+        "description": "Output does NOT use template placeholders",
+        "deterministic_checks": [
+          {
+            "type": "output_not_contains",
+            "value": "[Assumption"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "$X"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "value-theory-approach",
+    "description": "Market sizing using the value theory / willingness-to-pay methodology",
+    "prompt": "Help me size the market for a cybersecurity tool that prevents data breaches. The average breach costs a company $4.5M. I want to approach this from the value we deliver, not just top-down industry numbers.",
+    "expectations": [
+      {
+        "description": "Output uses value theory approach referencing customer pain point cost",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": [
+              "Value Theory",
+              "value theory",
+              "Value theory",
+              "value-based",
+              "willingness to pay",
+              "value delivered"
+            ]
+          }
+        ]
+      },
+      {
+        "description": "Output references the $4.5M breach cost figure provided by the user",
+        "deterministic_checks": [
+          {
+            "type": "output_contains",
+            "value": "$4.5M"
+          }
+        ]
+      },
+      {
+        "description": "Output calculates a capture rate (percentage of value the solution can charge)",
+        "deterministic_checks": [
+          {
+            "type": "output_matches",
+            "pattern": "[0-9]+%"
+          }
+        ]
+      },
+      {
+        "description": "Output still produces TAM/SAM/SOM figures even when using value theory",
+        "deterministic_checks": [
+          {
+            "type": "output_contains",
+            "value": "TAM"
+          },
+          {
+            "type": "output_contains",
+            "value": "SOM"
+          }
+        ]
+      },
+      {
+        "description": "Output includes Key Assumptions documenting the capture rate and customer count assumptions"
+      }
+    ]
+  },
+  {
+    "id": "ambiguous-vague-request",
+    "description": "Edge case: user provides minimal context forcing the skill to ask clarifying questions or make stated assumptions",
+    "prompt": "market size for drones",
+    "expectations": [
+      {
+        "description": "Output either asks clarifying questions about segment/geography/use-case OR explicitly states assumptions made to narrow the scope"
+      },
+      {
+        "description": "If sizing is provided, it includes TAM/SAM/SOM structure rather than a single number",
+        "deterministic_checks": [
+          {
+            "type": "output_contains",
+            "value": "TAM"
+          }
+        ]
+      },
+      {
+        "description": "Output acknowledges the breadth of the drone market (commercial, consumer, military, etc.)"
+      },
+      {
+        "description": "Output does NOT just return a single unsupported market size number without methodology"
+      }
+    ]
+  },
+  {
+    "id": "declining-market-edge-case",
+    "description": "Edge case: user asks about a contracting/declining market to test DEC trend handling",
+    "prompt": "Can you do a TAM/SAM/SOM for traditional print newspaper advertising in the United States? I know it's shrinking but I need the numbers for a comparison analysis.",
+    "expectations": [
+      {
+        "description": "Output identifies the market trend as declining or decreasing",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": [
+              "DEC",
+              "Decreasing",
+              "declining",
+              "contracting",
+              "shrinking"
+            ]
+          }
+        ]
+      },
+      {
+        "description": "Output includes negative or near-zero growth rates reflecting market contraction",
+        "deterministic_checks": [
+          {
+            "type": "output_matches",
+            "pattern": "-[0-9]+\\.?[0-9]*%"
+          }
+        ]
+      },
+      {
+        "description": "Output still provides complete TAM/SAM/SOM structure even for declining market",
+        "deterministic_checks": [
+          {
+            "type": "output_contains",
+            "value": "TAM"
+          },
+          {
+            "type": "output_contains",
+            "value": "SAM"
+          },
+          {
+            "type": "output_contains",
+            "value": "SOM"
+          }
+        ]
+      },
+      {
+        "description": "Output notes risks or caveats about entering a declining market"
+      },
+      {
+        "description": "Output includes Data Sources section",
+        "deterministic_checks": [
+          {
+            "type": "output_contains",
+            "value": "Data Sources"
+          }
+        ]
+      }
+    ]
+  }
+]

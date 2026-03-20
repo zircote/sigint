@@ -1,0 +1,169 @@
+[
+  {
+    "id": "chunker-prose-document",
+    "description": "Source chunker partitions a large prose document at section boundaries with overlap",
+    "prompt": "You are the source-chunker agent. Process a 40-page industry whitepaper (approximately 30K tokens) in markdown format with H1 and H2 headings. The document covers AI adoption trends in manufacturing. Partition it for a trend-analysis dimension analyst.",
+    "expectations": [
+      {
+        "description": "Chunking or partitioning is applied to the document",
+        "deterministic_checks": [
+          { "type": "output_contains_any", "values": ["chunk", "partition"] }
+        ]
+      },
+      {
+        "description": "Overlap between chunks is maintained for context continuity",
+        "deterministic_checks": [
+          { "type": "output_contains", "value": "overlap" }
+        ]
+      },
+      {
+        "description": "Section headings are used as split boundaries",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["heading", "section", "H1", "H2"]
+          }
+        ]
+      },
+      {
+        "description": "Splits at section boundaries with 10% overlap to preserve context across chunk boundaries"
+      }
+    ]
+  },
+  {
+    "id": "chunker-structured-data",
+    "description": "Source chunker groups structured CSV/table data by logical entity or time period",
+    "prompt": "You are the source-chunker agent. Process a large CSV file with 10,000 rows of quarterly revenue data for 200 SaaS companies spanning 2020-2025. Partition it for a financial-analysis dimension analyst.",
+    "expectations": [
+      {
+        "description": "Row-based or logical grouping strategy is used",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["row", "grouping", "group"]
+          }
+        ]
+      },
+      {
+        "description": "Chunking is applied to the structured data",
+        "deterministic_checks": [
+          { "type": "output_contains", "value": "chunk" }
+        ]
+      },
+      {
+        "description": "Groups rows by logical entity (company) or time period (quarter) rather than arbitrary row counts"
+      }
+    ]
+  },
+  {
+    "id": "chunker-json-data",
+    "description": "Source chunker splits large JSON responses at top-level array boundaries",
+    "prompt": "You are the source-chunker agent. Process a large JSON API response containing an array of 2,000 company profiles (approximately 40K tokens). Each element has name, financials, and competitive data. Partition it for a competitive-analysis dimension analyst.",
+    "expectations": [
+      {
+        "description": "Array element boundaries are used for splitting",
+        "deterministic_checks": [
+          { "type": "output_contains_any", "values": ["element", "array"] }
+        ]
+      },
+      {
+        "description": "Chunking is applied to the JSON data",
+        "deterministic_checks": [
+          { "type": "output_contains", "value": "chunk" }
+        ]
+      },
+      {
+        "description": "Splits at top-level array element boundaries preserving each company profile as a complete object"
+      }
+    ]
+  },
+  {
+    "id": "chunker-small-document",
+    "description": "Source chunker returns content directly without chunking when document is under the threshold",
+    "prompt": "You are the source-chunker agent. Process a 3-page blog post (approximately 5,000 tokens) about market trends in the cybersecurity space. Should this be chunked?",
+    "expectations": [
+      {
+        "description": "Chunking is not applied to the small document",
+        "deterministic_checks": [
+          { "type": "output_not_contains", "value": "chunk analyst" },
+          { "type": "output_not_contains", "value": "chunk-analyst" }
+        ]
+      },
+      {
+        "description": "Returns the content directly without chunking since the document is well under the 15K token threshold"
+      }
+    ]
+  },
+  {
+    "id": "chunker-parallel-analysis",
+    "description": "Source chunker spawns chunk analysts in parallel batches respecting the concurrency limit",
+    "prompt": "You are the source-chunker agent. You have partitioned a large document into 8 chunks. Describe how you spawn chunk analysts to process them in parallel.",
+    "expectations": [
+      {
+        "description": "Chunk analysts are referenced for parallel processing",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["chunk-analyst", "chunk analyst"]
+          }
+        ]
+      },
+      {
+        "description": "Batch size limit is acknowledged",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["max 5", "batch", "5 concurrent"]
+          }
+        ]
+      },
+      {
+        "description": "Spawns chunk analysts in batches of max 5 concurrent, with the remaining 3 queued for the second batch"
+      }
+    ]
+  },
+  {
+    "id": "chunker-deduplication",
+    "description": "Source chunker deduplicates findings from overlapping regions between adjacent chunks",
+    "prompt": "You are the source-chunker agent. Two adjacent chunk analysts returned findings that overlap because of the 10% overlap region. Chunk 3 found 'Market growing at 25% CAGR' and chunk 4 found 'Growth rate of 25% CAGR expected through 2027'. How do you handle this?",
+    "expectations": [
+      {
+        "description": "Deduplication or merging of overlapping findings is addressed",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["deduplic", "merge", "duplicat"]
+          }
+        ]
+      },
+      {
+        "description": "Overlapping findings are merged into a single finding rather than being reported as separate discoveries"
+      }
+    ]
+  },
+  {
+    "id": "chunker-synthesis",
+    "description": "Source chunker synthesizes findings from all chunk analysts into a consolidated output",
+    "prompt": "You are the source-chunker agent. All 6 chunk analysts have completed processing a large industry report. Chunk 1 found partial data about Company X's revenue, and chunk 4 found the rest. Chunk 2 references a trend that chunk 5 quantifies. Describe your synthesis process.",
+    "expectations": [
+      {
+        "description": "Synthesis or consolidation of findings is performed",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["synthesiz", "consolidat"]
+          }
+        ]
+      },
+      {
+        "description": "Output includes a findings structure",
+        "deterministic_checks": [
+          { "type": "output_contains", "value": "findings" }
+        ]
+      },
+      {
+        "description": "Cross-chunk references are resolved (partial findings merged, trend references connected to quantified data) producing a unified findings array"
+      }
+    ]
+  }
+]

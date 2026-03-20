@@ -1,0 +1,229 @@
+[
+  {
+    "id": "orchestrator-happy-path-3-dimensions",
+    "description": "Orchestrator spawns exactly 3 dimension analysts for a prompt with 3 priorities, coordinates via blackboard, and avoids deprecated tools",
+    "prompt": "Research the AI code review market. Focus on competitive landscape, market sizing, and trends. Use the research-orchestrator agent.",
+    "expectations": [
+      {
+        "description": "Blackboard is created or referenced for team coordination",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["blackboard_create", "blackboard"]
+          }
+        ]
+      },
+      {
+        "description": "Dimension analyst agents are referenced as the worker pattern",
+        "deterministic_checks": [
+          { "type": "output_contains", "value": "dimension-analyst" }
+        ]
+      },
+      {
+        "description": "At least one dimension findings key is referenced",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": [
+              "findings_competitive",
+              "findings_sizing",
+              "findings_trends"
+            ]
+          }
+        ]
+      },
+      {
+        "description": "Team status tracking is referenced",
+        "deterministic_checks": [
+          { "type": "output_contains", "value": "team_status" }
+        ]
+      },
+      {
+        "description": "Deprecated v0.3 patterns are not used",
+        "deterministic_checks": [
+          { "type": "output_not_contains", "value": "TodoWrite" },
+          { "type": "output_not_contains", "value": "Subcog" },
+          { "type": "output_not_contains", "value": "market-researcher" }
+        ]
+      },
+      {
+        "description": "Spawns exactly 3 analysts (one per priority: competitive, sizing, trends) and not all 7 dimensions"
+      },
+      {
+        "description": "Waits for all analysts to complete before merging findings into unified output"
+      }
+    ]
+  },
+  {
+    "id": "orchestrator-single-dimension",
+    "description": "Orchestrator spawns only one analyst when a single research priority is given",
+    "prompt": "Research the electric vehicle charging market. Only focus on competitive analysis. Use the research-orchestrator agent.",
+    "expectations": [
+      {
+        "description": "Only one dimension analyst is referenced since only one priority was given",
+        "deterministic_checks": [
+          { "type": "output_contains", "value": "dimension-analyst" }
+        ]
+      },
+      {
+        "description": "Blackboard coordination is still used even for a single dimension",
+        "deterministic_checks": [
+          { "type": "output_contains", "value": "blackboard" }
+        ]
+      },
+      {
+        "description": "Does not spawn unnecessary analysts for dimensions not requested by the user"
+      }
+    ]
+  },
+  {
+    "id": "orchestrator-all-dimensions",
+    "description": "Orchestrator handles all 7 priorities with batching to respect the max 5 concurrent limit",
+    "prompt": "Run a comprehensive research session on the telemedicine market covering all dimensions: competitive, sizing, trends, customer, tech, financial, and regulatory. Use the research-orchestrator agent.",
+    "expectations": [
+      {
+        "description": "Multiple dimension analysts are referenced for the full set",
+        "deterministic_checks": [
+          { "type": "output_contains", "value": "dimension-analyst" }
+        ]
+      },
+      {
+        "description": "Concurrency limit or batching is acknowledged",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["max 5", "batch", "concurrent", "5 concurrent"]
+          }
+        ]
+      },
+      {
+        "description": "Batches analyst spawning so no more than 5 run concurrently, with remaining 2 queued"
+      }
+    ]
+  },
+  {
+    "id": "orchestrator-blackboard-lifecycle",
+    "description": "Verifies the full blackboard lifecycle: create, write elicitation, track status, read findings",
+    "prompt": "Research the autonomous drone delivery market focusing on regulatory and competitive dimensions. Use the research-orchestrator agent and show the blackboard coordination steps.",
+    "expectations": [
+      {
+        "description": "Blackboard creation is referenced",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["blackboard_create", "blackboard"]
+          }
+        ]
+      },
+      {
+        "description": "Elicitation context is written to the blackboard",
+        "deterministic_checks": [
+          { "type": "output_contains", "value": "elicitation" }
+        ]
+      },
+      {
+        "description": "Team status is tracked on the blackboard",
+        "deterministic_checks": [
+          { "type": "output_contains", "value": "team_status" }
+        ]
+      },
+      {
+        "description": "Blackboard is created before analysts are spawned, and findings are read from it after all analysts complete"
+      }
+    ]
+  },
+  {
+    "id": "orchestrator-atlatl-recall",
+    "description": "Verifies orchestrator recalls prior Atlatl memories before beginning research",
+    "prompt": "Research the AI code review market with competitive and sizing focus. We researched this topic last month. Use the research-orchestrator agent.",
+    "expectations": [
+      {
+        "description": "Atlatl recall is invoked to search for prior research",
+        "deterministic_checks": [
+          { "type": "output_contains", "value": "recall_memories" }
+        ]
+      },
+      {
+        "description": "The sigint-research tag is used for memory recall",
+        "deterministic_checks": [
+          { "type": "output_contains", "value": "sigint-research" }
+        ]
+      },
+      {
+        "description": "Prior findings from Atlatl inform the current research plan rather than starting from scratch"
+      }
+    ]
+  },
+  {
+    "id": "orchestrator-atlatl-capture",
+    "description": "Verifies orchestrator captures research summary to Atlatl after completion",
+    "prompt": "Research the edge computing market with sizing and trends focus. Use the research-orchestrator agent and persist findings to memory.",
+    "expectations": [
+      {
+        "description": "Memory capture is invoked after research completes",
+        "deterministic_checks": [
+          { "type": "output_contains", "value": "capture_memory" }
+        ]
+      },
+      {
+        "description": "Memory enrichment is invoked after capture",
+        "deterministic_checks": [
+          { "type": "output_contains", "value": "enrich_memory" }
+        ]
+      },
+      {
+        "description": "The semantic knowledge namespace is used for storing findings",
+        "deterministic_checks": [
+          { "type": "output_contains", "value": "_semantic/knowledge" }
+        ]
+      },
+      {
+        "description": "A summary of key findings is captured to Atlatl, not raw unprocessed data dumps"
+      }
+    ]
+  },
+  {
+    "id": "orchestrator-conflict-handling",
+    "description": "Verifies orchestrator detects and resolves conflicting findings from different dimension analysts",
+    "prompt": "Research the quantum computing market focusing on sizing and financial dimensions. The sizing data may conflict with financial projections given the early stage of the market. Use the research-orchestrator agent.",
+    "expectations": [
+      {
+        "description": "Conflict detection is referenced in the orchestration flow",
+        "deterministic_checks": [
+          { "type": "output_contains", "value": "conflict" }
+        ]
+      },
+      {
+        "description": "Conflict resolution is addressed",
+        "deterministic_checks": [
+          { "type": "output_contains", "value": "resolution" }
+        ]
+      },
+      {
+        "description": "Conflicts detected from the blackboard are read and resolved with explicit rationale for the chosen resolution"
+      }
+    ]
+  },
+  {
+    "id": "orchestrator-state-update",
+    "description": "Verifies orchestrator writes merged findings to state.json with timestamps",
+    "prompt": "Research the vertical farming market with competitive and trends focus. Use the research-orchestrator agent and update the research state file.",
+    "expectations": [
+      {
+        "description": "state.json is referenced as the output target",
+        "deterministic_checks": [
+          { "type": "output_contains", "value": "state.json" }
+        ]
+      },
+      {
+        "description": "Findings are written to the state file",
+        "deterministic_checks": [
+          { "type": "output_contains", "value": "findings" }
+        ]
+      },
+      {
+        "description": "Merged findings are written to state.json with last_updated timestamps and phase progression"
+      }
+    ]
+  }
+]

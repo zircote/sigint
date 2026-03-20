@@ -1,0 +1,367 @@
+{
+  "skill_name": "competitive-analysis",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I need a full competitive analysis of the project management SaaS space. We're building a tool that targets small dev teams (5-15 people). Main competitors are Linear, Jira, Shortcut, and maybe Asana. Can you map out the landscape?",
+      "expected_output": "A comprehensive competitive analysis report covering Porter's 5 Forces, competitor profiles for the named competitors, a competitive matrix, positioning map, key insights, and strategic recommendations for a small-team PM tool",
+      "files": [],
+      "deterministic_checks": [
+        {
+          "type": "file_contains",
+          "file": "transcript.md",
+          "literal": "Porter",
+          "description": "Analysis includes Porter's 5 Forces framework"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "[Ll]inear",
+          "description": "Analysis covers Linear as a named competitor"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "[Jj]ira",
+          "description": "Analysis covers Jira as a named competitor"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "[Ss]hortcut",
+          "description": "Analysis covers Shortcut as a named competitor"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "Competitive (Matrix|Landscape|matrix|landscape)|\\|.*Competitor.*\\|",
+          "description": "Output contains a competitive matrix or comparison table"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "[Aa]sana",
+          "description": "Analysis covers Asana as a named competitor"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "[Ss]trategic [Rr]ecommendation",
+          "description": "Output includes a Strategic Recommendations section"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "[Kk]ey [Ii]nsight",
+          "description": "Output includes a Key Insights section"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "[Cc]ompetitive [Rr]ivalry",
+          "description": "Porter's force: Competitive Rivalry is addressed"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "[Bb]uyer [Pp]ower",
+          "description": "Porter's force: Buyer Power is addressed"
+        }
+      ],
+      "expectations": [
+        "All five Porter's forces are individually analyzed with ratings or assessments",
+        "Each named competitor gets a distinct profile with strengths and weaknesses",
+        "The analysis includes strategic recommendations specific to small dev teams (5-15 people), not generic advice"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Run a Porter's 5 Forces analysis on the cloud infrastructure market, focusing on how a smaller provider like Hetzner or DigitalOcean competes against AWS, GCP, and Azure.",
+      "expected_output": "A focused Porter's 5 Forces analysis for the cloud infrastructure market with all five forces assessed and specific references to the named providers",
+      "files": [],
+      "deterministic_checks": [
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "[Cc]ompetitive [Rr]ivalry",
+          "description": "Force 1: Competitive Rivalry is explicitly addressed"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "[Ss]upplier [Pp]ower",
+          "description": "Force 2: Supplier Power is explicitly addressed"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "[Bb]uyer [Pp]ower",
+          "description": "Force 3: Buyer Power is explicitly addressed"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "[Ss]ubstitut",
+          "description": "Force 4: Threat of Substitution is addressed"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "[Nn]ew [Ee]ntry|[Nn]ew [Ee]ntrants|[Bb]arriers to [Ee]ntry",
+          "description": "Force 5: Threat of New Entry is addressed"
+        }
+      ],
+      "expectations": [
+        "Each of the five forces includes specific factors relevant to cloud infrastructure (e.g., high capital requirements for new entry, switching costs for buyer power)",
+        "The analysis references both the smaller providers (Hetzner/DigitalOcean) and hyperscalers (AWS/GCP/Azure) with distinct positioning",
+        "Each force includes an indicator rating or assessment (e.g., High/Medium/Low) as specified in the skill's framework",
+        "The analysis draws conclusions about how a smaller provider can realistically compete (pricing, niche targeting, simplicity)"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Can you create a competitor comparison matrix for email marketing platforms? Compare Mailchimp, ConvertKit, SendGrid, and Resend. I care most about API quality, pricing for startups, and deliverability.",
+      "expected_output": "A focused competitor matrix table comparing the four named email platforms across the user-specified dimensions plus standard competitive dimensions",
+      "files": [],
+      "deterministic_checks": [
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "\\|.*[Mm]ailchimp.*\\||[Mm]ailchimp",
+          "description": "Mailchimp appears in the comparison"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "[Cc]onvert[Kk]it",
+          "description": "ConvertKit appears in the comparison"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "[Ss]end[Gg]rid",
+          "description": "SendGrid appears in the comparison"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "[Rr]esend",
+          "description": "Resend appears in the comparison"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "\\|.*\\|.*\\|.*\\|",
+          "description": "Output contains a markdown table structure"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "[Aa]PI|api",
+          "description": "The matrix addresses API quality as a dimension"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "[Pp]ric(e|ing)",
+          "description": "The matrix addresses pricing as a dimension"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "[Dd]eliverability",
+          "description": "The matrix addresses deliverability as a dimension"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "INC|DEC|CONST|[Ii]ncreasing|[Dd]ecreasing|[Ss]table|[Gg]rowing|[Dd]eclining",
+          "description": "Trend indicators are applied to competitors"
+        }
+      ],
+      "expectations": [
+        "The matrix includes additional standard dimensions from the skill framework (e.g., strengths, weaknesses, market share)",
+        "The comparison is fair and balanced, noting both strengths and weaknesses for each platform rather than favoring one"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "I want to understand the competitive positioning of our CLI tool. We don't really have direct competitors yet - it's a new category (AI-powered infrastructure auditing). How do I think about competitive analysis when the market doesn't exist yet?",
+      "expected_output": "Guidance on competitive analysis for a nascent/new-category market, focusing on indirect competitors, substitutes, adjacent market entrants, and modified frameworks appropriate for emerging markets",
+      "files": [],
+      "deterministic_checks": [
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "[Ii]ndirect|[Ss]ubstitute|[Aa]djacent",
+          "description": "Analysis discusses indirect competitors, substitutes, or adjacent market entrants"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "[Pp]otential [Ee]ntrant|[Nn]ew [Ee]ntry|[Tt]hreat.*[Ee]ntry|[Bb]arrier",
+          "description": "Analysis addresses the threat of potential entrants in the new category"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "[Ff]irst.mover|[Cc]ategory [Cc]reation|[Mm]arket [Cc]reation|[Bb]lue [Oo]cean|[Ee]merging",
+          "description": "Analysis discusses first-mover or category-creation dynamics"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "[Mm]anual|[Cc]onsultant|[Ee]xisting.*tool|[Cc]urrent.*solution",
+          "description": "Analysis identifies what customers currently use as substitutes"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "[Rr]ecommend|[Ss]trateg",
+          "description": "Analysis provides strategic recommendations"
+        }
+      ],
+      "expectations": [
+        "The response identifies categories of indirect competitors rather than claiming no analysis is possible",
+        "Porter's 5 Forces is adapted for the new-category context, noting that rivalry is low but threat of new entry is high",
+        "The response does NOT refuse the request or say competitive analysis is inapplicable"
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "Generate a positioning map for the observability market. Include Datadog, Grafana, New Relic, Honeycomb, and Splunk. Use price vs ease of use as the axes.",
+      "expected_output": "A Mermaid quadrant chart showing the five observability platforms plotted on price (x-axis) vs ease of use (y-axis)",
+      "files": [],
+      "deterministic_checks": [
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "quadrantChart|quadrant-chart|xychart",
+          "description": "Output contains a Mermaid chart directive for positioning visualization"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "[Dd]atacdog",
+          "description": "Datadog is plotted on the positioning map"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "[Gg]rafana",
+          "description": "Grafana is plotted on the positioning map"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "[Hh]oneycomb",
+          "description": "Honeycomb is plotted on the positioning map"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "[Nn]ew [Rr]elic",
+          "description": "New Relic is plotted on the positioning map"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "[Ss]plunk",
+          "description": "Splunk is plotted on the positioning map"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "[Pp]rice|[Cc]ost|[Ee]xpens",
+          "description": "Price axis is labeled on the chart"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "[Ee]ase of [Uu]se|[Uu]sability|[Ss]implicity",
+          "description": "Ease of use axis is labeled on the chart"
+        }
+      ],
+      "expectations": [
+        "The positioning map uses Mermaid quadrant chart syntax as specified in the skill definition",
+        "The relative positions are defensible (e.g., Grafana should be positioned as lower price than Datadog; Splunk should be positioned as complex/less easy to use)"
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "analyze competitors",
+      "expected_output": "The skill asks clarifying questions about which market, industry, or specific competitors to analyze rather than producing a generic or empty analysis",
+      "files": [],
+      "deterministic_checks": [
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "\\?",
+          "description": "The response contains a question mark, indicating it asks for clarification"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "[Ww]hich|[Ww]hat|[Cc]ould you|[Cc]an you|[Tt]ell me|[Ss]pecif|[Mm]ore (detail|info|context)",
+          "description": "The response uses clarification language to gather missing context"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "[Mm]arket|[Ii]ndustry|[Pp]roduct|[Ss]pace|[Ss]ector|[Cc]ompetitor",
+          "description": "The response references the kind of information needed (market, industry, product, etc.)"
+        }
+      ],
+      "expectations": [
+        "The response does NOT produce a full competitive analysis with fabricated market data",
+        "The response asks which market, industry, or product the user wants analyzed",
+        "The response does NOT refuse outright - it engages helpfully while seeking specifics"
+      ]
+    },
+    {
+      "id": 7,
+      "prompt": "We're a B2B fintech doing expense management. Our board wants a competitive landscape doc for our next funding round. Competitors are Brex, Ramp, Divvy (now part of Bill.com), and Airbase. We need to show we understand the market and where we fit. Focus on differentiation opportunities.",
+      "expected_output": "A board-ready competitive landscape document covering the expense management fintech space with emphasis on differentiation opportunities and strategic positioning",
+      "files": [],
+      "deterministic_checks": [
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "[Bb]rex",
+          "description": "Analysis covers Brex"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "[Rr]amp",
+          "description": "Analysis covers Ramp"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "[Dd]ivvy|[Bb]ill\\.com|BILL",
+          "description": "Analysis covers Divvy/Bill.com"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "[Dd]ifferentiat",
+          "description": "Analysis explicitly addresses differentiation as requested"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "[Ss]trategic [Rr]ecommendation|[Rr]ecommendation|[Oo]pportunit",
+          "description": "Output includes strategic recommendations or opportunities section"
+        }
+      ],
+      "expectations": [
+        "The output follows the full documented structure (Landscape Overview, Porter's 5 Forces, Competitor Profiles, Matrix, Positioning Map, Key Insights, Recommendations)",
+        "The analysis is framed for a board/investor audience - professional tone, data-oriented, focused on market opportunity",
+        "Differentiation opportunities are specifically called out with actionable suggestions, not just a list of what competitors do",
+        "The Divvy/Bill.com acquisition is acknowledged as relevant competitive context (consolidation trend)",
+        "Trend indicators (INC/DEC/CONST) are applied to each competitor's trajectory"
+      ]
+    }
+  ]
+}

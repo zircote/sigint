@@ -1,0 +1,478 @@
+[
+  {
+    "id": "happy-path-market-entry-trend-model",
+    "description": "Standard trend model for a new market entry scenario with relationship matrix and scenarios",
+    "prompt": "I'm evaluating entering the electric vehicle charging station market. Can you build a trend model? The key variables I care about are: EV adoption rate, charging infrastructure density, electricity costs, and government subsidies. I don't have hard numbers, just directional intuition.",
+    "expectations": [
+      {
+        "description": "Output contains a Variables table with all four user-specified variables and their trend assignments (INC/DEC/CONST)",
+        "deterministic_checks": [
+          {
+            "type": "output_contains",
+            "value": "EV adoption"
+          },
+          {
+            "type": "output_contains_any",
+            "values": [
+              "charging infrastructure",
+              "infrastructure density",
+              "Charging Infrastructure"
+            ]
+          },
+          {
+            "type": "output_contains_any",
+            "values": [
+              "electricity cost",
+              "Electricity Cost",
+              "electricity price",
+              "Electricity"
+            ]
+          },
+          {
+            "type": "output_contains_any",
+            "values": ["subsidies", "Subsidies", "Government"]
+          }
+        ]
+      },
+      {
+        "description": "Output contains a Relationship Matrix showing INC/DEC/CONST correlations between variable pairs",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": [
+              "Relationship Matrix",
+              "relationship matrix",
+              "Trend Matrix",
+              "trend matrix"
+            ]
+          },
+          {
+            "type": "output_contains",
+            "value": "INC"
+          },
+          {
+            "type": "output_contains",
+            "value": "DEC"
+          }
+        ]
+      },
+      {
+        "description": "Output generates at least two named scenarios (e.g., S1, S2) with trend assignments for each variable",
+        "deterministic_checks": [
+          {
+            "type": "output_matches",
+            "pattern": "S[0-9]|Scenario [0-9]|Scenario\\s+[0-9]"
+          }
+        ]
+      },
+      {
+        "description": "Output identifies at least one terminal scenario and explains why it is an equilibrium state"
+      },
+      {
+        "description": "Output includes a Mermaid state diagram showing transitions between scenarios",
+        "deterministic_checks": [
+          {
+            "type": "output_contains",
+            "value": "stateDiagram"
+          },
+          {
+            "type": "output_contains",
+            "value": "mermaid"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "extended-notation-acceleration",
+    "description": "Tests extended notation (AG/DG/AD/DD) for nuanced trend analysis",
+    "prompt": "I need a trend model for the remote work technology market. Use the extended notation with acceleration/deceleration — I want to see AG, DG, AD, DD where appropriate, not just plain INC/DEC. Variables: remote workforce adoption, office real estate demand, collaboration tool spend, cybersecurity investment.",
+    "expectations": [
+      {
+        "description": "Output uses extended notation codes AG, DG, AD, or DD in scenario assignments",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["AG", "DG"]
+          },
+          {
+            "type": "output_contains_any",
+            "values": ["AD", "DD"]
+          }
+        ]
+      },
+      {
+        "description": "Output explains what the extended notation codes mean (accelerating/decelerating growth/decrease)",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": [
+              "Accelerating Growth",
+              "accelerating growth",
+              "Decelerating Growth",
+              "decelerating growth"
+            ]
+          }
+        ]
+      },
+      {
+        "description": "Output contains a relationship matrix linking variable pairs",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": [
+              "Relationship Matrix",
+              "relationship matrix",
+              "Trend Matrix",
+              "trend matrix"
+            ]
+          }
+        ]
+      },
+      {
+        "description": "Output addresses all four user-specified variables in the model",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["remote workforce", "Remote Workforce", "remote work"]
+          },
+          {
+            "type": "output_contains_any",
+            "values": [
+              "office real estate",
+              "Office Real Estate",
+              "real estate demand"
+            ]
+          },
+          {
+            "type": "output_contains_any",
+            "values": ["collaboration tool", "Collaboration Tool"]
+          },
+          {
+            "type": "output_contains_any",
+            "values": ["cybersecurity", "Cybersecurity"]
+          }
+        ]
+      },
+      {
+        "description": "Output generates scenarios using the extended notation rather than only basic INC/DEC/CONST"
+      }
+    ]
+  },
+  {
+    "id": "correlation-to-trend-conversion",
+    "description": "Tests explicit correlation-to-trend conversion with positive and negative correlations",
+    "prompt": "I have these known correlations for the renewable energy sector: solar panel cost and adoption rate are negatively correlated, government incentives and adoption rate are positively correlated, adoption rate and grid strain are positively correlated, and grid strain and electricity price are positively correlated. Convert these into a trend model with INC/DEC notation and show me the scenarios.",
+    "expectations": [
+      {
+        "description": "Output correctly converts negative correlation: when solar panel cost is DEC, adoption is INC (or vice versa)",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": [
+              "DEC(",
+              "negative correlation",
+              "negatively correlated",
+              "inversely"
+            ]
+          }
+        ]
+      },
+      {
+        "description": "Output correctly converts positive correlation: when government incentives is INC, adoption is INC",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["INC(", "positive correlation", "positively correlated"]
+          }
+        ]
+      },
+      {
+        "description": "Output uses the INC/DEC notation format described in the skill (e.g., INC(X, Y) or DEC(X, Y))",
+        "deterministic_checks": [
+          {
+            "type": "output_matches",
+            "pattern": "(INC|DEC)\\("
+          }
+        ]
+      },
+      {
+        "description": "Output produces a relationship matrix covering all four variables",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["solar", "Solar"]
+          },
+          {
+            "type": "output_contains_any",
+            "values": ["grid strain", "Grid Strain", "Grid"]
+          }
+        ]
+      },
+      {
+        "description": "Output generates at least two consistent scenarios that satisfy all relationship constraints"
+      }
+    ]
+  },
+  {
+    "id": "multi-objective-tradeoffs",
+    "description": "Tests multi-objective trade-off analysis across terminal scenarios",
+    "prompt": "Build me a trend model for a food delivery startup. Variables: delivery speed, driver compensation, order volume, customer satisfaction, profit margins. I need to understand the trade-offs — which terminal scenarios favor profitability vs. growth vs. driver welfare? Show me why I can't have everything.",
+    "expectations": [
+      {
+        "description": "Output explicitly identifies competing objectives and maps terminal scenarios to objectives",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": [
+              "trade-off",
+              "Trade-off",
+              "tradeoff",
+              "Tradeoff",
+              "trade off"
+            ]
+          }
+        ]
+      },
+      {
+        "description": "Output includes terminal scenario analysis with at least two terminal scenarios",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["Terminal", "terminal", "equilibrium"]
+          }
+        ]
+      },
+      {
+        "description": "Output addresses all three requested objectives: profitability, growth, and driver welfare"
+      },
+      {
+        "description": "Output explains why no single scenario satisfies all objectives simultaneously",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": [
+              "no scenario",
+              "No scenario",
+              "cannot simultaneously",
+              "cannot satisfy all",
+              "not possible to",
+              "competing",
+              "conflict"
+            ]
+          }
+        ]
+      },
+      {
+        "description": "Output includes a Mermaid transitional scenario graph",
+        "deterministic_checks": [
+          {
+            "type": "output_contains",
+            "value": "stateDiagram"
+          }
+        ]
+      },
+      {
+        "description": "Output provides strategic recommendations based on priority alignment"
+      }
+    ]
+  },
+  {
+    "id": "minimal-variables-edge-case",
+    "description": "Edge case: only two variables provided, testing model behavior at minimal complexity",
+    "prompt": "quick trend model: just two variables — interest rates and housing demand. what scenarios come out?",
+    "expectations": [
+      {
+        "description": "Output identifies the negative correlation between interest rates and housing demand",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["DEC", "negative", "inversely", "inverse"]
+          }
+        ]
+      },
+      {
+        "description": "Output still produces a structured model with relationship matrix despite only two variables",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["interest rate", "Interest Rate", "Interest Rates"]
+          },
+          {
+            "type": "output_contains_any",
+            "values": ["housing demand", "Housing Demand", "Housing"]
+          }
+        ]
+      },
+      {
+        "description": "Output generates scenarios using INC/DEC/CONST assignments for both variables",
+        "deterministic_checks": [
+          {
+            "type": "output_contains",
+            "value": "INC"
+          },
+          {
+            "type": "output_contains",
+            "value": "DEC"
+          }
+        ]
+      },
+      {
+        "description": "Output does NOT contain placeholder text or unfilled template markers",
+        "deterministic_checks": [
+          {
+            "type": "output_not_contains",
+            "value": "[insert"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "[TODO"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "[Name]"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "ambiguous-no-variables-specified",
+    "description": "Edge case: user asks for a trend model without specifying variables, testing skill's ability to propose them",
+    "prompt": "can you do a three-valued logic analysis for the fintech lending space? I don't really know what variables matter, just help me think through it",
+    "expectations": [
+      {
+        "description": "Output proposes a set of relevant variables (at least 4) for the fintech lending domain",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["INC", "DEC", "CONST"]
+          }
+        ]
+      },
+      {
+        "description": "Output follows the standard output structure with Variables table, Relationship Matrix, and Scenarios",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["Variable", "variable"]
+          },
+          {
+            "type": "output_contains_any",
+            "values": ["Scenario", "scenario"]
+          }
+        ]
+      },
+      {
+        "description": "Output includes confidence levels (High/Med/Low) reflecting the speculative nature of proposed variables",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["High", "Med", "Low", "Medium"]
+          }
+        ]
+      },
+      {
+        "description": "Output documents uncertainty or notes where relationships are speculative, per best practices"
+      },
+      {
+        "description": "Output includes a transitional scenario graph in Mermaid format",
+        "deterministic_checks": [
+          {
+            "type": "output_contains",
+            "value": "mermaid"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "many-variables-complexity",
+    "description": "Edge case: user provides 7+ variables to test handling of complex relationship matrices",
+    "prompt": "I need a full trend model for the healthcare AI market with these variables: regulatory approval speed, data privacy requirements, clinician adoption rate, patient trust, AI model accuracy, reimbursement policies, competing solutions count. That's a lot of relationships to map — give me the full matrix and the key scenarios.",
+    "expectations": [
+      {
+        "description": "Output includes a relationship matrix that covers all 7 specified variables",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["regulatory", "Regulatory"]
+          },
+          {
+            "type": "output_contains_any",
+            "values": ["privacy", "Privacy"]
+          },
+          {
+            "type": "output_contains_any",
+            "values": ["clinician", "Clinician"]
+          },
+          {
+            "type": "output_contains_any",
+            "values": ["patient trust", "Patient Trust"]
+          },
+          {
+            "type": "output_contains_any",
+            "values": ["accuracy", "Accuracy"]
+          },
+          {
+            "type": "output_contains_any",
+            "values": ["reimbursement", "Reimbursement"]
+          },
+          {
+            "type": "output_contains_any",
+            "values": ["competing", "Competing", "competition"]
+          }
+        ]
+      },
+      {
+        "description": "Output relationship matrix uses INC/DEC/CONST for variable pair relationships",
+        "deterministic_checks": [
+          {
+            "type": "output_contains",
+            "value": "INC"
+          },
+          {
+            "type": "output_contains",
+            "value": "DEC"
+          },
+          {
+            "type": "output_contains",
+            "value": "CONST"
+          }
+        ]
+      },
+      {
+        "description": "Output generates scenarios and identifies which are terminal vs. transitional",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["Terminal", "terminal"]
+          }
+        ]
+      },
+      {
+        "description": "Output includes Key Insights section summarizing takeaways from the complex model",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": [
+              "Key Insights",
+              "key insights",
+              "Key insight",
+              "Insights"
+            ]
+          }
+        ]
+      },
+      {
+        "description": "Output includes a Mermaid transitional graph despite the complexity",
+        "deterministic_checks": [
+          {
+            "type": "output_contains",
+            "value": "stateDiagram"
+          }
+        ]
+      }
+    ]
+  }
+]

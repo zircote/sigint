@@ -1,0 +1,140 @@
+[
+  {
+    "id": "issues-happy-path-from-research",
+    "description": "Issue architect converts research findings into sprint-sized GitHub issues with acceptance criteria",
+    "prompt": "Convert the following research findings into GitHub issues: 1) Competitor X launched a free tier that undercuts our pricing, 2) Market sizing shows a $2B underserved SMB segment, 3) Regulatory changes in EU require GDPR-compliant data processing by Q3. Use the issue-architect agent.",
+    "expectations": [
+      {
+        "description": "Issues include acceptance criteria",
+        "deterministic_checks": [
+          { "type": "output_contains", "value": "acceptance criteria" }
+        ]
+      },
+      {
+        "description": "Issues are scoped to sprint size",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["sprint", "sprint-sized"]
+          }
+        ]
+      },
+      {
+        "description": "Deprecated v0.3 patterns are not used",
+        "deterministic_checks": [
+          { "type": "output_not_contains", "value": "Subcog" }
+        ]
+      },
+      {
+        "description": "Each issue is atomic, completable in 1-2 weeks, with specific measurable acceptance criteria and clear business context"
+      }
+    ]
+  },
+  {
+    "id": "issues-atlatl-integration",
+    "description": "Issue architect uses Atlatl memory for recall and capture of issue context",
+    "prompt": "Convert our AI code review market research into GitHub issues. Check Atlatl for any prior issue sets we created for this topic. Use the issue-architect agent.",
+    "expectations": [
+      {
+        "description": "Atlatl memory tools are referenced for recall or capture",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["capture_memory", "Atlatl", "recall_memories"]
+          }
+        ]
+      },
+      {
+        "description": "Correct namespace or tag for sigint research is used",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["_semantic/knowledge", "sigint-research"]
+          }
+        ]
+      },
+      {
+        "description": "Deprecated patterns are not used",
+        "deterministic_checks": [
+          { "type": "output_not_contains", "value": "Subcog" }
+        ]
+      },
+      {
+        "description": "Prior research findings are recalled from Atlatl to inform issue creation, and new issues are captured back for future reference"
+      }
+    ]
+  },
+  {
+    "id": "issues-elicitation-alignment",
+    "description": "Issue architect aligns generated issues to the elicitation priorities and decision context",
+    "prompt": "The elicitation context says our decision is whether to enter the APAC market, with top priorities being regulatory compliance and competitive positioning. Convert our research findings into issues that align with this decision context. Use the issue-architect agent.",
+    "expectations": [
+      {
+        "description": "Elicitation or decision context is referenced in issue creation",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["elicitation", "decision_context", "priorities"]
+          }
+        ]
+      },
+      {
+        "description": "Issue priorities match the stated elicitation priorities (regulatory and competitive) rather than being generically assigned"
+      }
+    ]
+  },
+  {
+    "id": "issues-dry-run",
+    "description": "Issue architect previews issues without creating them when dry-run mode is requested",
+    "prompt": "Preview the issues you would create from our telemedicine market research. Do NOT create them yet, just show me what you would make. Use the issue-architect agent.",
+    "expectations": [
+      {
+        "description": "Preview or dry-run mode is acknowledged",
+        "deterministic_checks": [
+          { "type": "output_contains_any", "values": ["preview", "dry"] }
+        ]
+      },
+      {
+        "description": "Issues are displayed for review but not created via gh CLI or GitHub API"
+      }
+    ]
+  },
+  {
+    "id": "issues-categorization",
+    "description": "Issue architect applies correct labels and categories to generated issues",
+    "prompt": "Convert these research findings into categorized issues: 1) Need to build a HIPAA compliance module (feature), 2) Should investigate whether telehealth reimbursement rates will change (research), 3) Update our pricing page to reflect competitive positioning (action item). Use the issue-architect agent.",
+    "expectations": [
+      {
+        "description": "Issue categories or labels are applied",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["enhancement", "research", "action-item"]
+          }
+        ]
+      },
+      {
+        "description": "Each issue receives the correct category label matching its type: feature/enhancement for the compliance module, research for the investigation, action-item for the pricing update"
+      }
+    ]
+  },
+  {
+    "id": "issues-dependency-mapping",
+    "description": "Issue architect identifies and documents dependencies between related issues",
+    "prompt": "Create issues from our research: 1) Build OAuth integration for enterprise SSO, 2) Create admin dashboard for enterprise tier, 3) Launch enterprise pricing page. Note: the admin dashboard depends on OAuth being done first, and the pricing page depends on both. Use the issue-architect agent.",
+    "expectations": [
+      {
+        "description": "Dependencies between issues are documented",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["dependency", "dependencies", "blocks", "blocked by"]
+          }
+        ]
+      },
+      {
+        "description": "Parent/child or blocking relationships are correctly documented: OAuth blocks admin dashboard, both block pricing page"
+      }
+    ]
+  }
+]

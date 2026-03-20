@@ -1,0 +1,203 @@
+[
+  {
+    "id": "report-happy-path-markdown",
+    "description": "Report synthesizer generates a full markdown report with all standard sections and Mermaid diagrams",
+    "prompt": "Generate a comprehensive research report from our AI code review market research findings. Include all standard sections. Use the report-synthesizer agent.",
+    "expectations": [
+      {
+        "description": "Report includes an Executive Summary section",
+        "deterministic_checks": [
+          { "type": "output_contains", "value": "Executive Summary" }
+        ]
+      },
+      {
+        "description": "Report includes a Recommendations section",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["Recommendation", "recommendation"]
+          }
+        ]
+      },
+      {
+        "description": "Report includes Mermaid visualizations",
+        "deterministic_checks": [
+          { "type": "output_contains_any", "values": ["mermaid", "Mermaid"] }
+        ]
+      },
+      {
+        "description": "Deprecated v0.3 patterns are not used",
+        "deterministic_checks": [
+          { "type": "output_not_contains", "value": "Subcog" }
+        ]
+      },
+      {
+        "description": "Produces a full report with Executive Summary, Market Overview, Competitive Landscape, Trend Analysis, SWOT, Recommendations, Risk Assessment, and Appendix sections"
+      }
+    ]
+  },
+  {
+    "id": "report-blackboard-integration",
+    "description": "Report synthesizer reads dimension findings from the blackboard in addition to state.json",
+    "prompt": "Generate a report from the research session. The blackboard task_id is 'ai-code-review' and contains findings from competitive, sizing, and trends analysts. Use the report-synthesizer agent.",
+    "expectations": [
+      {
+        "description": "Blackboard is read for findings data",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["blackboard_read", "blackboard"]
+          }
+        ]
+      },
+      {
+        "description": "Dimension findings keys are referenced",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": [
+              "findings_competitive",
+              "findings_sizing",
+              "findings_trends",
+              "findings_"
+            ]
+          }
+        ]
+      },
+      {
+        "description": "Incorporates blackboard dimension findings alongside state.json data for complete coverage in the report"
+      }
+    ]
+  },
+  {
+    "id": "report-atlatl-integration",
+    "description": "Report synthesizer recalls prior context and captures report completion to Atlatl",
+    "prompt": "Generate a report for the cloud infrastructure market research. Check Atlatl for any prior research on this topic first. Use the report-synthesizer agent.",
+    "expectations": [
+      {
+        "description": "Atlatl memory recall or capture is referenced",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["recall_memories", "capture_memory"]
+          }
+        ]
+      },
+      {
+        "description": "Deprecated patterns are not used",
+        "deterministic_checks": [
+          { "type": "output_not_contains", "value": "Subcog" }
+        ]
+      },
+      {
+        "description": "Prior context is recalled from Atlatl to enrich the report, and report completion is captured back for future reference"
+      }
+    ]
+  },
+  {
+    "id": "report-audience-executive",
+    "description": "Report synthesizer tailors output for an executive audience with strategic language and minimal jargon",
+    "prompt": "Generate an executive-focused report from our fintech market research. The audience is C-suite executives who need to make a go/no-go decision on market entry. Use the report-synthesizer agent.",
+    "expectations": [
+      {
+        "description": "Executive audience is acknowledged in tailoring",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["executive", "Executive"]
+          }
+        ]
+      },
+      {
+        "description": "Strategic or bottom-line focused language is used",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["strategic", "bottom-line"]
+          }
+        ]
+      },
+      {
+        "description": "Language is executive-appropriate: leads with bottom-line impact, minimizes technical jargon, focuses on strategic implications with clear recommendations"
+      }
+    ]
+  },
+  {
+    "id": "report-audience-investor",
+    "description": "Report synthesizer tailors output for investors with market opportunity and growth metrics",
+    "prompt": "Generate an investor-ready report from our autonomous vehicle research. The audience is Series B investors evaluating market opportunity. Use the report-synthesizer agent.",
+    "expectations": [
+      {
+        "description": "Investor audience is acknowledged",
+        "deterministic_checks": [
+          { "type": "output_contains_any", "values": ["investor", "Investor"] }
+        ]
+      },
+      {
+        "description": "Market opportunity or TAM is prominently featured",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["TAM", "market opportunity"]
+          }
+        ]
+      },
+      {
+        "description": "Leads with market opportunity size, includes growth metrics and competitive moat, addresses risks, and frames findings for investment decision-making"
+      }
+    ]
+  },
+  {
+    "id": "report-hypothesis-validation",
+    "description": "Report synthesizer validates hypotheses stated in the elicitation context with explicit verdicts",
+    "prompt": "Generate a report for our edge computing research. The elicitation included these hypotheses: 1) 'Edge computing will cannibalize cloud revenue within 5 years', 2) 'Telcos will be the dominant edge providers', 3) 'Latency-sensitive applications will drive 80% of adoption'. Validate each hypothesis against findings. Use the report-synthesizer agent.",
+    "expectations": [
+      {
+        "description": "Hypothesis validation is included in the report",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["Hypothesis", "hypothesis"]
+          }
+        ]
+      },
+      {
+        "description": "Explicit validation verdicts are given",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["SUPPORTED", "CHALLENGED", "INCONCLUSIVE"]
+          }
+        ]
+      },
+      {
+        "description": "Each of the three stated hypotheses receives an explicit validation verdict (SUPPORTED, CHALLENGED, or INCONCLUSIVE) with supporting evidence from findings"
+      }
+    ]
+  },
+  {
+    "id": "report-mermaid-diagrams",
+    "description": "Report synthesizer generates multiple distinct Mermaid diagram types for visualization",
+    "prompt": "Generate a report with rich visualizations for our cybersecurity market research. Include competitive positioning maps, trend scenario diagrams, and market share breakdowns. Use the report-synthesizer agent.",
+    "expectations": [
+      {
+        "description": "Mermaid diagram types are referenced",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["quadrantChart", "stateDiagram", "pie"]
+          }
+        ]
+      },
+      {
+        "description": "Mermaid syntax is used for visualizations",
+        "deterministic_checks": [
+          { "type": "output_contains", "value": "mermaid" }
+        ]
+      },
+      {
+        "description": "At least 2 distinct Mermaid diagram types are generated (e.g., quadrantChart for positioning, stateDiagram for scenarios, pie for market share)"
+      }
+    ]
+  }
+]

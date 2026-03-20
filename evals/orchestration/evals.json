@@ -1,0 +1,459 @@
+[
+  {
+    "id": "blackboard-creation-before-spawning",
+    "description": "Verify blackboard is created before any analyst is spawned, with appropriate TTL and task reference",
+    "prompt": "Research the competitive landscape for autonomous vehicle LiDAR suppliers. Focus on market sizing and competitive analysis dimensions.",
+    "expectations": [
+      {
+        "description": "Blackboard creation is invoked",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["blackboard_create", "blackboard create"]
+          }
+        ]
+      },
+      {
+        "description": "Task or topic identifier is associated with the blackboard",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["task_id", "topic-slug", "lidar", "autonomous-vehicle"]
+          }
+        ]
+      },
+      {
+        "description": "TTL is configured for the research session",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["ttl", "TTL", "24", "expir"]
+          }
+        ]
+      },
+      {
+        "description": "Blackboard creation happens temporally before any analyst spawning - the orchestrator must set up shared state before launching parallel workers"
+      },
+      {
+        "description": "TTL is appropriate for a research session (typically 24 hours), not too short (minutes) or too long (weeks)"
+      }
+    ]
+  },
+  {
+    "id": "blackboard-elicitation-propagation",
+    "description": "Verify elicitation context is written to blackboard and subsequently read by spawned analysts",
+    "prompt": "Research the European electric vehicle charging infrastructure market. Priorities: market sizing, regulatory review, competitive analysis. Time horizon: 2024-2030. Geographic scope: EU27 only.",
+    "expectations": [
+      {
+        "description": "Elicitation data is written to blackboard",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["elicitation", "scope", "priorities"]
+          }
+        ]
+      },
+      {
+        "description": "A blackboard write operation occurs for elicitation context",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["blackboard_write", "blackboard write", "write"]
+          }
+        ]
+      },
+      {
+        "description": "Analysts read the blackboard to retrieve elicitation context",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["blackboard_read", "blackboard read", "read"]
+          }
+        ]
+      },
+      {
+        "description": "The full elicitation object is propagated to analysts, not just the topic name - including time horizon (2024-2030), geographic scope (EU27), and dimension priorities"
+      },
+      {
+        "description": "Analysts shape their research based on elicitation scope and priorities, e.g., market sizing focuses on EU27 charging infrastructure specifically, not global EV market"
+      }
+    ]
+  },
+  {
+    "id": "blackboard-team-status-tracking",
+    "description": "Verify team_status key is updated throughout the research lifecycle with per-analyst status tracking",
+    "prompt": "Research quantum computing hardware vendors. Dimensions: competitive analysis, tech assessment, trend analysis. Show me status updates as analysts work.",
+    "expectations": [
+      {
+        "description": "Team status key is referenced on the blackboard",
+        "deterministic_checks": [
+          {
+            "type": "output_contains",
+            "value": "team_status"
+          }
+        ]
+      },
+      {
+        "description": "Status values reflect lifecycle states",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": [
+              "pending",
+              "in_progress",
+              "complete",
+              "running",
+              "completed"
+            ]
+          }
+        ]
+      },
+      {
+        "description": "Status transitions follow the correct lifecycle: pending (spawned but not started) -> in_progress (actively researching) -> complete (findings written) for each analyst"
+      },
+      {
+        "description": "Status is queryable by the /sigint:status command, allowing the user to check progress of individual dimension analysts at any time"
+      }
+    ]
+  },
+  {
+    "id": "blackboard-findings-key-schema",
+    "description": "Verify findings written to blackboard follow the required schema with dimension, confidence, sources, and gaps",
+    "prompt": "Research the global cybersecurity mesh architecture market. Run competitive analysis and market sizing dimensions. Show me the raw findings structure.",
+    "expectations": [
+      {
+        "description": "Findings keys use the findings_ prefix pattern per dimension",
+        "deterministic_checks": [
+          {
+            "type": "output_matches",
+            "pattern": "findings_(competitive|sizing|regulatory|trend|financial|tech|customer)"
+          }
+        ]
+      },
+      {
+        "description": "Findings include a dimension field",
+        "deterministic_checks": [
+          {
+            "type": "output_contains",
+            "value": "dimension"
+          }
+        ]
+      },
+      {
+        "description": "Findings include a confidence field",
+        "deterministic_checks": [
+          {
+            "type": "output_contains",
+            "value": "confidence"
+          }
+        ]
+      },
+      {
+        "description": "Findings include a sources field",
+        "deterministic_checks": [
+          {
+            "type": "output_contains",
+            "value": "sources"
+          }
+        ]
+      },
+      {
+        "description": "Each findings object contains the full schema: dimension (string), status (complete/partial), findings (array of individual findings), sources (array of URLs/references), and gaps (array of identified knowledge gaps)"
+      }
+    ]
+  },
+  {
+    "id": "parallel-analyst-spawning",
+    "description": "Verify multiple dimension analysts are spawned concurrently rather than sequentially",
+    "prompt": "Research the edge computing market. Run all available dimensions: competitive analysis, market sizing, trend analysis, tech assessment, regulatory review.",
+    "expectations": [
+      {
+        "description": "Multiple dimension-analyst references indicating multiple analysts spawned",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["dimension-analyst", "analyst", "dimension analyst"]
+          }
+        ]
+      },
+      {
+        "description": "Parallel or concurrent execution pattern is used",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["parallel", "concurrent", "background", "simultaneously"]
+          }
+        ]
+      },
+      {
+        "description": "Background execution pattern is used for analyst tasks",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["run_in_background", "background", "async", "spawn"]
+          }
+        ]
+      },
+      {
+        "description": "Analysts for independent dimensions run in parallel, not sequentially - there should be no evidence of waiting for one analyst to complete before starting the next"
+      },
+      {
+        "description": "Maximum of 5 concurrent analysts is enforced to prevent resource exhaustion, with additional dimensions queued if more than 5 are requested"
+      }
+    ]
+  },
+  {
+    "id": "parallel-selective-spawning",
+    "description": "Verify only user-prioritized dimensions receive analyst spawns, not all available dimensions",
+    "prompt": "Research the plant-based meat market. Only focus on: market sizing and trend analysis. Do NOT run other dimensions.",
+    "expectations": [
+      {
+        "description": "Prioritized dimensions are referenced",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["market sizing", "market-sizing", "sizing"]
+          }
+        ]
+      },
+      {
+        "description": "Trend analysis dimension is referenced",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["trend analysis", "trend-analysis", "trend"]
+          }
+        ]
+      },
+      {
+        "description": "Non-requested dimensions should not appear as spawned analysts",
+        "deterministic_checks": [
+          {
+            "type": "output_not_contains",
+            "value": "regulatory-review analyst"
+          }
+        ]
+      },
+      {
+        "description": "The number of spawned analysts matches exactly the number of user-requested priorities (2 in this case), not the full set of 7 available dimensions"
+      },
+      {
+        "description": "Non-prioritized dimensions such as competitive analysis, regulatory review, financial analysis, tech assessment, and customer research are not researched or spawned"
+      }
+    ]
+  },
+  {
+    "id": "parallel-completion-synchronization",
+    "description": "Verify orchestrator waits for all analysts to complete before initiating findings merge",
+    "prompt": "Research the satellite internet market. Run competitive analysis, market sizing, and trend analysis. Do not merge until all dimensions are complete.",
+    "expectations": [
+      {
+        "description": "Completion signal or alert is used for synchronization",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["phase_complete", "complete", "all_complete", "finished"]
+          }
+        ]
+      },
+      {
+        "description": "Merge operation is referenced after completion",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["merge", "merging", "synthesiz", "consolidat"]
+          }
+        ]
+      },
+      {
+        "description": "The orchestrator waits for all spawned analysts to report completion before proceeding to the merge/synthesis phase - no partial merges"
+      },
+      {
+        "description": "If one analyst completes significantly before others, its findings are stored on the blackboard but the merge does not begin until the slowest analyst also completes"
+      }
+    ]
+  },
+  {
+    "id": "cross-dimension-conflict-detection",
+    "description": "Verify conflicting findings across dimensions are detected and flagged via blackboard alerts",
+    "prompt": "Research the global drone delivery market. Run market sizing and competitive analysis. If market sizing estimates TAM at $10B but competitive analysis revenue sums imply $5B, flag the conflict.",
+    "expectations": [
+      {
+        "description": "Conflict detection is referenced",
+        "deterministic_checks": [
+          {
+            "type": "output_contains",
+            "value": "conflict"
+          }
+        ]
+      },
+      {
+        "description": "Conflict alert channel is used",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["conflict_detected", "conflict alert", "alert"]
+          }
+        ]
+      },
+      {
+        "description": "Conflicting dimensions are identified",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["dimension_a", "dimension_b", "sizing", "competitive"]
+          }
+        ]
+      },
+      {
+        "description": "When market sizing says TAM is $10B but competitive analysis revenue sums only reach $5B, the system flags this as a cross-dimension conflict requiring reconciliation"
+      },
+      {
+        "description": "The conflict report includes both dimensions involved, the specific data points that conflict, and a description of the discrepancy"
+      }
+    ]
+  },
+  {
+    "id": "cross-dimension-source-sharing",
+    "description": "Verify high-value sources discovered by one analyst are shared with other active analysts via blackboard alerts",
+    "prompt": "Research the industrial IoT platform market. Run competitive analysis and market sizing. If one analyst finds a comprehensive Gartner Magic Quadrant report, share it with the other analyst.",
+    "expectations": [
+      {
+        "description": "Source sharing alert channel is used",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": [
+              "source_shared",
+              "shared_source",
+              "share source",
+              "source sharing"
+            ]
+          }
+        ]
+      },
+      {
+        "description": "When one analyst discovers a comprehensive industry report (e.g., Gartner Magic Quadrant, IDC MarketScape), it broadcasts an alert so other active analysts can leverage the same source"
+      },
+      {
+        "description": "Shared sources reduce duplicate web searches and API calls across analysts, improving both speed and cost efficiency of the research session"
+      }
+    ]
+  },
+  {
+    "id": "cross-dimension-finding-discovery-alert",
+    "description": "Verify significant findings trigger immediate alerts to the orchestrator via blackboard alert channels",
+    "prompt": "Research the generative AI chip market. Run trend analysis and competitive analysis. Alert immediately if a major market shift is discovered (e.g., >20% share change, new dominant player).",
+    "expectations": [
+      {
+        "description": "Finding discovery alert channel is used",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": [
+              "finding_discovered",
+              "major_finding",
+              "significant_finding",
+              "alert"
+            ]
+          }
+        ]
+      },
+      {
+        "description": "Major findings such as >20% market share shifts, trend reversals, new dominant entrants, or regulatory disruptions trigger an immediate alert to the orchestrator rather than waiting for the full analysis to complete"
+      },
+      {
+        "description": "The alert includes a brief description of what was found, which dimension discovered it, and a preliminary confidence level so the orchestrator can decide whether to adjust other analysts' priorities"
+      }
+    ]
+  },
+  {
+    "id": "atlatl-recall-before-research",
+    "description": "Verify Atlatl memory recall is performed before spawning analysts to leverage prior research on the same or related topics",
+    "prompt": "Research the autonomous vehicle LiDAR market. Check if we have prior research on this topic before starting new analysts.",
+    "expectations": [
+      {
+        "description": "recall_memories is invoked",
+        "deterministic_checks": [
+          {
+            "type": "output_contains",
+            "value": "recall_memories"
+          }
+        ]
+      },
+      {
+        "description": "Query includes sigint-relevant terms",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["sigint", "lidar", "autonomous", "research"]
+          }
+        ]
+      },
+      {
+        "description": "Should not reference unrelated tools",
+        "deterministic_checks": [
+          {
+            "type": "output_not_contains",
+            "value": "Subcog"
+          }
+        ]
+      },
+      {
+        "description": "If prior research exists on the topic (or a closely related topic), those findings are loaded from Atlatl and shared via the blackboard so analysts can build on existing knowledge rather than starting from scratch"
+      },
+      {
+        "description": "Prior findings reduce duplicate research effort - analysts skip re-investigating well-established facts and focus on gaps, updates, or newly requested dimensions"
+      }
+    ]
+  },
+  {
+    "id": "atlatl-capture-after-merge",
+    "description": "Verify key cross-dimension findings are captured to Atlatl permanent memory after the merge/synthesis phase completes",
+    "prompt": "Research the space tourism market. Run market sizing and trend analysis. After merging findings, save key insights to permanent memory for future sessions.",
+    "expectations": [
+      {
+        "description": "capture_memory is invoked after merge",
+        "deterministic_checks": [
+          {
+            "type": "output_contains",
+            "value": "capture_memory"
+          }
+        ]
+      },
+      {
+        "description": "enrich_memory is invoked to improve discoverability",
+        "deterministic_checks": [
+          {
+            "type": "output_contains",
+            "value": "enrich_memory"
+          }
+        ]
+      },
+      {
+        "description": "Correct namespace is used for knowledge storage",
+        "deterministic_checks": [
+          {
+            "type": "output_contains",
+            "value": "_semantic/knowledge"
+          }
+        ]
+      },
+      {
+        "description": "Sigint research tag is applied",
+        "deterministic_checks": [
+          {
+            "type": "output_contains",
+            "value": "sigint-research"
+          }
+        ]
+      },
+      {
+        "description": "The captured memory contains cross-dimension insights and synthesized conclusions, not raw data dumps from individual analysts"
+      },
+      {
+        "description": "The captured memory is enriched with tags, entity extraction, and embeddings so future sessions can discover and leverage these findings via semantic search"
+      }
+    ]
+  }
+]

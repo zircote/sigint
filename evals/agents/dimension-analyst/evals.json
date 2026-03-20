@@ -1,0 +1,280 @@
+[
+  {
+    "id": "analyst-competitive-happy-path",
+    "description": "Dimension analyst correctly loads the competitive-analysis skill and writes findings to the correct blackboard key",
+    "prompt": "You are a dimension-analyst for competitive research on 'AI code review tools'. Blackboard task_id: ai-code-review. Skill to load: skills/competitive-analysis/SKILL.md. Your blackboard key: findings_competitive. Analyze the competitive landscape.",
+    "expectations": [
+      {
+        "description": "The competitive analysis skill is loaded",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["competitive-analysis", "competitive-analysis/SKILL.md"]
+          }
+        ]
+      },
+      {
+        "description": "Findings are written to the correct blackboard key",
+        "deterministic_checks": [
+          { "type": "output_contains", "value": "findings_competitive" }
+        ]
+      },
+      {
+        "description": "Web search is used for current data gathering",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["WebSearch", "web search", "search"]
+          }
+        ]
+      },
+      {
+        "description": "Deprecated v0.3 patterns are not used",
+        "deterministic_checks": [
+          { "type": "output_not_contains", "value": "TodoWrite" },
+          { "type": "output_not_contains", "value": "Subcog" }
+        ]
+      },
+      {
+        "description": "Follows competitive analysis methodology from the loaded skill including competitor profiles, matrix, and strategic positioning"
+      }
+    ]
+  },
+  {
+    "id": "analyst-sizing-happy-path",
+    "description": "Dimension analyst loads market-sizing skill and produces quantified TAM/SAM/SOM estimates",
+    "prompt": "You are a dimension-analyst for sizing research on 'autonomous vehicle fleet management'. Blackboard task_id: av-fleet-mgmt. Skill to load: skills/market-sizing/SKILL.md. Your blackboard key: findings_sizing. Estimate the market size.",
+    "expectations": [
+      {
+        "description": "The market-sizing skill is loaded",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["market-sizing", "market-sizing/SKILL.md"]
+          }
+        ]
+      },
+      {
+        "description": "Findings are written to the correct blackboard key",
+        "deterministic_checks": [
+          { "type": "output_contains", "value": "findings_sizing" }
+        ]
+      },
+      {
+        "description": "Market sizing methodology is applied with TAM/SAM/SOM",
+        "deterministic_checks": [
+          { "type": "output_contains_any", "values": ["TAM", "SAM", "SOM"] }
+        ]
+      },
+      {
+        "description": "Produces quantified market size estimates with dollar figures or growth rates"
+      }
+    ]
+  },
+  {
+    "id": "analyst-trends-happy-path",
+    "description": "Dimension analyst loads trend-analysis skill and identifies trends with direction indicators",
+    "prompt": "You are a dimension-analyst for trends research on 'generative AI in healthcare'. Blackboard task_id: gen-ai-healthcare. Skill to load: skills/trend-analysis/SKILL.md. Your blackboard key: findings_trends. Identify market trends.",
+    "expectations": [
+      {
+        "description": "The trend-analysis skill is loaded",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["trend-analysis", "trend-analysis/SKILL.md"]
+          }
+        ]
+      },
+      {
+        "description": "Findings are written to the correct blackboard key",
+        "deterministic_checks": [
+          { "type": "output_contains", "value": "findings_trends" }
+        ]
+      },
+      {
+        "description": "Trend direction indicators are used",
+        "deterministic_checks": [
+          { "type": "output_contains_any", "values": ["INC", "DEC", "CONST"] }
+        ]
+      },
+      {
+        "description": "Identifies both macro trends (economic, regulatory) and micro trends (industry-specific, adoption patterns) with direction indicators"
+      }
+    ]
+  },
+  {
+    "id": "analyst-customer-happy-path",
+    "description": "Dimension analyst loads customer-research skill and identifies customer segments",
+    "prompt": "You are a dimension-analyst for customer research on 'developer productivity tools'. Blackboard task_id: dev-prod-tools. Skill to load: skills/customer-research/SKILL.md. Your blackboard key: findings_customer. Research the target customers.",
+    "expectations": [
+      {
+        "description": "The customer-research skill is loaded",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["customer-research", "customer-research/SKILL.md"]
+          }
+        ]
+      },
+      {
+        "description": "Findings are written to the correct blackboard key",
+        "deterministic_checks": [
+          { "type": "output_contains", "value": "findings_customer" }
+        ]
+      },
+      {
+        "description": "Identifies distinct customer segments with needs, pain points, and buying behaviors"
+      }
+    ]
+  },
+  {
+    "id": "analyst-tech-happy-path",
+    "description": "Dimension analyst loads tech-assessment skill and evaluates technology landscape",
+    "prompt": "You are a dimension-analyst for tech research on 'WebAssembly in server-side computing'. Blackboard task_id: wasm-server. Skill to load: skills/tech-assessment/SKILL.md. Your blackboard key: findings_tech. Assess the technology landscape.",
+    "expectations": [
+      {
+        "description": "The tech-assessment skill is loaded",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["tech-assessment", "tech-assessment/SKILL.md"]
+          }
+        ]
+      },
+      {
+        "description": "Findings are written to the correct blackboard key",
+        "deterministic_checks": [
+          { "type": "output_contains", "value": "findings_tech" }
+        ]
+      },
+      {
+        "description": "Evaluates technology readiness, feasibility, and adoption landscape with specific technical findings"
+      }
+    ]
+  },
+  {
+    "id": "analyst-financial-happy-path",
+    "description": "Dimension analyst loads financial-analysis skill and produces unit economics or revenue analysis",
+    "prompt": "You are a dimension-analyst for financial research on 'subscription-based SaaS for logistics'. Blackboard task_id: saas-logistics. Skill to load: skills/financial-analysis/SKILL.md. Your blackboard key: findings_financial. Analyze the financial dynamics.",
+    "expectations": [
+      {
+        "description": "The financial-analysis skill is loaded",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["financial-analysis", "financial-analysis/SKILL.md"]
+          }
+        ]
+      },
+      {
+        "description": "Findings are written to the correct blackboard key",
+        "deterministic_checks": [
+          { "type": "output_contains", "value": "findings_financial" }
+        ]
+      },
+      {
+        "description": "Produces unit economics, revenue models, or financial projections relevant to the SaaS logistics domain"
+      }
+    ]
+  },
+  {
+    "id": "analyst-regulatory-happy-path",
+    "description": "Dimension analyst loads regulatory-review skill and identifies compliance requirements",
+    "prompt": "You are a dimension-analyst for regulatory research on 'digital health platforms in the US and EU'. Blackboard task_id: digital-health. Skill to load: skills/regulatory-review/SKILL.md. Your blackboard key: findings_regulatory. Review the regulatory landscape.",
+    "expectations": [
+      {
+        "description": "The regulatory-review skill is loaded",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["regulatory-review", "regulatory-review/SKILL.md"]
+          }
+        ]
+      },
+      {
+        "description": "Findings are written to the correct blackboard key",
+        "deterministic_checks": [
+          { "type": "output_contains", "value": "findings_regulatory" }
+        ]
+      },
+      {
+        "description": "Identifies compliance requirements, regulatory bodies, and risk factors for the specified jurisdictions"
+      }
+    ]
+  },
+  {
+    "id": "analyst-blackboard-elicitation-read",
+    "description": "Analyst reads elicitation context from the blackboard to shape its research approach",
+    "prompt": "You are a dimension-analyst for competitive research on 'cloud-native observability'. Blackboard task_id: cloud-observability. Read the elicitation from the blackboard first to understand the research scope and priorities before conducting research.",
+    "expectations": [
+      {
+        "description": "Blackboard read is used to load the elicitation context",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["blackboard_read", "elicitation"]
+          }
+        ]
+      },
+      {
+        "description": "Research scope or priorities from the elicitation are referenced",
+        "deterministic_checks": [
+          { "type": "output_contains_any", "values": ["scope", "priorities"] }
+        ]
+      },
+      {
+        "description": "Research queries and focus areas are shaped by the elicitation context rather than being generic"
+      }
+    ]
+  },
+  {
+    "id": "analyst-conflict-detection",
+    "description": "Analyst detects contradictions with another dimension's findings and raises a blackboard alert",
+    "prompt": "You are a dimension-analyst for sizing research on 'quantum computing services'. Blackboard task_id: quantum-computing. After writing your findings, check the competitive dimension's findings on the blackboard. The competitive analysis says the market has 50+ active players suggesting maturity, but your sizing data shows the market is under $500M suggesting it is still nascent. Flag the conflict.",
+    "expectations": [
+      {
+        "description": "Cross-dimension conflict is detected and reported",
+        "deterministic_checks": [
+          { "type": "output_contains", "value": "conflict" }
+        ]
+      },
+      {
+        "description": "A blackboard alert is raised for the conflict",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["blackboard_alert", "alert"]
+          }
+        ]
+      },
+      {
+        "description": "Detects the specific contradiction between competitive maturity signals and early-stage sizing data and reports it to the orchestrator"
+      }
+    ]
+  },
+  {
+    "id": "analyst-large-source-delegation",
+    "description": "Analyst delegates large documents to the source-chunker agent instead of processing directly",
+    "prompt": "You are a dimension-analyst for competitive research on 'enterprise search platforms'. You fetched a 100-page Gartner Magic Quadrant report that is approximately 80,000 tokens. How do you handle this large document?",
+    "expectations": [
+      {
+        "description": "The source-chunker agent is referenced for delegation",
+        "deterministic_checks": [
+          { "type": "output_contains", "value": "source-chunker" }
+        ]
+      },
+      {
+        "description": "The token threshold for chunking is referenced",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["15K", "15,000", "15000", "token"]
+          }
+        ]
+      },
+      {
+        "description": "Delegates to the source-chunker agent for parallel chunk processing instead of attempting single-pass analysis"
+      }
+    ]
+  }
+]

@@ -1,0 +1,408 @@
+{
+  "skill_name": "financial-analysis",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Can you do a unit economics analysis for a SaaS company? They spend $200k/month on sales and marketing and acquire 400 new customers per month. Average subscription is $99/month, gross margin is 78%, and monthly churn is 3%. I need to know if the economics work.",
+      "expected_output": "A structured financial analysis covering CAC, LTV, LTV:CAC ratio, and payback period with benchmarks and assessment",
+      "files": [],
+      "deterministic_checks": [
+        {
+          "type": "file_contains",
+          "file": "transcript.md",
+          "literal": "CAC",
+          "description": "Output contains Customer Acquisition Cost metric"
+        },
+        {
+          "type": "file_contains",
+          "file": "transcript.md",
+          "literal": "LTV",
+          "description": "Output contains Lifetime Value metric"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "\\$500|500",
+          "description": "CAC is correctly calculated as $200k/400 = $500"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "[Pp]ayback",
+          "description": "Output includes payback period analysis"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "LTV.?:.?CAC|LTV.CAC",
+          "description": "Output includes LTV:CAC ratio"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "\\$2,?5[0-9]{2}|2,?5[0-9]{2}",
+          "description": "LTV is approximately $2,574 (ARPU $99 * 0.78 margin / 0.03 churn)"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "[45]:1|[45]\\.[0-9]:1",
+          "description": "LTV:CAC ratio is approximately 5:1"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "3:1",
+          "description": "Output references the 3:1 LTV:CAC benchmark"
+        }
+      ],
+      "expectations": [
+        "LTV:CAC ratio is assessed against the 3:1 benchmark with a clear healthy/concerning judgment",
+        "Payback period is calculated and compared to the 12-month SaaS target",
+        "Output includes an overall assessment of whether the unit economics are sustainable"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "analyze the revenue model for a marketplace company doing $50M GMV with a 12% take rate. they're growing GMV 35% YoY but take rate has been declining from 15% two years ago. What should I be worried about?",
+      "expected_output": "Revenue model analysis identifying marketplace economics, revenue calculation, take rate erosion trend, and strategic concerns",
+      "files": [],
+      "deterministic_checks": [
+        {
+          "type": "file_contains",
+          "file": "transcript.md",
+          "literal": "GMV",
+          "description": "Output references Gross Merchandise Volume"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "take rate",
+          "description": "Output discusses take rate"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "\\$6[\\s,]?M|\\$6[\\s,]?million|6,?000,?000",
+          "description": "Revenue correctly calculated as $50M * 12% = $6M"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "[Mm]arketplace",
+          "description": "Output identifies the business as a marketplace model"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "15%",
+          "description": "Output references the historical 15% take rate"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "12%",
+          "description": "Output references the current 12% take rate"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "[Dd]eclin|[Cc]ompres|[Ee]rosion|[Dd]rop",
+          "description": "Output identifies the take rate decline as a negative trend"
+        }
+      ],
+      "expectations": [
+        "Analyzes whether GMV growth (35%) is sufficient to offset take rate compression",
+        "Provides a trend indicator assessment (e.g., revenue growth vs margin trajectory)",
+        "Includes strategic recommendations to address take rate erosion"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "I need a Rule of 40 analysis. We're a SaaS company growing ARR at 65% year over year but our operating margin is -30%. Are we in good shape or not?",
+      "expected_output": "Rule of 40 calculation showing 65% + (-30%) = 35%, with assessment that the company is below the 40% threshold",
+      "files": [],
+      "deterministic_checks": [
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "[Rr]ule of 40",
+          "description": "Output references the Rule of 40"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "35%?|35",
+          "description": "Rule of 40 score correctly calculated as 65 + (-30) = 35"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "[Bb]elow|[Uu]nder|not.*(meet|reach|hit)",
+          "description": "Output indicates the company is below the Rule of 40 threshold"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "65%",
+          "description": "Output references the 65% growth rate input"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "-30%|negative 30",
+          "description": "Output references the -30% operating margin input"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "40%|40",
+          "description": "Output references the 40% threshold"
+        }
+      ],
+      "expectations": [
+        "Contextualizes the high growth rate as partially compensating for losses",
+        "Provides guidance on the margin improvement needed (at least -25% margin, or 5% improvement) to reach 40%",
+        "References SaaS benchmarks appropriate for a high-growth stage company"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "do a cost structure breakdown for my startup. we have $80k/month in engineering salaries, $15k cloud hosting that scales with users, $25k office lease, $10k in sales commissions (variable), and $5k misc. Our MRR is $180k. What are our margins looking like and where's the operating leverage?",
+      "expected_output": "Cost structure analysis with fixed/variable classification, gross margin calculation, operating margin, and operating leverage assessment",
+      "files": [],
+      "deterministic_checks": [
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "[Ff]ixed|[Vv]ariable",
+          "description": "Output classifies costs as fixed vs variable"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "[Gg]ross [Mm]argin",
+          "description": "Output includes gross margin analysis"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "[Oo]perating.*(leverage|margin)",
+          "description": "Output discusses operating leverage or operating margin"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "\\$135|135,?000|\\$45|45,?000",
+          "description": "Output calculates total costs ($135k) or net operating income ($45k)"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "\\$80,?000|80k|\\$80K",
+          "description": "Output references the $80k engineering salary cost"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "\\$25,?000|25k|\\$25K|lease|[Rr]ent",
+          "description": "Output references the $25k office lease as a fixed cost"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "25%|~25|24\\.?|25\\.?",
+          "description": "Operating margin calculated as approximately 25%"
+        }
+      ],
+      "expectations": [
+        "Classifies costs correctly: fixed (salaries $80k, lease $25k), variable (hosting $15k, commissions $10k), and misc ($5k)",
+        "Notes that the high fixed cost structure means profits will scale faster than revenue as MRR grows"
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "analyze financials for a company but I only have partial data: ARR is $2M, they say gross margins are 'healthy', and they have about 500 customers. No churn data, no cost data available. What can you tell me?",
+      "expected_output": "Analysis using available data with clear callouts about what cannot be determined due to missing information",
+      "files": [],
+      "deterministic_checks": [
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "ARPU|[Aa]verage [Rr]evenue [Pp]er",
+          "description": "Output calculates ARPU from available data"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "\\$4,?000|\\$333|4000|333",
+          "description": "ARPU calculated as $2M/500 = $4,000/year or ~$333/month"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "[Mm]issing|[Uu]navailable|[Ii]nsufficient|[Cc]annot.*determin|[Nn]ot.*available|[Ll]imited|[Nn]o.*data|[Nn]ot.*provided",
+          "description": "Output explicitly acknowledges missing data limitations"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "[Cc]hurn",
+          "description": "Output mentions churn as a missing data point needed for LTV"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "\\$2[\\s,]?M|\\$2[\\s,]?million|2,?000,?000",
+          "description": "Output references the $2M ARR figure"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "500",
+          "description": "Output references the 500 customer count"
+        }
+      ],
+      "expectations": [
+        "Does NOT fabricate numbers for churn, CAC, or costs that were not provided",
+        "Distinguishes between reported claims ('healthy' margins) and verified data",
+        "Suggests what additional data would be needed to complete a full analysis"
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "I need a 3-year financial projection for our SaaS product. Current MRR is $50k, growing 8% month-over-month. Gross margin is 75%, operating costs are $40k/month fixed plus 10% of revenue variable. Give me bear/base/bull scenarios.",
+      "expected_output": "Three-scenario financial projection with revenue, costs, and profitability forecasts over 3 years",
+      "files": [],
+      "deterministic_checks": [
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "[Bb]ear|[Bb]ase|[Bb]ull",
+          "description": "Output includes multiple scenario labels"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "[Pp]rojection|[Ff]orecast",
+          "description": "Output frames the analysis as projections/forecasts"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "[Yy]ear.?[123]|[Yy]1|[Yy]2|[Yy]3|[Yy]ear [Oo]ne|[Yy]ear [Tt]wo|[Yy]ear [Tt]hree",
+          "description": "Output includes multi-year projections"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "MRR|ARR|[Rr]evenue",
+          "description": "Output projects revenue figures"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "8%|8 ?percent",
+          "description": "Output references the 8% MoM growth rate as baseline"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "\\$40,?000|40k|\\$40K|40,?000.*[Ff]ixed",
+          "description": "Output references the $40k fixed cost component"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "[Pp]rofit|[Bb]reakeven|[Bb]reak.even",
+          "description": "Output discusses profitability or breakeven point"
+        }
+      ],
+      "expectations": [
+        "Presents three distinct scenarios (bear, base, bull) with different growth rate assumptions",
+        "Each scenario includes revenue, cost, and margin/profitability projections",
+        "Identifies when (or if) the company reaches profitability under each scenario"
+      ]
+    },
+    {
+      "id": 7,
+      "prompt": "Compare our SaaS metrics against industry benchmarks. We're at the growth stage with: 72% gross margin, 45% YoY growth, NRR of 105%, LTV:CAC of 2.5:1, and payback period of 14 months. How do we stack up?",
+      "expected_output": "Benchmarking analysis comparing each metric against growth-stage SaaS benchmarks with clear above/below assessments",
+      "files": [],
+      "deterministic_checks": [
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "[Bb]enchmark|[Cc]ompar",
+          "description": "Output performs benchmarking comparison"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "[Gg]ross [Mm]argin",
+          "description": "Output evaluates gross margin against benchmarks"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "NRR|[Nn]et [Rr]evenue [Rr]etention",
+          "description": "Output evaluates NRR against benchmarks"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "LTV.?:.?CAC|LTV.CAC",
+          "description": "Output evaluates LTV:CAC against benchmarks"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "[Bb]elow|[Aa]bove|[Mm]eets|[Ss]hort|[Ee]xceeds",
+          "description": "Output includes clear above/below benchmark assessments"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "72%",
+          "description": "Output references the 72% gross margin input"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "45%",
+          "description": "Output references the 45% YoY growth input"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "105%",
+          "description": "Output references the 105% NRR input"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "2\\.5:1|2\\.5.to.1",
+          "description": "Output references the 2.5:1 LTV:CAC input"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "14 months|14.month",
+          "description": "Output references the 14-month payback period input"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "[Rr]ecommend|[Pp]riorit|[Ii]mprov",
+          "description": "Output includes recommendations for improvement"
+        }
+      ],
+      "expectations": [
+        "Compares YoY growth (45%) against the growth-stage benchmark of 50-100% and identifies it as below target",
+        "Compares NRR (105%) against the growth-stage benchmark of >110% and identifies it as below target",
+        "Compares LTV:CAC (2.5:1) against the benchmark of >3:1 and flags it as concerning/below target",
+        "Provides an overall assessment with prioritized recommendations for which metrics to improve first"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,2050 @@
+[
+  {
+    "id": "start-happy-path",
+    "description": "Normal /sigint:start with topic triggers elicitation and references research-orchestrator",
+    "prompt": "/sigint:start AI-powered supply chain optimization for agriculture",
+    "expectations": [
+      {
+        "description": "Output asks elicitation questions to scope the research",
+        "deterministic_checks": [
+          {
+            "type": "output_contains",
+            "value": "?"
+          }
+        ]
+      },
+      {
+        "description": "Output references research-orchestrator for delegation",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["research-orchestrator", "research orchestrator"]
+          }
+        ]
+      },
+      {
+        "description": "Output does not contain deprecated TodoWrite pattern",
+        "deterministic_checks": [
+          {
+            "type": "output_not_contains",
+            "value": "TodoWrite"
+          }
+        ]
+      },
+      {
+        "description": "Output does not contain deprecated Subcog pattern",
+        "deterministic_checks": [
+          {
+            "type": "output_not_contains",
+            "value": "Subcog"
+          }
+        ]
+      },
+      {
+        "description": "Output does not contain deprecated subagent_type pattern",
+        "deterministic_checks": [
+          {
+            "type": "output_not_contains",
+            "value": "subagent_type"
+          }
+        ]
+      },
+      {
+        "description": "Output does not reference deprecated market-researcher agent",
+        "deterministic_checks": [
+          {
+            "type": "output_not_contains",
+            "value": "market-researcher"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "start-no-topic",
+    "description": "/sigint:start with no topic triggers open discovery elicitation",
+    "prompt": "/sigint:start",
+    "expectations": [
+      {
+        "description": "Output asks what topic or area the user wants to research",
+        "deterministic_checks": [
+          {
+            "type": "output_contains",
+            "value": "?"
+          }
+        ]
+      },
+      {
+        "description": "Output provides open-ended discovery prompts or asks for research area"
+      },
+      {
+        "description": "Output does not contain deprecated patterns",
+        "deterministic_checks": [
+          {
+            "type": "output_not_contains",
+            "value": "TodoWrite"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "Subcog"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "subagent_type"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "market-researcher"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "start-quick-mode",
+    "description": "/sigint:start --quick triggers abbreviated elicitation flow",
+    "prompt": "/sigint:start --quick Edge computing for IoT in manufacturing",
+    "expectations": [
+      {
+        "description": "Output uses abbreviated or streamlined elicitation rather than full question set"
+      },
+      {
+        "description": "Output references research-orchestrator for delegation",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["research-orchestrator", "research orchestrator"]
+          }
+        ]
+      },
+      {
+        "description": "Output does not contain deprecated patterns",
+        "deterministic_checks": [
+          {
+            "type": "output_not_contains",
+            "value": "TodoWrite"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "Subcog"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "subagent_type"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "market-researcher"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "start-no-todowrite",
+    "description": "Verify TodoWrite is never used in /sigint:start transcript",
+    "prompt": "/sigint:start Renewable energy storage market in Southeast Asia",
+    "expectations": [
+      {
+        "description": "TodoWrite never appears anywhere in the output",
+        "deterministic_checks": [
+          {
+            "type": "output_not_contains",
+            "value": "TodoWrite"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "todo_write"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "TodoRead"
+          }
+        ]
+      },
+      {
+        "description": "Output uses TaskCreate or task-based planning instead of TodoWrite",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": [
+              "TaskCreate",
+              "task",
+              "research plan",
+              "research-orchestrator"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "start-no-subcog",
+    "description": "Verify Subcog is never referenced in /sigint:start transcript",
+    "prompt": "/sigint:start Digital health platforms for chronic disease management",
+    "expectations": [
+      {
+        "description": "Subcog never appears in the output",
+        "deterministic_checks": [
+          {
+            "type": "output_not_contains",
+            "value": "Subcog"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "subcog"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "SUBCOG"
+          }
+        ]
+      },
+      {
+        "description": "Output uses Atlatl memory system instead of Subcog",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["Atlatl", "atlatl", "capture_memory", "recall_memories"]
+          }
+        ]
+      },
+      {
+        "description": "Output does not contain other deprecated patterns",
+        "deterministic_checks": [
+          {
+            "type": "output_not_contains",
+            "value": "TodoWrite"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "subagent_type"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "market-researcher"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "start-atlatl-capture",
+    "description": "Verify /sigint:start references Atlatl memory capture for persisting research context",
+    "prompt": "/sigint:start Autonomous vehicle regulations in the EU",
+    "expectations": [
+      {
+        "description": "Output references Atlatl memory capture for research persistence",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": [
+              "capture_memory",
+              "Atlatl",
+              "atlatl",
+              "memory capture",
+              "persist"
+            ]
+          }
+        ]
+      },
+      {
+        "description": "Output does not contain deprecated patterns",
+        "deterministic_checks": [
+          {
+            "type": "output_not_contains",
+            "value": "TodoWrite"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "Subcog"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "subagent_type"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "market-researcher"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "start-orchestrator-delegation",
+    "description": "Verify /sigint:start delegates to research-orchestrator, not market-researcher",
+    "prompt": "/sigint:start Quantum computing applications in financial services",
+    "expectations": [
+      {
+        "description": "Output references research-orchestrator for delegation",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["research-orchestrator", "research orchestrator"]
+          }
+        ]
+      },
+      {
+        "description": "Output never references deprecated market-researcher agent",
+        "deterministic_checks": [
+          {
+            "type": "output_not_contains",
+            "value": "market-researcher"
+          }
+        ]
+      },
+      {
+        "description": "Output does not contain other deprecated patterns",
+        "deterministic_checks": [
+          {
+            "type": "output_not_contains",
+            "value": "TodoWrite"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "Subcog"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "subagent_type"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "start-task-create",
+    "description": "Verify /sigint:start references TaskCreate for research plan execution",
+    "prompt": "/sigint:start Precision fermentation market for alternative proteins",
+    "expectations": [
+      {
+        "description": "Output references TaskCreate or task creation for research plan",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["TaskCreate", "task", "research plan"]
+          }
+        ]
+      },
+      {
+        "description": "Output references research-orchestrator",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["research-orchestrator", "research orchestrator"]
+          }
+        ]
+      },
+      {
+        "description": "Output does not contain deprecated patterns",
+        "deterministic_checks": [
+          {
+            "type": "output_not_contains",
+            "value": "TodoWrite"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "Subcog"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "subagent_type"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "market-researcher"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "init-happy-path",
+    "description": "Default /sigint:init loads Atlatl context and displays readiness",
+    "prompt": "/sigint:init",
+    "expectations": [
+      {
+        "description": "Output indicates Atlatl context loading or initialization",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": [
+              "Atlatl",
+              "atlatl",
+              "context loaded",
+              "initialized",
+              "memory"
+            ]
+          }
+        ]
+      },
+      {
+        "description": "Output does not contain deprecated patterns",
+        "deterministic_checks": [
+          {
+            "type": "output_not_contains",
+            "value": "TodoWrite"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "Subcog"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "subagent_type"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "market-researcher"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "init-full-flag",
+    "description": "/sigint:init --full triggers comprehensive memory load",
+    "prompt": "/sigint:init --full",
+    "expectations": [
+      {
+        "description": "Output indicates comprehensive or full memory load",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": [
+              "full",
+              "comprehensive",
+              "all memories",
+              "complete context",
+              "recall_memories"
+            ]
+          }
+        ]
+      },
+      {
+        "description": "Output references Atlatl memory system",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["Atlatl", "atlatl", "recall_memories", "memory"]
+          }
+        ]
+      },
+      {
+        "description": "Output does not contain deprecated patterns",
+        "deterministic_checks": [
+          {
+            "type": "output_not_contains",
+            "value": "TodoWrite"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "Subcog"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "subagent_type"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "market-researcher"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "init-topic-flag",
+    "description": "/sigint:init --topic scopes recall to a specific topic",
+    "prompt": "/sigint:init --topic \"autonomous vehicles\"",
+    "expectations": [
+      {
+        "description": "Output scopes context loading to the specified topic",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["autonomous vehicle", "autonomous vehicles", "topic"]
+          }
+        ]
+      },
+      {
+        "description": "Output references recall_memories or Atlatl for topic-scoped retrieval",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["recall_memories", "Atlatl", "atlatl", "memory"]
+          }
+        ]
+      },
+      {
+        "description": "Output does not contain deprecated patterns",
+        "deterministic_checks": [
+          {
+            "type": "output_not_contains",
+            "value": "TodoWrite"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "Subcog"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "subagent_type"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "market-researcher"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "init-no-subcog",
+    "description": "Verify /sigint:init uses Atlatl namespaces, not Subcog namespaces",
+    "prompt": "/sigint:init --full",
+    "expectations": [
+      {
+        "description": "Output never references Subcog namespace format",
+        "deterministic_checks": [
+          {
+            "type": "output_not_contains",
+            "value": "Subcog"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "subcog"
+          }
+        ]
+      },
+      {
+        "description": "Output references Atlatl namespace conventions",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": [
+              "_semantic",
+              "_procedural",
+              "_episodic",
+              "Atlatl",
+              "atlatl"
+            ]
+          }
+        ]
+      },
+      {
+        "description": "Output does not contain other deprecated patterns",
+        "deterministic_checks": [
+          {
+            "type": "output_not_contains",
+            "value": "TodoWrite"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "subagent_type"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "market-researcher"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "init-atlatl-namespaces",
+    "description": "Verify /sigint:init references correct Atlatl namespaces",
+    "prompt": "/sigint:init",
+    "expectations": [
+      {
+        "description": "Output references _semantic/knowledge namespace",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["_semantic/knowledge", "_semantic", "semantic"]
+          }
+        ]
+      },
+      {
+        "description": "Output references _procedural/patterns namespace",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["_procedural/patterns", "_procedural", "procedural"]
+          }
+        ]
+      },
+      {
+        "description": "Output does not contain deprecated patterns",
+        "deterministic_checks": [
+          {
+            "type": "output_not_contains",
+            "value": "TodoWrite"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "Subcog"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "subagent_type"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "market-researcher"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "init-config-loading",
+    "description": "Verify /sigint:init references cascading config loading",
+    "prompt": "/sigint:init",
+    "expectations": [
+      {
+        "description": "Output mentions config loading from global and/or project sources",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": [
+              "config",
+              "configuration",
+              "sigint.local.md",
+              "global",
+              "project"
+            ]
+          }
+        ]
+      },
+      {
+        "description": "Output does not contain deprecated patterns",
+        "deterministic_checks": [
+          {
+            "type": "output_not_contains",
+            "value": "TodoWrite"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "Subcog"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "subagent_type"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "market-researcher"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "report-happy-path",
+    "description": "Default /sigint:report references report-synthesizer agent",
+    "prompt": "/sigint:report",
+    "expectations": [
+      {
+        "description": "Output references report-synthesizer agent for report generation",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["report-synthesizer", "report synthesizer"]
+          }
+        ]
+      },
+      {
+        "description": "Output does not contain deprecated patterns",
+        "deterministic_checks": [
+          {
+            "type": "output_not_contains",
+            "value": "TodoWrite"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "Subcog"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "subagent_type"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "market-researcher"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "report-format-audience",
+    "description": "/sigint:report with --format and --audience passes params to agent",
+    "prompt": "/sigint:report --format executive-brief --audience C-suite",
+    "expectations": [
+      {
+        "description": "Output acknowledges the executive-brief format",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["executive-brief", "executive brief", "executive"]
+          }
+        ]
+      },
+      {
+        "description": "Output acknowledges the C-suite audience",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["C-suite", "c-suite", "C-Suite"]
+          }
+        ]
+      },
+      {
+        "description": "Output references report-synthesizer",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["report-synthesizer", "report synthesizer"]
+          }
+        ]
+      },
+      {
+        "description": "Output does not contain deprecated patterns",
+        "deterministic_checks": [
+          {
+            "type": "output_not_contains",
+            "value": "TodoWrite"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "Subcog"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "subagent_type"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "market-researcher"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "report-no-todowrite",
+    "description": "Verify TodoWrite never appears in /sigint:report transcript",
+    "prompt": "/sigint:report --format detailed",
+    "expectations": [
+      {
+        "description": "TodoWrite and related patterns never appear",
+        "deterministic_checks": [
+          {
+            "type": "output_not_contains",
+            "value": "TodoWrite"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "todo_write"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "TodoRead"
+          }
+        ]
+      },
+      {
+        "description": "Output does not contain other deprecated patterns",
+        "deterministic_checks": [
+          {
+            "type": "output_not_contains",
+            "value": "Subcog"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "subagent_type"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "market-researcher"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "report-agent-delegation",
+    "description": "Verify /sigint:report uses Agent tool pattern, not Task/subagent_type",
+    "prompt": "/sigint:report",
+    "expectations": [
+      {
+        "description": "Output references Agent tool or agent delegation pattern",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["Agent", "agent", "report-synthesizer"]
+          }
+        ]
+      },
+      {
+        "description": "Output never uses subagent_type delegation pattern",
+        "deterministic_checks": [
+          {
+            "type": "output_not_contains",
+            "value": "subagent_type"
+          }
+        ]
+      },
+      {
+        "description": "Output does not contain deprecated patterns",
+        "deterministic_checks": [
+          {
+            "type": "output_not_contains",
+            "value": "TodoWrite"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "Subcog"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "market-researcher"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "report-blackboard-read",
+    "description": "Verify /sigint:report references blackboard for reading research findings",
+    "prompt": "/sigint:report",
+    "expectations": [
+      {
+        "description": "Output references blackboard_read or blackboard for gathering findings",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["blackboard_read", "blackboard", "findings"]
+          }
+        ]
+      },
+      {
+        "description": "Output does not contain deprecated patterns",
+        "deterministic_checks": [
+          {
+            "type": "output_not_contains",
+            "value": "TodoWrite"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "Subcog"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "subagent_type"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "market-researcher"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "report-no-market-researcher",
+    "description": "Verify /sigint:report never references deprecated market-researcher",
+    "prompt": "/sigint:report --format comprehensive",
+    "expectations": [
+      {
+        "description": "Output never references market-researcher",
+        "deterministic_checks": [
+          {
+            "type": "output_not_contains",
+            "value": "market-researcher"
+          }
+        ]
+      },
+      {
+        "description": "Output references report-synthesizer instead",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["report-synthesizer", "report synthesizer"]
+          }
+        ]
+      },
+      {
+        "description": "Output does not contain other deprecated patterns",
+        "deterministic_checks": [
+          {
+            "type": "output_not_contains",
+            "value": "TodoWrite"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "Subcog"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "subagent_type"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "augment-happy-path",
+    "description": "Normal /sigint:augment with area specified references dimension-analyst",
+    "prompt": "/sigint:augment competitive-landscape",
+    "expectations": [
+      {
+        "description": "Output references dimension-analyst agent",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["dimension-analyst", "dimension analyst"]
+          }
+        ]
+      },
+      {
+        "description": "Output acknowledges the competitive-landscape area",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["competitive", "landscape", "competitive-landscape"]
+          }
+        ]
+      },
+      {
+        "description": "Output does not contain deprecated patterns",
+        "deterministic_checks": [
+          {
+            "type": "output_not_contains",
+            "value": "TodoWrite"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "Subcog"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "subagent_type"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "market-researcher"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "augment-methodology-flag",
+    "description": "/sigint:augment --methodology selects appropriate analysis skill",
+    "prompt": "/sigint:augment regulatory --methodology regulatory-review",
+    "expectations": [
+      {
+        "description": "Output references the regulatory-review methodology or skill",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["regulatory-review", "regulatory review", "regulatory"]
+          }
+        ]
+      },
+      {
+        "description": "Output references dimension-analyst for execution",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["dimension-analyst", "dimension analyst"]
+          }
+        ]
+      },
+      {
+        "description": "Output does not contain deprecated patterns",
+        "deterministic_checks": [
+          {
+            "type": "output_not_contains",
+            "value": "TodoWrite"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "Subcog"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "subagent_type"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "market-researcher"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "augment-atlatl-recall",
+    "description": "Verify /sigint:augment uses recall_memories for prior research context",
+    "prompt": "/sigint:augment financial-analysis",
+    "expectations": [
+      {
+        "description": "Output references recall_memories or Atlatl recall for prior context",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": [
+              "recall_memories",
+              "Atlatl",
+              "atlatl",
+              "prior research",
+              "existing findings"
+            ]
+          }
+        ]
+      },
+      {
+        "description": "Output does not contain deprecated patterns",
+        "deterministic_checks": [
+          {
+            "type": "output_not_contains",
+            "value": "TodoWrite"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "Subcog"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "subagent_type"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "market-researcher"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "augment-atlatl-capture",
+    "description": "Verify /sigint:augment uses capture_memory for persisting findings",
+    "prompt": "/sigint:augment market-sizing",
+    "expectations": [
+      {
+        "description": "Output references capture_memory or Atlatl capture for findings persistence",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": [
+              "capture_memory",
+              "Atlatl",
+              "atlatl",
+              "capture",
+              "persist"
+            ]
+          }
+        ]
+      },
+      {
+        "description": "Output does not contain deprecated patterns",
+        "deterministic_checks": [
+          {
+            "type": "output_not_contains",
+            "value": "TodoWrite"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "Subcog"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "subagent_type"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "market-researcher"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "augment-no-subcog",
+    "description": "Verify Subcog never appears in /sigint:augment transcript",
+    "prompt": "/sigint:augment tech-assessment",
+    "expectations": [
+      {
+        "description": "Subcog never appears in any form",
+        "deterministic_checks": [
+          {
+            "type": "output_not_contains",
+            "value": "Subcog"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "subcog"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "SUBCOG"
+          }
+        ]
+      },
+      {
+        "description": "Output uses Atlatl memory system",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["Atlatl", "atlatl", "capture_memory", "recall_memories"]
+          }
+        ]
+      },
+      {
+        "description": "Output does not contain other deprecated patterns",
+        "deterministic_checks": [
+          {
+            "type": "output_not_contains",
+            "value": "TodoWrite"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "subagent_type"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "market-researcher"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "augment-no-market-researcher",
+    "description": "Verify market-researcher is never referenced in /sigint:augment",
+    "prompt": "/sigint:augment customer-research",
+    "expectations": [
+      {
+        "description": "market-researcher never appears",
+        "deterministic_checks": [
+          {
+            "type": "output_not_contains",
+            "value": "market-researcher"
+          }
+        ]
+      },
+      {
+        "description": "Output references dimension-analyst instead",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["dimension-analyst", "dimension analyst"]
+          }
+        ]
+      },
+      {
+        "description": "Output does not contain other deprecated patterns",
+        "deterministic_checks": [
+          {
+            "type": "output_not_contains",
+            "value": "TodoWrite"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "Subcog"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "subagent_type"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "augment-source-chunker",
+    "description": "Verify /sigint:augment references source-chunker for large documents",
+    "prompt": "/sigint:augment trend-analysis --source large-pdf-report.pdf",
+    "expectations": [
+      {
+        "description": "Output references source-chunker for handling large documents",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["source-chunker", "source chunker", "chunking", "chunk"]
+          }
+        ]
+      },
+      {
+        "description": "Output does not contain deprecated patterns",
+        "deterministic_checks": [
+          {
+            "type": "output_not_contains",
+            "value": "TodoWrite"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "Subcog"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "subagent_type"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "market-researcher"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "issues-happy-path",
+    "description": "Default /sigint:issues references issue-architect agent",
+    "prompt": "/sigint:issues",
+    "expectations": [
+      {
+        "description": "Output references issue-architect agent",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["issue-architect", "issue architect"]
+          }
+        ]
+      },
+      {
+        "description": "Output does not contain deprecated patterns",
+        "deterministic_checks": [
+          {
+            "type": "output_not_contains",
+            "value": "TodoWrite"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "Subcog"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "subagent_type"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "market-researcher"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "issues-dry-run",
+    "description": "/sigint:issues --dry-run shows preview without creating issues",
+    "prompt": "/sigint:issues --dry-run",
+    "expectations": [
+      {
+        "description": "Output indicates dry-run or preview mode",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": [
+              "dry-run",
+              "dry run",
+              "preview",
+              "would create",
+              "Preview"
+            ]
+          }
+        ]
+      },
+      {
+        "description": "Output references issue-architect",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["issue-architect", "issue architect"]
+          }
+        ]
+      },
+      {
+        "description": "Output does not contain deprecated patterns",
+        "deterministic_checks": [
+          {
+            "type": "output_not_contains",
+            "value": "TodoWrite"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "Subcog"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "subagent_type"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "market-researcher"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "issues-agent-delegation",
+    "description": "Verify /sigint:issues uses Agent tool pattern, not Task/subagent_type",
+    "prompt": "/sigint:issues",
+    "expectations": [
+      {
+        "description": "Output references Agent tool or agent delegation",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["Agent", "agent", "issue-architect"]
+          }
+        ]
+      },
+      {
+        "description": "Output never uses subagent_type",
+        "deterministic_checks": [
+          {
+            "type": "output_not_contains",
+            "value": "subagent_type"
+          }
+        ]
+      },
+      {
+        "description": "Output does not contain other deprecated patterns",
+        "deterministic_checks": [
+          {
+            "type": "output_not_contains",
+            "value": "TodoWrite"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "Subcog"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "market-researcher"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "issues-atlatl-capture",
+    "description": "Verify /sigint:issues uses Atlatl for memory persistence",
+    "prompt": "/sigint:issues",
+    "expectations": [
+      {
+        "description": "Output references Atlatl memory for persisting issue creation context",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["Atlatl", "atlatl", "capture_memory", "blackboard"]
+          }
+        ]
+      },
+      {
+        "description": "Output does not contain deprecated patterns",
+        "deterministic_checks": [
+          {
+            "type": "output_not_contains",
+            "value": "TodoWrite"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "Subcog"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "subagent_type"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "market-researcher"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "issues-no-subcog",
+    "description": "Verify Subcog never appears in /sigint:issues transcript",
+    "prompt": "/sigint:issues --dry-run",
+    "expectations": [
+      {
+        "description": "Subcog never appears in any form",
+        "deterministic_checks": [
+          {
+            "type": "output_not_contains",
+            "value": "Subcog"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "subcog"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "SUBCOG"
+          }
+        ]
+      },
+      {
+        "description": "Output does not contain other deprecated patterns",
+        "deterministic_checks": [
+          {
+            "type": "output_not_contains",
+            "value": "TodoWrite"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "subagent_type"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "market-researcher"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "update-happy-path",
+    "description": "Default /sigint:update triggers research refresh flow",
+    "prompt": "/sigint:update",
+    "expectations": [
+      {
+        "description": "Output indicates research refresh or update process",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["refresh", "update", "re-research", "latest", "current"]
+          }
+        ]
+      },
+      {
+        "description": "Output does not contain deprecated patterns",
+        "deterministic_checks": [
+          {
+            "type": "output_not_contains",
+            "value": "TodoWrite"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "Subcog"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "subagent_type"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "market-researcher"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "update-area-flag",
+    "description": "/sigint:update --area targets update to specific research area",
+    "prompt": "/sigint:update --area competitive-landscape",
+    "expectations": [
+      {
+        "description": "Output acknowledges the targeted area",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["competitive", "landscape", "competitive-landscape"]
+          }
+        ]
+      },
+      {
+        "description": "Output indicates targeted rather than full refresh"
+      },
+      {
+        "description": "Output does not contain deprecated patterns",
+        "deterministic_checks": [
+          {
+            "type": "output_not_contains",
+            "value": "TodoWrite"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "Subcog"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "subagent_type"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "market-researcher"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "update-atlatl-capture",
+    "description": "Verify /sigint:update references capture_memory for updated findings",
+    "prompt": "/sigint:update",
+    "expectations": [
+      {
+        "description": "Output references capture_memory or Atlatl for persisting updates",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": [
+              "capture_memory",
+              "Atlatl",
+              "atlatl",
+              "update_memory",
+              "capture"
+            ]
+          }
+        ]
+      },
+      {
+        "description": "Output does not contain deprecated patterns",
+        "deterministic_checks": [
+          {
+            "type": "output_not_contains",
+            "value": "TodoWrite"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "Subcog"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "subagent_type"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "market-researcher"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "update-no-subcog",
+    "description": "Verify Subcog never appears in /sigint:update transcript",
+    "prompt": "/sigint:update --area market-sizing",
+    "expectations": [
+      {
+        "description": "Subcog never appears in any form",
+        "deterministic_checks": [
+          {
+            "type": "output_not_contains",
+            "value": "Subcog"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "subcog"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "SUBCOG"
+          }
+        ]
+      },
+      {
+        "description": "Output does not contain other deprecated patterns",
+        "deterministic_checks": [
+          {
+            "type": "output_not_contains",
+            "value": "TodoWrite"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "subagent_type"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "market-researcher"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "update-trend-recalc",
+    "description": "Verify /sigint:update mentions trend recalculation with INC/DEC/CONST indicators",
+    "prompt": "/sigint:update",
+    "expectations": [
+      {
+        "description": "Output references trend recalculation or trend indicators",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["INC", "DEC", "CONST", "trend", "Trend", "recalcul"]
+          }
+        ]
+      },
+      {
+        "description": "Output does not contain deprecated patterns",
+        "deterministic_checks": [
+          {
+            "type": "output_not_contains",
+            "value": "TodoWrite"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "Subcog"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "subagent_type"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "market-researcher"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "resume-happy-path",
+    "description": "Default /sigint:resume restores previous research session",
+    "prompt": "/sigint:resume",
+    "expectations": [
+      {
+        "description": "Output indicates session restoration or resumption",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["resum", "restor", "session", "previous", "continu"]
+          }
+        ]
+      },
+      {
+        "description": "Output does not contain deprecated patterns",
+        "deterministic_checks": [
+          {
+            "type": "output_not_contains",
+            "value": "TodoWrite"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "Subcog"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "subagent_type"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "market-researcher"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "resume-list-flag",
+    "description": "/sigint:resume --list displays available sessions in table format",
+    "prompt": "/sigint:resume --list",
+    "expectations": [
+      {
+        "description": "Output displays a list or table of available sessions",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["session", "Session", "list", "available", "topic"]
+          }
+        ]
+      },
+      {
+        "description": "Output presents sessions in a structured format (table or list)"
+      },
+      {
+        "description": "Output does not contain deprecated patterns",
+        "deterministic_checks": [
+          {
+            "type": "output_not_contains",
+            "value": "TodoWrite"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "Subcog"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "subagent_type"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "market-researcher"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "resume-atlatl-recall",
+    "description": "Verify /sigint:resume uses recall_memories to restore session context",
+    "prompt": "/sigint:resume",
+    "expectations": [
+      {
+        "description": "Output references recall_memories or Atlatl for session restoration",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": [
+              "recall_memories",
+              "Atlatl",
+              "atlatl",
+              "memory",
+              "recall"
+            ]
+          }
+        ]
+      },
+      {
+        "description": "Output does not contain deprecated patterns",
+        "deterministic_checks": [
+          {
+            "type": "output_not_contains",
+            "value": "TodoWrite"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "Subcog"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "subagent_type"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "market-researcher"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "resume-no-subcog",
+    "description": "Verify Subcog never appears in /sigint:resume transcript",
+    "prompt": "/sigint:resume",
+    "expectations": [
+      {
+        "description": "Subcog never appears in any form",
+        "deterministic_checks": [
+          {
+            "type": "output_not_contains",
+            "value": "Subcog"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "subcog"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "SUBCOG"
+          }
+        ]
+      },
+      {
+        "description": "Output does not contain other deprecated patterns",
+        "deterministic_checks": [
+          {
+            "type": "output_not_contains",
+            "value": "TodoWrite"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "subagent_type"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "market-researcher"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "resume-topic-specified",
+    "description": "/sigint:resume with topic loads topic-specific context",
+    "prompt": "/sigint:resume autonomous vehicles",
+    "expectations": [
+      {
+        "description": "Output scopes restoration to the specified topic",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["autonomous vehicle", "autonomous vehicles"]
+          }
+        ]
+      },
+      {
+        "description": "Output references recall_memories or Atlatl for topic-specific recall",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": [
+              "recall_memories",
+              "Atlatl",
+              "atlatl",
+              "recall",
+              "memory"
+            ]
+          }
+        ]
+      },
+      {
+        "description": "Output does not contain deprecated patterns",
+        "deterministic_checks": [
+          {
+            "type": "output_not_contains",
+            "value": "TodoWrite"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "Subcog"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "subagent_type"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "market-researcher"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "status-happy-path",
+    "description": "Default /sigint:status renders a research dashboard",
+    "prompt": "/sigint:status",
+    "expectations": [
+      {
+        "description": "Output renders a dashboard or status overview",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": [
+              "status",
+              "Status",
+              "dashboard",
+              "Dashboard",
+              "progress",
+              "Progress"
+            ]
+          }
+        ]
+      },
+      {
+        "description": "Output does not contain deprecated patterns",
+        "deterministic_checks": [
+          {
+            "type": "output_not_contains",
+            "value": "TodoWrite"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "Subcog"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "subagent_type"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "market-researcher"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "status-verbose",
+    "description": "/sigint:status --verbose shows detailed findings",
+    "prompt": "/sigint:status --verbose",
+    "expectations": [
+      {
+        "description": "Output includes detailed findings or expanded information",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": [
+              "detail",
+              "Detail",
+              "finding",
+              "Finding",
+              "verbose",
+              "expanded"
+            ]
+          }
+        ]
+      },
+      {
+        "description": "Output renders more information than default status view"
+      },
+      {
+        "description": "Output does not contain deprecated patterns",
+        "deterministic_checks": [
+          {
+            "type": "output_not_contains",
+            "value": "TodoWrite"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "Subcog"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "subagent_type"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "market-researcher"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "status-team-progress",
+    "description": "Verify /sigint:status shows team progress via blackboard",
+    "prompt": "/sigint:status",
+    "expectations": [
+      {
+        "description": "Output references blackboard or team status tracking",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": [
+              "blackboard",
+              "team_status",
+              "team progress",
+              "team",
+              "Team"
+            ]
+          }
+        ]
+      },
+      {
+        "description": "Output does not contain deprecated patterns",
+        "deterministic_checks": [
+          {
+            "type": "output_not_contains",
+            "value": "TodoWrite"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "Subcog"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "subagent_type"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "market-researcher"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "status-coverage-gaps",
+    "description": "Verify /sigint:status identifies coverage gaps in research",
+    "prompt": "/sigint:status",
+    "expectations": [
+      {
+        "description": "Output identifies coverage gaps or incomplete research areas",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": [
+              "gap",
+              "Gap",
+              "coverage",
+              "Coverage",
+              "incomplete",
+              "missing",
+              "remaining"
+            ]
+          }
+        ]
+      },
+      {
+        "description": "Output does not contain deprecated patterns",
+        "deterministic_checks": [
+          {
+            "type": "output_not_contains",
+            "value": "TodoWrite"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "Subcog"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "subagent_type"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "market-researcher"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "status-next-actions",
+    "description": "Verify /sigint:status suggests next actions",
+    "prompt": "/sigint:status",
+    "expectations": [
+      {
+        "description": "Output includes suggested next actions or recommendations",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": [
+              "next",
+              "Next",
+              "action",
+              "Action",
+              "recommend",
+              "Recommend",
+              "suggest",
+              "Suggest"
+            ]
+          }
+        ]
+      },
+      {
+        "description": "Output does not contain deprecated patterns",
+        "deterministic_checks": [
+          {
+            "type": "output_not_contains",
+            "value": "TodoWrite"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "Subcog"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "subagent_type"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "market-researcher"
+          }
+        ]
+      }
+    ]
+  }
+]

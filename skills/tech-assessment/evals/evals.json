@@ -1,0 +1,430 @@
+{
+  "skill_name": "tech-assessment",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "We're evaluating whether to adopt Apache Kafka for our event streaming needs. We currently use RabbitMQ but are hitting scaling limits at about 50k messages/sec. Can you do a full technology assessment of Kafka for our use case?",
+      "expected_output": "A structured technology assessment of Apache Kafka covering TRL, hype cycle position, evaluation matrix with scored dimensions, risk assessment, and actionable recommendations",
+      "files": [],
+      "deterministic_checks": [
+        {
+          "type": "file_contains",
+          "file": "transcript.md",
+          "literal": "TRL",
+          "description": "Assessment includes Technology Readiness Level classification"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "[Hh]ype [Cc]ycle|[Pp]lateau of [Pp]roductivity|[Ss]lope of [Ee]nlightenment",
+          "description": "Assessment maps Kafka to a Gartner Hype Cycle position"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "INC|DEC|CONST|[Ii]ncreasing|[Dd]ecreasing|[Ss]table",
+          "description": "Assessment includes a trend indicator for Kafka"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "[Tt]echnical [Mm]aturity.*[1-5]|[Ss]trategic [Ff]it.*[1-5]|[Rr]isk [Pp]rofile.*[1-5]|[Ee]conomic.*[1-5]",
+          "description": "Assessment includes scored evaluation dimensions (1-5 scale)"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "[Rr]isk|[Mm]itigation",
+          "description": "Assessment includes risk analysis"
+        },
+        {
+          "type": "file_contains",
+          "file": "transcript.md",
+          "literal": "Kafka",
+          "description": "Assessment names the technology being assessed"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "RabbitMQ|50k|50,000|scaling",
+          "description": "Assessment references user's current context"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "[Rr]ecommend|[Nn]ext [Ss]tep|[Aa]ction",
+          "description": "Assessment includes recommendations section"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "[Mm]onitoring [Ii]ndicator|[Ww]hat to [Ww]atch|[Ss]ignal",
+          "description": "Assessment includes monitoring indicators per output template"
+        }
+      ],
+      "expectations": [
+        "Kafka is assessed at TRL 7-9 (production/mature) given its widespread enterprise adoption",
+        "The evaluation matrix scores Technical Maturity, Strategic Fit, Risk Profile, and Economic Factors each on a 1-5 scale",
+        "Recommendations are actionable and specific, not vague platitudes"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "We need to decide whether to build our own authentication system or buy an identity platform like Auth0 or Okta. We're a 30-person B2B SaaS startup with about 500 enterprise customers. Can you run the build vs buy framework on this?",
+      "expected_output": "A structured build vs buy analysis using the weighted scoring matrix from the skill, with a clear recommendation and rationale",
+      "files": [],
+      "deterministic_checks": [
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "[Bb]uild.*[Bb]uy|[Bb]uy.*[Bb]uild",
+          "description": "Assessment explicitly frames the build vs buy comparison"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "[Ss]trategic [Ii]mportance.*[0-9]|[Dd]ifferentiation.*[0-9]|[Tt]ime to [Mm]arket.*[0-9]|[Tt]otal [Cc]ost.*[0-9]",
+          "description": "Assessment uses the weighted scoring factors from the Build vs Buy Matrix"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "30%|25%|20%|15%|10%|[Ww]eight",
+          "description": "Assessment includes factor weights from the framework"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "[Ww]eighted [Tt]otal|[Oo]verall.*[Ss]core|[Rr]ecommend",
+          "description": "Assessment produces a weighted total score and recommendation"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "Auth0|Okta",
+          "description": "Assessment evaluates specific buy options mentioned by user"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "[Cc]ommodity|[Cc]ore [Dd]ifferentiator|[Cc]ompetitive",
+          "description": "Assessment applies Build When/Buy When criteria from the framework"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "30.*person|30.*engineer|[Ss]tartup|500.*customer",
+          "description": "Assessment references the user's team size or customer base"
+        }
+      ],
+      "expectations": [
+        "The analysis uses the 5-factor weighted matrix (Strategic importance 30%, Differentiation 25%, Time to market 20%, Total cost 15%, Risk 10%)",
+        "Both Build and Buy options receive numeric scores for each factor",
+        "The recommendation leans toward Buy given that auth is commodity functionality for a B2B SaaS, matching the 'Buy When' criteria in the skill"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Do a tech stack analysis for our platform. We're running on AWS with ECS for containers, PostgreSQL on RDS, Redis for caching, a React frontend with Next.js, and a Go backend. We also use Terraform for IaC and GitHub Actions for CI/CD. I want to know where our stack is strong and where we have gaps.",
+      "expected_output": "A layered tech stack analysis covering Infrastructure, Platform, and Application layers with evaluation criteria scores and gap identification",
+      "files": [],
+      "deterministic_checks": [
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "[Ii]nfrastructure|[Pp]latform|[Aa]pplication",
+          "description": "Assessment covers the three stack layers from the skill framework"
+        },
+        {
+          "type": "file_contains",
+          "file": "transcript.md",
+          "literal": "AWS",
+          "description": "Assessment evaluates AWS as the cloud provider"
+        },
+        {
+          "type": "file_contains",
+          "file": "transcript.md",
+          "literal": "ECS",
+          "description": "Assessment evaluates ECS as the compute layer"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "[Pp]erformance|[Ss]calability|[Mm]aintainability|[Ss]ecurity|[Cc]ost|[Tt]alent|[Cc]ommunity",
+          "description": "Assessment uses Stack Evaluation Criteria from the skill"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "[Gg]ap|[Ww]eakness|[Mm]issing|[Ii]mprove",
+          "description": "Assessment identifies gaps or areas for improvement"
+        },
+        {
+          "type": "file_contains",
+          "file": "transcript.md",
+          "literal": "PostgreSQL",
+          "description": "Assessment evaluates PostgreSQL from user's stack"
+        },
+        {
+          "type": "file_contains",
+          "file": "transcript.md",
+          "literal": "Redis",
+          "description": "Assessment evaluates Redis from user's stack"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "Next\\.js|Next\\.JS|NextJS|Nextjs",
+          "description": "Assessment evaluates Next.js from user's stack"
+        },
+        {
+          "type": "file_contains",
+          "file": "transcript.md",
+          "literal": "Terraform",
+          "description": "Assessment evaluates Terraform from user's stack"
+        }
+      ],
+      "expectations": [
+        "Technologies are organized into the three layers (Infrastructure, Platform, Application) from the skill framework",
+        "Each technology is evaluated against the Stack Evaluation Criteria (Performance, Scalability, Maintainability, Security, Cost, Talent, Community)",
+        "Trend indicators (INC/DEC/CONST) are applied to at least some of the technologies in the stack"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "We're looking at acquiring a small AI startup. Can you give me a technical due diligence checklist and assessment framework to evaluate their technology?",
+      "expected_output": "A comprehensive technical due diligence framework covering Architecture Review, Code Quality, Operations, and Team assessment areas",
+      "files": [],
+      "deterministic_checks": [
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "[Aa]rchitecture [Rr]eview",
+          "description": "Assessment includes Architecture Review section from the due diligence framework"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "[Cc]ode [Qq]uality",
+          "description": "Assessment includes Code Quality section"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "[Oo]perations",
+          "description": "Assessment includes Operations section"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "[Tt]eam|[Kk]ey [Pp]erson|[Rr]etention",
+          "description": "Assessment includes Team evaluation with key person dependency or retention considerations"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "[Tt]echnical [Dd]ebt|[Tt]esting [Cc]overage|[Ss]ecurity [Pp]ractice",
+          "description": "Assessment addresses concrete evaluation criteria not just section headers"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "[Dd]eployment|[Mm]onitoring|[Oo]bservability|[Ii]ncident",
+          "description": "Operations section covers deployment or monitoring specifics"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "[Ss]calability|[Ss]ystem [Dd]esign|[Pp]attern",
+          "description": "Architecture review covers scalability or design patterns"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "AI|[Mm]achine [Ll]earning|ML|[Mm]odel",
+          "description": "Assessment is contextualized to AI/ML startup specifics"
+        }
+      ],
+      "expectations": [
+        "All four due diligence areas are covered: Architecture Review, Code Quality, Operations, Team",
+        "Each area includes the specific sub-items from the skill (e.g., Architecture Review covers system design, scalability, technical debt, documentation quality)",
+        "The framework is tailored to AI startup specifics (model quality, training data, ML pipeline) not just generic software due diligence",
+        "Key person dependency and retention risk are explicitly called out given it's a small startup"
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "assess webassembly as a technology for us - we're thinking about using it for running user-submitted code in a sandbox on our platform",
+      "expected_output": "A technology assessment of WebAssembly with TRL classification appropriate for an emerging-but-maturing technology, hype cycle position, and evaluation against the sandboxed code execution use case",
+      "files": [],
+      "deterministic_checks": [
+        {
+          "type": "file_contains",
+          "file": "transcript.md",
+          "literal": "TRL",
+          "description": "Assessment includes TRL classification"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "[Hh]ype [Cc]ycle|[Ss]lope of [Ee]nlightenment|[Pp]lateau|[Tt]rough",
+          "description": "Assessment includes Hype Cycle positioning"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "[Ss]andbox|[Ii]solat|[Ss]ecur",
+          "description": "Assessment addresses the sandboxing use case specifically"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "[1-5].*\\/.*5|[Ss]core.*[1-5]|[1-5]\\s*\\|",
+          "description": "Assessment includes numeric scores in the evaluation matrix"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "WebAssembly|Wasm|WASM",
+          "description": "Assessment names the technology being assessed"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "[Rr]ecommend|[Nn]ext [Ss]tep|[Aa]ction",
+          "description": "Assessment includes recommendations"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "[Rr]isk.*[Mm]itigation|[Pp]rimary [Rr]isk|[Ss]econdary [Rr]isk",
+          "description": "Assessment includes risk mitigation per output template"
+        }
+      ],
+      "expectations": [
+        "WebAssembly is assessed at TRL 6-8 range reflecting its transition from development to production readiness",
+        "Security and isolation capabilities are evaluated in depth given the sandboxed code execution use case",
+        "The assessment mentions specific WebAssembly runtimes (Wasmtime, Wasmer, V8) as implementation options",
+        "Risks specific to user-submitted code execution are identified (escape vulnerabilities, resource limits, API surface)"
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "compare kubernetes vs nomad vs ecs for our container orchestration. we have 3 devops engineers and run about 40 microservices",
+      "expected_output": "A competitive technology analysis comparing three container orchestration platforms using the skill's comparative framework with trend indicators",
+      "files": [],
+      "deterministic_checks": [
+        {
+          "type": "file_contains",
+          "file": "transcript.md",
+          "literal": "Kubernetes",
+          "description": "Assessment evaluates Kubernetes"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "[Nn]omad",
+          "description": "Assessment evaluates Nomad"
+        },
+        {
+          "type": "file_contains",
+          "file": "transcript.md",
+          "literal": "ECS",
+          "description": "Assessment evaluates ECS"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "INC|DEC|CONST",
+          "description": "Assessment uses trend indicators from the skill framework"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "[Ss]trength|[Ww]eakness|[Aa]dvantage|[Gg]ap",
+          "description": "Assessment identifies strengths and weaknesses for each option"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "3 [Dd]ev[Oo]ps|three.*engineer|[Ss]mall team|[Ll]imited.*staff",
+          "description": "Assessment references the team size constraint"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "40 [Mm]icroservice|40 service|forty",
+          "description": "Assessment references the 40 microservices scale factor"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "[Rr]ecommend|[Ss]uggested|[Oo]ur [Pp]ick|[Bb]est [Ff]it",
+          "description": "Assessment makes a clear recommendation"
+        }
+      ],
+      "expectations": [
+        "All three technologies are assessed side-by-side using the Competitive Technology Analysis table format from the skill",
+        "Each technology gets a trend indicator (INC/DEC/CONST) with justification",
+        "The assessment factors in team size (3 DevOps engineers) when evaluating operational complexity",
+        "A clear recommendation is made with rationale tied to the user's specific constraints, not just a neutral comparison"
+      ]
+    },
+    {
+      "id": 7,
+      "prompt": "technology assessment for blockchain in our supply chain tracking product",
+      "expected_output": "A technology assessment of blockchain for supply chain that honestly addresses the hype cycle position and evaluates whether it fits the specific use case",
+      "files": [],
+      "deterministic_checks": [
+        {
+          "type": "file_contains",
+          "file": "transcript.md",
+          "literal": "TRL",
+          "description": "Assessment includes TRL classification"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "[Hh]ype [Cc]ycle|[Tt]rough of [Dd]isillusionment|[Ss]lope of [Ee]nlightenment",
+          "description": "Assessment maps blockchain to the Hype Cycle"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "[Ss]upply [Cc]hain",
+          "description": "Assessment is contextualized to supply chain use case"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "[Rr]isk|[Cc]hallenge|[Ll]imitation",
+          "description": "Assessment identifies risks or challenges"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "[Bb]lockchain|[Dd]istributed [Ll]edger|DLT",
+          "description": "Assessment names the technology"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "[Cc]ompetitive [Pp]osition|[Aa]lternative|[Cc]entralized|[Dd]atabase",
+          "description": "Assessment considers alternatives to blockchain"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "[Rr]ecommend|[Nn]ext [Ss]tep",
+          "description": "Assessment provides recommendations"
+        }
+      ],
+      "expectations": [
+        "Blockchain for supply chain is positioned appropriately on the Hype Cycle (Trough of Disillusionment or Slope of Enlightenment depending on the specific application)",
+        "The evaluation matrix scores are realistic and not inflated - blockchain has known economic and scalability challenges for supply chain",
+        "The assessment considers alternatives (e.g., centralized databases with audit trails) as part of the competitive position analysis",
+        "Build vs Buy considerations are addressed given that supply chain blockchain platforms exist (IBM Food Trust, VeChain)"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,361 @@
+{
+  "skill_name": "trend-analysis",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I need a full trend analysis on the enterprise observability market. We're evaluating whether to build an observability product and want to understand where the market is heading over the next 3-5 years. Cover macro and micro trends, and give me a scenario graph.",
+      "expected_output": "A comprehensive trend analysis following the skill's output structure with macro trends, micro trends, emerging signals, transitional scenario graph in Mermaid, terminal scenarios, implications, and monitoring indicators",
+      "files": [],
+      "deterministic_checks": [
+        {
+          "type": "file_contains",
+          "file": "transcript.md",
+          "literal": "Macro Trends",
+          "description": "Output contains the Macro Trends section header"
+        },
+        {
+          "type": "file_contains",
+          "file": "transcript.md",
+          "literal": "Micro Trends",
+          "description": "Output contains the Micro Trends section header"
+        },
+        {
+          "type": "file_contains",
+          "file": "transcript.md",
+          "literal": "Emerging Signal",
+          "description": "Output contains an Emerging Signals section"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "stateDiagram-v2",
+          "description": "Output contains a Mermaid stateDiagram-v2 for the transitional scenario graph"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "(INC|DEC|CONST)",
+          "description": "Output uses three-valued trend logic labels (INC, DEC, or CONST)"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "(High|Medium|Med|Low)",
+          "description": "Output includes confidence levels for trend assessments"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "Terminal Scenario",
+          "description": "Output contains a Terminal Scenarios section"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "[Mm]onitoring [Ii]ndicator",
+          "description": "Output contains a Monitoring Indicators section"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "[Ii]mplication",
+          "description": "Output contains an Implications section"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "\\[\\*\\]\\s*-->",
+          "description": "Mermaid diagram has a start state transition"
+        }
+      ],
+      "expectations": [
+        "The macro trends table includes columns for Trend, Direction, Confidence, and Timeframe",
+        "The micro trends table includes columns for Trend, Direction, Confidence, and Timeframe",
+        "The transitional scenario graph shows at least 3 distinct states branching from a current state",
+        "Terminal scenarios are described with conditions under which they would occur"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Can you identify the key macro trends affecting agriculture technology? I run a mid-size farm and want to understand what big shifts I should be watching for the next decade.",
+      "expected_output": "A trend analysis focused on macro trends in agriculture technology with INC/DEC/CONST classifications, confidence levels, and practical implications for a farm operator",
+      "files": [],
+      "deterministic_checks": [
+        {
+          "type": "file_contains",
+          "file": "transcript.md",
+          "literal": "Macro Trends",
+          "description": "Output contains the Macro Trends section"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "(INC|DEC|CONST)",
+          "description": "Output uses three-valued trend logic"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "(High|Medium|Med|Low)",
+          "description": "Confidence levels are assigned to each trend"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "(3|5|10|\\d+)\\s*(year|yr)",
+          "description": "Timeframes are specified for macro trends"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "[Ii]mplication",
+          "description": "Output includes an implications section"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "(Economic|Technological|Social|Environmental|Political)",
+          "description": "Output references at least one macro trend category from the skill framework"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "(agriculture|farm|crop|precision|irrigation|agri)",
+          "description": "Output is domain-specific to agriculture, not generic"
+        }
+      ],
+      "expectations": [
+        "Macro trends cover at least 3 of the 5 categories from the skill: Economic, Technological, Social, Environmental, Political",
+        "Each trend in the table has Direction, Confidence, and Timeframe columns filled in",
+        "The analysis connects trends back to practical farm operations, not just abstract market forces"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "what are the emerging signals in the AI coding assistants space? I don't need a full report, just the early indicators and what they might mean.",
+      "expected_output": "A focused analysis on emerging signals (sub-1-year indicators) in the AI coding assistant space, with signal sources and potential implications",
+      "files": [],
+      "deterministic_checks": [
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "[Ee]merging [Ss]ignal",
+          "description": "Output contains an emerging signals section"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "(startup|patent|research|early adopter|influencer|funding|hiring)",
+          "description": "Output references at least one signal source type from the skill methodology"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "(implication|indicate|suggest|point|forecast)",
+          "description": "Each signal is connected to its potential meaning or implication"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "(AI|coding|assistant|copilot|IDE|developer)",
+          "description": "Output is specific to the AI coding assistants domain"
+        }
+      ],
+      "expectations": [
+        "The output focuses on emerging signals (under 1 year timeframe) rather than established macro trends",
+        "Each signal is paired with a potential implication or what it might indicate",
+        "Signal sources reference at least 2 of: startup activity, patent filings, research papers, early adopter behavior, influencer attention, funding announcements",
+        "The output is concise and focused, not a full trend report -- respecting the user's request for 'just the early indicators'"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "I have these data points about our SaaS market:\n- Customer acquisition cost up 22% YoY\n- Net retention rate stable at 115% for 3 quarters\n- Competitor pricing down 10-15% across the board\n- API-first architectures growing in RFPs (now 60% vs 30% two years ago)\n- On-premise deployment requests declining from 25% to 8% of deals\n\nCan you do a trend analysis on this and give me the three-valued logic classification plus a scenario graph?",
+      "expected_output": "A trend analysis that classifies each provided data point using INC/DEC/CONST logic, includes correlation-to-trend conversion where applicable, and produces a transitional scenario graph",
+      "files": [],
+      "deterministic_checks": [
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "INC",
+          "description": "Output includes INC classification"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "DEC",
+          "description": "Output includes DEC classification"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "CONST",
+          "description": "Output includes CONST classification"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "stateDiagram",
+          "description": "Output includes a Mermaid state diagram"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "(High|Medium|Med|Low)",
+          "description": "Confidence levels are assigned"
+        }
+      ],
+      "expectations": [
+        "Customer acquisition cost is classified as INC (22% YoY increase)",
+        "Net retention rate is classified as CONST (stable at 115%)",
+        "Competitor pricing is classified as DEC (down 10-15%)",
+        "API-first architecture adoption is classified as INC (30% to 60%)",
+        "On-premise deployment requests are classified as DEC (25% to 8%)",
+        "The scenario graph shows at least a current state branching into multiple possible futures based on the trend indicators"
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "analyze trends in the cybersecurity market but I only care about micro trends, not the big picture stuff. Focus on what's changing in the next 1-2 years.",
+      "expected_output": "A trend analysis focused specifically on micro trends (1-3 year timeframe) in cybersecurity, without extensive macro trend coverage",
+      "files": [],
+      "deterministic_checks": [
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "[Mm]icro [Tt]rend",
+          "description": "Output contains micro trends section"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "(INC|DEC|CONST)",
+          "description": "Output uses three-valued trend logic"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "(month|year|yr|1-2|1-3)",
+          "description": "Timeframes are in the micro range (months to 1-3 years)"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "(High|Medium|Med|Low)",
+          "description": "Confidence levels are included for micro trends"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "(security|cyber|threat|vulnerability|zero.trust|SIEM|endpoint|SOC)",
+          "description": "Output is specific to cybersecurity domain"
+        }
+      ],
+      "expectations": [
+        "The output focuses on micro trends (1-3 year timeframe) as the user requested, not macro trends",
+        "Micro trends cover specific cybersecurity segments such as feature adoption, pricing shifts, or competitive dynamics",
+        "Each micro trend has Direction (INC/DEC/CONST), Confidence, and Timeframe",
+        "The output does NOT lead with extensive macro trend analysis when the user explicitly said they only care about micro trends"
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "I want to understand how to identify trends. Walk me through the trend identification process and the three-valued logic system you use.",
+      "expected_output": "An educational explanation of the five-step trend identification process and the INC/DEC/CONST three-valued logic system, including correlation-to-trend conversion thresholds",
+      "files": [],
+      "deterministic_checks": [
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "INC.*DEC.*CONST|INC.*CONST.*DEC|DEC.*INC.*CONST",
+          "description": "Output explains all three trend values"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "[Ss]ignal [Gg]athering|[Ss]tep 1",
+          "description": "Output covers the signal gathering step of the process"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "[Pp]attern [Rr]ecognition|[Ss]tep 2",
+          "description": "Output covers the pattern recognition step"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "[Vv]alidation|[Ss]tep 3",
+          "description": "Output covers the validation step"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "[Cc]lassification|[Ss]tep 4",
+          "description": "Output covers the classification step"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "[Pp]rojection|[Ss]tep 5",
+          "description": "Output covers the projection step"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "0\\.3|correlation",
+          "description": "Output references the correlation threshold or correlation-to-trend conversion"
+        }
+      ],
+      "expectations": [
+        "The explanation covers all five steps: Signal Gathering, Pattern Recognition, Validation, Classification, and Projection",
+        "The three-valued logic system (INC, DEC, CONST) is explained with examples of what each means",
+        "The correlation-to-trend conversion thresholds are mentioned (r > 0.3 for INC, r < -0.3 for DEC, between for CONST)"
+      ]
+    },
+    {
+      "id": 7,
+      "prompt": "Give me a trend analysis on the market for desktop Linux adoption in enterprise. I suspect it's basically flat but I want the analysis to tell me for sure. Include the quality assessment.",
+      "expected_output": "A trend analysis that objectively assesses desktop Linux enterprise adoption trends, includes confidence ratings with evidence requirements, and does not just confirm the user's suspicion without evidence",
+      "files": [],
+      "deterministic_checks": [
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "(INC|DEC|CONST)",
+          "description": "Output uses three-valued trend logic"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "(High|Medium|Med|Low)",
+          "description": "Output includes confidence levels"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "[Qq]uality|[Cc]onfidence|[Ee]vidence",
+          "description": "Output includes trend quality assessment section"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "(Linux|linux|desktop)",
+          "description": "Output is specific to the desktop Linux domain"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "(independent source|source|evidence|data)",
+          "description": "Output discusses evidence requirements for the confidence assessment"
+        }
+      ],
+      "expectations": [
+        "The trend quality assessment follows the skill's confidence rubric (High: 3+ independent sources; Medium: 2+ sources; Low: single source)",
+        "The analysis does NOT simply confirm the user's suspicion of 'flat' without providing evidence -- it presents evidence and lets the classification follow from data",
+        "The output acknowledges uncertainty where evidence is limited rather than presenting speculation as fact",
+        "Common pitfalls like confirmation bias are avoided -- the analysis considers both growth and decline signals, not just flatness"
+      ]
+    }
+  ]
+}

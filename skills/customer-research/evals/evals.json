@@ -1,0 +1,365 @@
+[
+  {
+    "name": "persona-development-saas",
+    "prompt": "I need to build buyer personas for our B2B SaaS project management tool. We're targeting mid-market companies (200-1000 employees). Can you help me develop 2-3 detailed personas?",
+    "expectations": [
+      {
+        "description": "Output contains at least 2 distinct personas with unique names",
+        "deterministic_checks": [
+          {
+            "type": "output_pattern_count",
+            "pattern": "### Profile|## \\w+ \\w+\\n+.*Role",
+            "min_count": 2
+          }
+        ]
+      },
+      {
+        "description": "Each persona includes demographics: role/job title, company size, and industry",
+        "deterministic_checks": [
+          {
+            "type": "output_contains",
+            "value": "Role"
+          },
+          {
+            "type": "output_contains",
+            "value": "Company"
+          }
+        ]
+      },
+      {
+        "description": "Each persona includes psychographics: goals, pain points, and decision-making factors",
+        "deterministic_checks": [
+          {
+            "type": "output_contains",
+            "value": "Goals"
+          },
+          {
+            "type": "output_contains",
+            "value": "Pain Points"
+          }
+        ]
+      },
+      {
+        "description": "Each persona includes buying behavior section with trigger, research method, and decision factors",
+        "deterministic_checks": [
+          {
+            "type": "output_contains",
+            "value": "Buying Behavior"
+          },
+          {
+            "type": "output_contains",
+            "value": "Trigger"
+          }
+        ]
+      },
+      {
+        "description": "Personas are specific to mid-market B2B SaaS context, not generic templates with placeholder brackets"
+      },
+      {
+        "description": "Output does NOT contain unfilled placeholder brackets like [Job title] or [Size, industry]",
+        "deterministic_checks": [
+          {
+            "type": "output_not_contains",
+            "value": "[Job title]"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "[Size, industry]"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "jtbd-framework-ecommerce",
+    "prompt": "We run an e-commerce analytics platform and want to understand our customers through Jobs-to-be-Done. Help me create JTBD statements for our key user segments.",
+    "expectations": [
+      {
+        "description": "Output contains multiple JTBD statements in the 'When [situation], I want to [motivation], so I can [expected outcome]' format",
+        "deterministic_checks": [
+          {
+            "type": "output_contains",
+            "value": "When "
+          },
+          {
+            "type": "output_contains",
+            "value": "I want to"
+          },
+          {
+            "type": "output_contains",
+            "value": "so I can"
+          }
+        ]
+      },
+      {
+        "description": "Output distinguishes between functional jobs and emotional jobs",
+        "deterministic_checks": [
+          {
+            "type": "output_contains",
+            "value": "Functional"
+          },
+          {
+            "type": "output_contains",
+            "value": "Emotional"
+          }
+        ]
+      },
+      {
+        "description": "JTBD statements are specific to e-commerce analytics, referencing concepts like conversions, revenue, traffic, or product performance"
+      },
+      {
+        "description": "Output includes at least 3 distinct JTBD statements covering different user segments or use cases"
+      },
+      {
+        "description": "Output does NOT contain generic placeholder text like [situation] or [motivation]",
+        "deterministic_checks": [
+          {
+            "type": "output_not_contains",
+            "value": "[situation]"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "[motivation]"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "[expected outcome]"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "customer-journey-map-fintech",
+    "prompt": "I'm working on a fintech app for small business invoicing. Can you map out the customer journey from awareness to advocacy? I want to identify where we're losing people.",
+    "expectations": [
+      {
+        "description": "Output includes all 6 journey stages: Awareness, Consideration, Decision, Purchase, Onboarding, Retention/Advocacy",
+        "deterministic_checks": [
+          {
+            "type": "output_contains",
+            "value": "Awareness"
+          },
+          {
+            "type": "output_contains",
+            "value": "Consideration"
+          },
+          {
+            "type": "output_contains",
+            "value": "Decision"
+          },
+          {
+            "type": "output_contains",
+            "value": "Purchase"
+          },
+          {
+            "type": "output_contains",
+            "value": "Onboarding"
+          },
+          {
+            "type": "output_contains",
+            "value": "Retention"
+          }
+        ]
+      },
+      {
+        "description": "Each stage includes pain points or friction points, since the user specifically asked about where they're losing people",
+        "deterministic_checks": [
+          {
+            "type": "output_contains",
+            "value": "Pain"
+          }
+        ]
+      },
+      {
+        "description": "Output includes a journey map table or structured format with columns for Actions, Thoughts, Emotions, Pain Points, and Opportunities"
+      },
+      {
+        "description": "Content is specific to fintech/invoicing context, mentioning relevant concepts like payments, cash flow, accounting, or invoice management"
+      },
+      {
+        "description": "Output identifies specific opportunities or recommendations to reduce drop-off at each stage"
+      }
+    ]
+  },
+  {
+    "name": "interview-framework-healthcare",
+    "prompt": "We're launching a telehealth platform and need to interview potential users (both patients and providers). Can you give me an interview guide I can use for customer discovery?",
+    "expectations": [
+      {
+        "description": "Output includes structured interview sections with time allocations (Opening, Current State, Pain Points, Ideal State, Closing or similar)",
+        "deterministic_checks": [
+          {
+            "type": "output_contains",
+            "value": "Opening"
+          },
+          {
+            "type": "output_contains",
+            "value": "Pain"
+          },
+          {
+            "type": "output_contains",
+            "value": "Closing"
+          }
+        ]
+      },
+      {
+        "description": "Interview guide includes actual sample questions, not just topic headers",
+        "deterministic_checks": [
+          {
+            "type": "output_contains",
+            "value": "?"
+          }
+        ]
+      },
+      {
+        "description": "Guide addresses BOTH user segments mentioned: patients and healthcare providers with distinct questions or sections for each"
+      },
+      {
+        "description": "Questions are open-ended (starting with how, what, tell me, walk me through) rather than yes/no"
+      },
+      {
+        "description": "Output includes guidance on rapport building, recording permission, or follow-up protocol",
+        "deterministic_checks": [
+          {
+            "type": "output_contains",
+            "value": "rapport"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "segmentation-ambiguous-market",
+    "prompt": "help me segment customers for a new product - it's like notion but for construction teams. not sure where to start honestly",
+    "expectations": [
+      {
+        "description": "Output uses multiple segmentation dimensions (demographic, behavioral, needs-based, or value-based)",
+        "deterministic_checks": [
+          {
+            "type": "output_contains",
+            "value": "Segment"
+          }
+        ]
+      },
+      {
+        "description": "Output includes a segment prioritization framework or table with criteria like size, need intensity, accessibility, and competition",
+        "deterministic_checks": [
+          {
+            "type": "output_contains",
+            "value": "Priority"
+          }
+        ]
+      },
+      {
+        "description": "Segments are specific to construction industry context (e.g., general contractors, subcontractors, project managers, site supervisors)"
+      },
+      {
+        "description": "Despite the vague prompt, the skill provides actionable structure rather than asking excessive clarifying questions before producing output"
+      },
+      {
+        "description": "Output identifies at least 3 distinct customer segments with descriptions"
+      }
+    ]
+  },
+  {
+    "name": "review-mining-competitor",
+    "prompt": "I want to analyze what people are saying about our competitors on G2 and Capterra. We're in the CRM space competing with HubSpot and Pipedrive. Can you help me set up a review mining framework?",
+    "expectations": [
+      {
+        "description": "Output references specific review platforms mentioned by the user (G2, Capterra) and potentially others",
+        "deterministic_checks": [
+          {
+            "type": "output_contains",
+            "value": "G2"
+          },
+          {
+            "type": "output_contains",
+            "value": "Capterra"
+          }
+        ]
+      },
+      {
+        "description": "Output includes categories for what to look for: repeated complaints, feature requests, competitor comparisons, use case descriptions, or emotional language",
+        "deterministic_checks": [
+          {
+            "type": "output_contains",
+            "value": "complaint"
+          }
+        ]
+      },
+      {
+        "description": "Framework is structured for CRM-specific analysis, mentioning relevant features like pipeline management, contact management, or integrations"
+      },
+      {
+        "description": "Output provides a methodology or template for capturing and organizing review insights systematically"
+      },
+      {
+        "description": "Output references both competitors mentioned (HubSpot and Pipedrive) in the analysis framework",
+        "deterministic_checks": [
+          {
+            "type": "output_contains",
+            "value": "HubSpot"
+          },
+          {
+            "type": "output_contains",
+            "value": "Pipedrive"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "full-research-summary-output",
+    "prompt": "We're a DevOps monitoring startup. I need a complete customer research summary document that I can share with my co-founder and our seed investors. Cover personas, JTBD, journey insights, and pain points.",
+    "expectations": [
+      {
+        "description": "Output follows the Customer Research Summary structure with sections for Key Segments, Personas, Jobs-to-be-Done, Journey Insights, Pain Points, and Opportunities",
+        "deterministic_checks": [
+          {
+            "type": "output_contains",
+            "value": "Key Segments"
+          },
+          {
+            "type": "output_contains",
+            "value": "Personas"
+          },
+          {
+            "type": "output_contains",
+            "value": "Jobs-to-be-Done"
+          },
+          {
+            "type": "output_contains",
+            "value": "Journey Insights"
+          },
+          {
+            "type": "output_contains",
+            "value": "Pain Points"
+          },
+          {
+            "type": "output_contains",
+            "value": "Opportunities"
+          }
+        ]
+      },
+      {
+        "description": "Output includes Trend Indicators section with directional assessments (INC/DEC/CONST or equivalent)",
+        "deterministic_checks": [
+          {
+            "type": "output_contains",
+            "value": "Trend"
+          }
+        ]
+      },
+      {
+        "description": "Pain points are ranked/numbered rather than presented as an unordered list"
+      },
+      {
+        "description": "Content is specific to DevOps monitoring domain, mentioning concepts like uptime, alerts, incident response, or infrastructure"
+      },
+      {
+        "description": "Output is investor-ready: professional tone, no placeholder brackets remaining, and includes quantifiable or structured data"
+      }
+    ]
+  }
+]
