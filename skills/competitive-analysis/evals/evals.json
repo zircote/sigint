@@ -242,7 +242,7 @@
         {
           "type": "regex_match",
           "file": "transcript.md",
-          "pattern": "[Dd]atacdog",
+          "pattern": "[Dd]atadog",
           "description": "Datadog is plotted on the positioning map"
         },
         {
