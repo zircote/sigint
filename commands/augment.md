@@ -2,7 +2,7 @@
 description: Deep-dive into a specific area of current research
 version: 0.1.0
 argument-hint: <area> [--methodology <type>]
-allowed-tools: Read, Write, Grep, Glob
+allowed-tools: Read, Write, Grep, Glob, Agent
 ---
 
 Augment the current research session with deeper analysis of a specific area.

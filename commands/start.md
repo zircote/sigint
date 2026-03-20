@@ -2,7 +2,7 @@
 description: Begin a new market research session with comprehensive scoping
 version: 0.1.0
 argument-hint: [<topic>]
-allowed-tools: Read, Write, Grep, Glob, TaskCreate, TaskUpdate, AskUserQuestion
+allowed-tools: Read, Write, Grep, Glob, Agent, TaskCreate, TaskUpdate, AskUserQuestion
 ---
 
 Initialize a new sigint research session through structured elicitation.
