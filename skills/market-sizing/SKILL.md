@@ -10,6 +10,15 @@ version: 0.3.0
 
 Market sizing quantifies the revenue opportunity in a market. The TAM/SAM/SOM framework provides progressively refined estimates from total market to realistically achievable share.
 
+## Required Frameworks
+
+| Framework | Output Section | Required | Condition |
+|-----------|---------------|----------|-----------|
+| Methodology Selection | methodology rationale | yes | — |
+| TAM/SAM/SOM Hierarchy | Market Sizing Summary | yes | — |
+| Scenario Modeling | Scenarios | yes | — |
+| Growth Projections | CAGR/growth | yes | — |
+
 ## Key Definitions
 
 **TAM (Total Addressable Market)**

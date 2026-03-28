@@ -10,6 +10,16 @@ version: 0.6.0
 
 Regulatory review assesses the legal and compliance landscape affecting markets and products. This skill covers frameworks for understanding regulatory requirements, risks, and trends.
 
+## Required Frameworks
+
+| Framework | Output Section | Required | Condition |
+|-----------|---------------|----------|-----------|
+| Framework Identification | Applicable Frameworks | yes | — |
+| Industry-to-Framework Mapping | Regulatory Mapping | yes | — |
+| Penalty Ranges | Enforcement & Penalties | yes | — |
+| Risk Matrix | Risk Assessment | yes | — |
+| Cross-border Mechanisms | Cross-border Analysis | conditional | Multi-jurisdiction scope in elicitation |
+
 ## Regulatory Dimensions
 
 ### Direct Regulations

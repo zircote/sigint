@@ -420,6 +420,19 @@ Agent(
 
   State file: ./reports/{topic-slug}/state.json
   Skill to load: skills/{skill-directory}/SKILL.md
+
+  METHODOLOGY CHECKLIST (verify against SKILL.md):
+  {For competitive: "Porter's 5 Forces (with ratings), Competitor Matrix (with trends), Positioning Map (if axes available)"}
+  {For sizing: "Methodology Selection (Top-Down/Bottom-Up/Value Theory), TAM > SAM > SOM hierarchy, Scenario Modeling (Bear/Base/Bull)"}
+  {For trends: "Macro/Micro Trends Tables (INC/DEC/CONST), Emerging Signals, Transitional Scenario Graph (Mermaid stateDiagram), Terminal Scenarios"}
+  {For customer: "Personas, Jobs-to-be-Done, Journey Mapping, Segmentation & Prioritization"}
+  {For tech: "TRL Levels, Hype Cycle Mapping, Build vs Buy Matrix"}
+  {For financial: "Unit Economics (CAC/LTV/LTV:CAC/payback), Revenue Model, Cost Structure, Rule of 40"}
+  {For regulatory: "Framework Identification, Industry-to-Framework Mapping, Penalty Ranges, Risk Matrix"}
+
+  IMPORTANT: You MUST write methodology_plan_{dimension} to the blackboard BEFORE any WebSearch call.
+  Read your SKILL.md, extract the Required Frameworks table, and write your plan first.
+
   Your blackboard key: findings_{dimension}
   Your task ID: #{taskId}
 
@@ -463,6 +476,32 @@ If more than `max_dimensions` priorities exist, batch the remaining dimensions a
 
 ---
 
+## Phase 2.5: Methodology Verification Gate
+
+After spawning all analysts and sending task assignments, verify that each analyst has produced a methodology plan.
+
+**Step 2.5.1**: Wait up to 60 seconds per analyst for methodology plans to appear on the blackboard.
+For each dimension:
+```
+blackboard_read(scope="{topic-slug}", key="methodology_plan_{dimension}")
+```
+
+**Step 2.5.2**: Surface methodology plans to user in a table:
+"📋 Methodology plans confirmed:
+| Dimension | Frameworks Planned | Status |
+|-----------|-------------------|--------|
+| competitive | Porter's 5 Forces, Competitor Matrix, Positioning Map | ✓ plan written |
+| sizing | TAM/SAM/SOM, Scenario Modeling | ✓ plan written |
+| trends | Macro/Micro Tables, Scenario Graph, Terminal Scenarios | ✓ plan written |
+..."
+
+**Step 2.5.3**: If any analyst fails to produce a methodology plan within 60 seconds:
+- Log warning: "⚠️ {dimension} analyst did not produce methodology plan. Research will proceed but methodology compliance is unverified."
+- Do NOT block the session. Continue with partial verification.
+- Note the gap in the team_status blackboard entry.
+
+---
+
 ## Phase 3: Wait and Merge
 
 Wait for SendMessages from each dimension-analyst (one per dimension). You will receive each as a background notification.
@@ -494,7 +533,25 @@ Wait for SendMessages from each dimension-analyst (one per dimension). You will 
    - Set `phase: "complete"`, `last_updated: "{ISO_DATE}"`
    - Note any gaps from failed/timed-out analysts
 
-3. Write merged summary to blackboard for downstream agents:
+3. Build Methodology Coverage Matrix:
+   For each dimension:
+     - Read methodology_plan_{dimension} from blackboard (frameworks planned)
+     - Read findings_{dimension} from blackboard (check which framework outputs are present)
+     - Compare planned vs evidenced frameworks
+
+   Present to user:
+   "📊 Methodology Coverage Matrix:
+   | Dimension | Framework | Planned | Applied | Notes |
+   |-----------|-----------|---------|---------|-------|
+   | competitive | Porter's 5 Forces | ✓ | ✓ | 5 forces with ratings |
+   | competitive | Competitor Matrix | ✓ | ✓ | 6 competitors compared |
+   | competitive | Positioning Map | ✓ | ✗ | skipped — no clear axes from elicitation |
+   | sizing | TAM/SAM/SOM | ✓ | ✓ | $4.2B / $1.8B / $450M |
+   ..."
+
+   Write coverage matrix to state.json under "methodology_coverage" key.
+
+4. Write merged summary to blackboard for downstream agents:
    ```
    blackboard_write(scope="{topic-slug}", key="merged_findings", value={
      "dimensions_complete": [...],
@@ -505,7 +562,7 @@ Wait for SendMessages from each dimension-analyst (one per dimension). You will 
    })
    ```
 
-4. Capture summary to Atlatl:
+5. Capture summary to Atlatl:
    ```
    capture_memory(
      title="Research complete: {topic}",
@@ -518,7 +575,14 @@ Wait for SendMessages from each dimension-analyst (one per dimension). You will 
    ```
    Then `enrich_memory(id)`.
 
-5. Present merged findings summary to user:
+### Source-Chunker Coordination
+
+If a dimension-analyst sends a message with type "source_chunking_request":
+1. Spawn source-chunker: Agent(subagent_type="sigint:source-chunker", team_name="sigint-{topic-slug}-research", name="source-chunker-{request_id}", run_in_background=true, prompt="...")
+2. Create task for source-chunker with the URL, extraction focus, and target dimension
+3. When source-chunker completes, route chunked findings back to the requesting analyst via SendMessage
+
+6. Present merged findings summary to user:
    - Number of dimensions researched
    - Total findings count
    - Top 3-5 key insights across all dimensions

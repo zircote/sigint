@@ -10,6 +10,15 @@ version: 0.1.0
 
 Customer research systematically gathers insights about target users to inform product and market decisions. This skill covers methodologies for understanding customer needs, behaviors, and preferences.
 
+## Required Frameworks
+
+| Framework | Output Section | Required | Condition |
+|-----------|---------------|----------|-----------|
+| Persona Development | Customer Personas | yes | — |
+| Jobs-to-be-Done | JTBD Analysis | yes | — |
+| Journey Mapping | Customer Journey | yes | — |
+| Segmentation & Prioritization | Customer Segments | yes | — |
+
 ## Research Types
 
 ### Quantitative Research

@@ -455,5 +455,166 @@
         "description": "The captured memory is enriched with tags, entity extraction, and embeddings so future sessions can discover and leverage these findings via semantic search"
       }
     ]
+  },
+  {
+    "id": "methodology-plan-collection",
+    "description": "Orchestrator collects methodology plans from analysts via blackboard reads to verify planning occurred",
+    "prompt": "Research AI-powered legal tech. Run competitive and sizing dimensions. Show methodology plans.",
+    "expectations": [
+      {
+        "description": "Competitive methodology plan key is referenced",
+        "deterministic_checks": [
+          { "type": "output_contains", "value": "methodology_plan_competitive" }
+        ]
+      },
+      {
+        "description": "Sizing methodology plan key is referenced",
+        "deterministic_checks": [
+          { "type": "output_contains", "value": "methodology_plan_sizing" }
+        ]
+      },
+      {
+        "description": "Blackboard read is used to collect methodology plans",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["blackboard_read", "blackboard read"]
+          }
+        ]
+      },
+      {
+        "description": "Orchestrator reads methodology_plan keys from the blackboard for each spawned analyst dimension to verify that planning occurred before research"
+      }
+    ]
+  },
+  {
+    "id": "methodology-plan-user-display",
+    "description": "Orchestrator displays framework plans per dimension in table format for user visibility",
+    "prompt": "Research quantum sensors market. Run all dimensions. Show me what frameworks each analyst will use.",
+    "expectations": [
+      {
+        "description": "Table format with dimension-to-framework mapping is displayed",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["Frameworks Planned", "frameworks", "methodology"]
+          }
+        ]
+      },
+      {
+        "description": "Multiple dimensions are listed with their planned frameworks",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["competitive", "sizing", "trends", "customer", "tech", "financial", "regulatory"]
+          }
+        ]
+      },
+      {
+        "description": "Each dimension's planned frameworks are displayed in a structured format showing the user what analytical methods each analyst will employ"
+      }
+    ]
+  },
+  {
+    "id": "methodology-coverage-matrix-in-merge",
+    "description": "Orchestrator includes a methodology coverage matrix in the merged report showing planned vs applied frameworks",
+    "prompt": "Research sustainable aviation fuel market. After all dimensions complete, show methodology coverage.",
+    "expectations": [
+      {
+        "description": "Coverage matrix is present in the output",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["Coverage Matrix", "coverage matrix", "Methodology Coverage"]
+          }
+        ]
+      },
+      {
+        "description": "Planned vs Applied comparison is shown",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["Planned", "Applied", "planned", "applied"]
+          }
+        ]
+      },
+      {
+        "description": "Per-dimension framework status is shown",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["competitive", "sizing", "trends", "dimension"]
+          }
+        ]
+      },
+      {
+        "description": "The coverage matrix compares planned frameworks (from methodology_plan) against actually applied frameworks (from findings), highlighting any gaps where a planned framework was not executed"
+      }
+    ]
+  },
+  {
+    "id": "source-chunker-team-lead-coordination",
+    "description": "Team-lead coordinates source-chunker spawning when an analyst requests chunking, routing results back to the requesting analyst",
+    "prompt": "Research enterprise AI market. A dimension analyst encounters a 50-page industry report and requests chunking. Coordinate the source-chunker.",
+    "expectations": [
+      {
+        "description": "Source-chunker is spawned by team-lead",
+        "deterministic_checks": [
+          { "type": "output_contains", "value": "source-chunker" }
+        ]
+      },
+      {
+        "description": "Results are routed back to the requesting analyst",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["SendMessage", "route", "findings"]
+          }
+        ]
+      },
+      {
+        "description": "Analyst does not spawn source-chunker directly",
+        "deterministic_checks": [
+          { "type": "output_not_contains", "value": "analyst spawns" }
+        ]
+      },
+      {
+        "description": "Team-lead receives the chunking request from the analyst, spawns the source-chunker agent, and routes the chunked findings back to the requesting analyst via SendMessage"
+      }
+    ]
+  },
+  {
+    "id": "methodology-gate-timeout-handling",
+    "description": "Orchestrator handles methodology plan timeout gracefully by logging a warning and continuing with gap notation",
+    "prompt": "Research edge AI market. One analyst fails to produce a methodology plan within timeout. How does orchestration handle this?",
+    "expectations": [
+      {
+        "description": "Warning is logged for the timeout",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["warning", "Warning", "\u26a0"]
+          }
+        ]
+      },
+      {
+        "description": "Session continues rather than aborting",
+        "deterministic_checks": [
+          { "type": "output_not_contains", "value": "abort" }
+        ]
+      },
+      {
+        "description": "Gap is noted for the missing methodology plan",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["gap", "unverified", "missing"]
+          }
+        ]
+      },
+      {
+        "description": "When a methodology plan is not written within the expected timeout, the orchestrator logs a warning, marks that dimension's methodology as unverified, and continues the session rather than aborting the entire research run"
+      }
+    ]
   }
 ]

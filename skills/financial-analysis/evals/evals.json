@@ -403,6 +403,36 @@
         "Compares LTV:CAC (2.5:1) against the benchmark of >3:1 and flags it as concerning/below target",
         "Provides an overall assessment with prioritized recommendations for which metrics to improve first"
       ]
+    },
+    {
+      "id": 8,
+      "prompt": "Analyze a SaaS company growing at 35% YoY with an operating margin of -5%. Apply the Rule of 40.",
+      "expected_output": "Rule of 40 calculation showing 35 + (-5) = 30, with assessment that the company falls below the 40 threshold",
+      "files": [],
+      "deterministic_checks": [
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "[Rr]ule of 40",
+          "description": "Output references the Rule of 40"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "30|35|40",
+          "description": "Output shows the calculation result (30) from 35 + (-5)"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "[Bb]elow|[Ff]ailing|[Mm]issing",
+          "description": "Output indicates the company falls below the Rule of 40 threshold"
+        }
+      ],
+      "expectations": [
+        "Correctly calculates Rule of 40 score (30) and notes it falls below the threshold",
+        "Provides context on what improvement is needed to reach the 40 benchmark"
+      ]
     }
   ]
 }

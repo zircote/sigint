@@ -362,6 +362,92 @@
         "The Divvy/Bill.com acquisition is acknowledged as relevant competitive context (consolidation trend)",
         "Trend indicators (INC/DEC/CONST) are applied to each competitor's trajectory"
       ]
+    },
+    {
+      "id": 8,
+      "prompt": "Analyze the competitive landscape for enterprise identity management platforms (Okta, Auth0, Ping Identity, ForgeRock). Provide a complete Porter's 5 Forces analysis with explicit ratings.",
+      "expected_output": "A Porter's 5 Forces analysis with all five forces explicitly named and rated using HIGH/MODERATE/LOW indicators for the identity management market",
+      "files": [],
+      "deterministic_checks": [
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "Competitive Rivalry",
+          "description": "Porter's force: Competitive Rivalry is addressed"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "Supplier Power",
+          "description": "Porter's force: Supplier Power is addressed"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "Buyer Power",
+          "description": "Porter's force: Buyer Power is addressed"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "Substitution",
+          "description": "Porter's force: Threat of Substitution is addressed"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "New Entry",
+          "description": "Porter's force: Threat of New Entry is addressed"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "(HIGH|MODERATE|LOW|VERY HIGH)",
+          "description": "Each force has an explicit rating"
+        },
+        {
+          "type": "file_contains",
+          "file": "transcript.md",
+          "literal": "Porter",
+          "description": "Analysis references Porter's framework"
+        }
+      ],
+      "expectations": [
+        "Each of the 5 forces has an explicit HIGH/MODERATE/LOW rating and assessment statement",
+        "The analysis covers Okta, Auth0, Ping Identity, and ForgeRock as named competitors",
+        "Ratings are justified with market-specific reasoning, not generic labels"
+      ]
+    },
+    {
+      "id": 9,
+      "prompt": "Create a competitive comparison matrix for CI/CD platforms (GitHub Actions, GitLab CI, CircleCI, Jenkins). Include trend indicators.",
+      "expected_output": "A competitor matrix table comparing CI/CD platforms with INC/DEC/CONST trend indicators for each competitor",
+      "files": [],
+      "deterministic_checks": [
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "(INC|DEC|CONST)",
+          "description": "Trend indicators are applied to competitors"
+        },
+        {
+          "type": "file_contains",
+          "file": "transcript.md",
+          "literal": "Trend",
+          "description": "Output includes trend column or section"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "\\|.*\\|.*\\|",
+          "description": "Output contains a markdown table structure"
+        }
+      ],
+      "expectations": [
+        "Matrix includes INC/DEC/CONST trend indicators for each competitor",
+        "All four CI/CD platforms are compared in the matrix",
+        "The matrix includes standard competitive dimensions beyond just trends"
+      ]
     }
   ]
 }

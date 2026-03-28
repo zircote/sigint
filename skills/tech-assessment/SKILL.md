@@ -10,6 +10,15 @@ version: 0.1.0
 
 Technology assessment evaluates technologies for strategic fit, technical feasibility, and competitive advantage. This skill covers frameworks for making informed technology decisions.
 
+## Required Frameworks
+
+| Framework | Output Section | Required | Condition |
+|-----------|---------------|----------|-----------|
+| TRL Levels | Technology Readiness | yes | — |
+| Hype Cycle Mapping | Hype Cycle Position | yes | — |
+| Build vs Buy Matrix | Build vs Buy Analysis | yes | — |
+| Domain-Specific Due Diligence | Due Diligence | conditional | Applicable domain detected (AI/ML, Fintech, Healthcare, Infrastructure) |
+
 ## Critical Assessment Rules
 
 Follow these rules to produce assessments that are honest, grounded, and actionable:

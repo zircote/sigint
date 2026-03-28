@@ -474,5 +474,79 @@
         ]
       }
     ]
+  },
+  {
+    "id": "relationship-matrix-nxn",
+    "description": "NxN relationship matrix with 5 variables using INC/DEC/CONST assignments",
+    "prompt": "Build a trend model for the EdTech market with variables: student enrollment, tuition costs, online platform adoption, teacher availability, and venture funding. Show the full relationship matrix.",
+    "expectations": [
+      {
+        "description": "Output contains a relationship matrix",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["Relationship Matrix", "relationship matrix", "Trend Matrix"]
+          }
+        ]
+      },
+      {
+        "description": "Output includes INC trend assignments",
+        "deterministic_checks": [
+          {
+            "type": "output_contains",
+            "value": "INC"
+          }
+        ]
+      },
+      {
+        "description": "Output includes DEC trend assignments",
+        "deterministic_checks": [
+          {
+            "type": "output_contains",
+            "value": "DEC"
+          }
+        ]
+      },
+      {
+        "description": "Output includes CONST trend assignments",
+        "deterministic_checks": [
+          {
+            "type": "output_contains",
+            "value": "CONST"
+          }
+        ]
+      },
+      {
+        "description": "NxN matrix where N=5 variables, all pairs have INC/DEC/CONST assignments"
+      }
+    ]
+  },
+  {
+    "id": "no-scenario-satisfies-all",
+    "description": "Multi-objective trade-off where no single scenario optimizes all objectives",
+    "prompt": "Model the trade-offs in ride-sharing: driver pay, rider price, platform margin, service quality, market share. Show me the terminal scenarios and explain the trade-offs.",
+    "expectations": [
+      {
+        "description": "Output explicitly states that no single scenario optimizes all objectives",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["no scenario", "No scenario", "cannot simultaneously", "trade-off", "competing objectives"]
+          }
+        ]
+      },
+      {
+        "description": "Output identifies terminal scenarios",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["Terminal", "terminal", "equilibrium"]
+          }
+        ]
+      },
+      {
+        "description": "Explicit statement that no single scenario optimizes all objectives simultaneously"
+      }
+    ]
   }
 ]

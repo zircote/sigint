@@ -548,5 +548,131 @@
         "description": "Full research cycle completes through all four phases (start, augment, report, issues) using only v0.4.0 agents and patterns without any deprecated tool, agent, or memory references"
       }
     ]
+  },
+  {
+    "id": "e2e-methodology-compliance",
+    "description": "End-to-end research with methodology plan, framework application, and coverage matrix",
+    "prompt": "Research the AI-powered drug discovery market. Run competitive, sizing, and trends dimensions. Show methodology plans, research progress, and a methodology coverage matrix at the end.",
+    "expectations": [
+      {
+        "description": "Methodology plan is written per dimension",
+        "deterministic_checks": [
+          { "type": "output_contains", "value": "methodology_plan" }
+        ]
+      },
+      {
+        "description": "Plans are surfaced to user",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["Frameworks Planned", "methodology plan"]
+          }
+        ]
+      },
+      {
+        "description": "Coverage matrix is included in final output",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["Coverage Matrix", "coverage matrix"]
+          }
+        ]
+      },
+      {
+        "description": "Deprecated TodoWrite is not used",
+        "deterministic_checks": [
+          { "type": "output_not_contains", "value": "TodoWrite" }
+        ]
+      },
+      {
+        "description": "Deprecated Subcog is not used",
+        "deterministic_checks": [
+          { "type": "output_not_contains", "value": "Subcog" }
+        ]
+      },
+      {
+        "description": "Research applies methodology frameworks per dimension and produces a coverage matrix showing which frameworks were applied"
+      }
+    ]
+  },
+  {
+    "id": "e2e-trend-modeling-applied",
+    "description": "End-to-end research with three-valued logic scenario modeling in trends dimension",
+    "prompt": "Research the metaverse real estate market. Run the trends dimension and ensure three-valued logic scenario modeling is applied, not just trend listings.",
+    "expectations": [
+      {
+        "description": "State diagram is included in output",
+        "deterministic_checks": [
+          { "type": "output_contains", "value": "stateDiagram" }
+        ]
+      },
+      {
+        "description": "INC/DEC/CONST trend logic is used",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["INC", "DEC", "CONST"]
+          }
+        ]
+      },
+      {
+        "description": "Scenario generation is present",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["Scenario", "scenario"]
+          }
+        ]
+      },
+      {
+        "description": "Terminal scenario is identified",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["Terminal", "terminal", "equilibrium"]
+          }
+        ]
+      },
+      {
+        "description": "Trends dimension applies three-valued logic scenario modeling with stateDiagram, not just a list of trends"
+      }
+    ]
+  },
+  {
+    "id": "e2e-competitive-porters-applied",
+    "description": "End-to-end research with Porter's 5 Forces and explicit ratings in competitive dimension",
+    "prompt": "Research the low-code/no-code platform market. Run the competitive dimension and ensure Porter's 5 Forces is applied with explicit ratings, not just a competitor list.",
+    "expectations": [
+      {
+        "description": "Porter's 5 Forces framework is referenced",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["Porter", "5 Forces", "Five Forces"]
+          }
+        ]
+      },
+      {
+        "description": "Explicit ratings are present",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["HIGH", "MODERATE", "LOW"]
+          }
+        ]
+      },
+      {
+        "description": "All 5 forces are addressed",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["Competitive Rivalry", "Supplier", "Buyer", "Substitution", "New Entry"]
+          }
+        ]
+      },
+      {
+        "description": "Competitive dimension applies Porter's 5 Forces with explicit HIGH/MODERATE/LOW ratings, not just a competitor list"
+      }
+    ]
   }
 ]

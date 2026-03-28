@@ -14,3 +14,4 @@ Thumbs.db
 
 # Local configuration (contains user-specific settings)
 .claude/sigint.local.md
+*-autonomous/

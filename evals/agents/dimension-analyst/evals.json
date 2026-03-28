@@ -276,5 +276,661 @@
         "description": "Delegates to the source-chunker agent for parallel chunk processing instead of attempting single-pass analysis"
       }
     ]
+  },
+  {
+    "id": "analyst-methodology-gate-competitive",
+    "description": "Analyst writes a methodology plan to the blackboard BEFORE conducting any web research for competitive dimension",
+    "prompt": "You are a dimension-analyst for competitive research on 'cloud storage providers'. Blackboard scope: cloud-storage. Skill to load: skills/competitive-analysis/SKILL.md. Your blackboard key: findings_competitive. Before researching, you must write a methodology plan to the blackboard.",
+    "expectations": [
+      {
+        "description": "Methodology plan is written to blackboard before any WebSearch",
+        "deterministic_checks": [
+          { "type": "output_contains", "value": "methodology_plan_competitive" }
+        ]
+      },
+      {
+        "description": "Plan references Porter's 5 Forces framework",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["Porter", "5 Forces", "Five Forces"]
+          }
+        ]
+      },
+      {
+        "description": "Plan references Competitor Matrix framework",
+        "deterministic_checks": [
+          { "type": "output_contains", "value": "Competitor Matrix" }
+        ]
+      },
+      {
+        "description": "blackboard_write for methodology_plan occurs before any WebSearch invocation in execution order"
+      }
+    ]
+  },
+  {
+    "id": "analyst-methodology-gate-sizing",
+    "description": "Analyst writes a methodology plan referencing TAM/SAM/SOM before conducting sizing research",
+    "prompt": "You are a dimension-analyst for sizing research on 'enterprise data lakehouse platforms'. Blackboard scope: data-lakehouse. Skill to load: skills/market-sizing/SKILL.md. Your blackboard key: findings_sizing. Before researching, you must write a methodology plan to the blackboard.",
+    "expectations": [
+      {
+        "description": "Methodology plan is written to blackboard before any WebSearch",
+        "deterministic_checks": [
+          { "type": "output_contains", "value": "methodology_plan_sizing" }
+        ]
+      },
+      {
+        "description": "Plan references TAM/SAM/SOM hierarchy",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["TAM", "SAM", "SOM"]
+          }
+        ]
+      },
+      {
+        "description": "blackboard_write for methodology_plan occurs before any WebSearch invocation in execution order"
+      }
+    ]
+  },
+  {
+    "id": "analyst-methodology-gate-trends",
+    "description": "Analyst writes a methodology plan referencing Macro Trends, Micro Trends, and Transitional Scenario Graph before conducting trends research",
+    "prompt": "You are a dimension-analyst for trends research on 'digital twin technology in manufacturing'. Blackboard scope: digital-twin-mfg. Skill to load: skills/trend-analysis/SKILL.md. Your blackboard key: findings_trends. Before researching, you must write a methodology plan to the blackboard.",
+    "expectations": [
+      {
+        "description": "Methodology plan is written to blackboard before any WebSearch",
+        "deterministic_checks": [
+          { "type": "output_contains", "value": "methodology_plan_trends" }
+        ]
+      },
+      {
+        "description": "Plan references Macro Trends framework",
+        "deterministic_checks": [
+          { "type": "output_contains", "value": "Macro Trends" }
+        ]
+      },
+      {
+        "description": "Plan references Micro Trends framework",
+        "deterministic_checks": [
+          { "type": "output_contains", "value": "Micro Trends" }
+        ]
+      },
+      {
+        "description": "Plan references Transitional Scenario Graph",
+        "deterministic_checks": [
+          { "type": "output_contains", "value": "Transitional Scenario Graph" }
+        ]
+      },
+      {
+        "description": "blackboard_write for methodology_plan occurs before any WebSearch invocation in execution order"
+      }
+    ]
+  },
+  {
+    "id": "analyst-methodology-gate-customer",
+    "description": "Analyst writes a methodology plan referencing Personas, JTBD, and Journey Mapping before conducting customer research",
+    "prompt": "You are a dimension-analyst for customer research on 'B2B fintech payment solutions'. Blackboard scope: b2b-fintech. Skill to load: skills/customer-research/SKILL.md. Your blackboard key: findings_customer. Before researching, you must write a methodology plan to the blackboard.",
+    "expectations": [
+      {
+        "description": "Methodology plan is written to blackboard before any WebSearch",
+        "deterministic_checks": [
+          { "type": "output_contains", "value": "methodology_plan_customer" }
+        ]
+      },
+      {
+        "description": "Plan references Personas framework",
+        "deterministic_checks": [
+          { "type": "output_contains", "value": "Personas" }
+        ]
+      },
+      {
+        "description": "Plan references Jobs To Be Done framework",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["JTBD", "Jobs To Be Done", "Jobs-to-be-Done"]
+          }
+        ]
+      },
+      {
+        "description": "Plan references Journey Mapping framework",
+        "deterministic_checks": [
+          { "type": "output_contains", "value": "Journey Mapping" }
+        ]
+      },
+      {
+        "description": "blackboard_write for methodology_plan occurs before any WebSearch invocation in execution order"
+      }
+    ]
+  },
+  {
+    "id": "analyst-methodology-gate-tech",
+    "description": "Analyst writes a methodology plan referencing TRL, Hype Cycle, and Build vs Buy before conducting tech research",
+    "prompt": "You are a dimension-analyst for tech research on 'federated learning platforms'. Blackboard scope: federated-learning. Skill to load: skills/tech-assessment/SKILL.md. Your blackboard key: findings_tech. Before researching, you must write a methodology plan to the blackboard.",
+    "expectations": [
+      {
+        "description": "Methodology plan is written to blackboard before any WebSearch",
+        "deterministic_checks": [
+          { "type": "output_contains", "value": "methodology_plan_tech" }
+        ]
+      },
+      {
+        "description": "Plan references Technology Readiness Level",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["TRL", "Technology Readiness Level"]
+          }
+        ]
+      },
+      {
+        "description": "Plan references Hype Cycle framework",
+        "deterministic_checks": [
+          { "type": "output_contains", "value": "Hype Cycle" }
+        ]
+      },
+      {
+        "description": "Plan references Build vs Buy analysis",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["Build vs Buy", "Build-vs-Buy", "Build versus Buy"]
+          }
+        ]
+      },
+      {
+        "description": "blackboard_write for methodology_plan occurs before any WebSearch invocation in execution order"
+      }
+    ]
+  },
+  {
+    "id": "analyst-methodology-gate-financial",
+    "description": "Analyst writes a methodology plan referencing Unit Economics, Revenue Model, and Rule of 40 before conducting financial research",
+    "prompt": "You are a dimension-analyst for financial research on 'vertical SaaS for construction management'. Blackboard scope: construction-saas. Skill to load: skills/financial-analysis/SKILL.md. Your blackboard key: findings_financial. Before researching, you must write a methodology plan to the blackboard.",
+    "expectations": [
+      {
+        "description": "Methodology plan is written to blackboard before any WebSearch",
+        "deterministic_checks": [
+          { "type": "output_contains", "value": "methodology_plan_financial" }
+        ]
+      },
+      {
+        "description": "Plan references Unit Economics framework",
+        "deterministic_checks": [
+          { "type": "output_contains", "value": "Unit Economics" }
+        ]
+      },
+      {
+        "description": "Plan references Revenue Model framework",
+        "deterministic_checks": [
+          { "type": "output_contains", "value": "Revenue Model" }
+        ]
+      },
+      {
+        "description": "Plan references Rule of 40",
+        "deterministic_checks": [
+          { "type": "output_contains", "value": "Rule of 40" }
+        ]
+      },
+      {
+        "description": "blackboard_write for methodology_plan occurs before any WebSearch invocation in execution order"
+      }
+    ]
+  },
+  {
+    "id": "analyst-methodology-gate-regulatory",
+    "description": "Analyst writes a methodology plan referencing Framework Identification, Penalty Ranges, and Risk Matrix before conducting regulatory research",
+    "prompt": "You are a dimension-analyst for regulatory research on 'cross-border cryptocurrency exchanges'. Blackboard scope: crypto-exchanges. Skill to load: skills/regulatory-review/SKILL.md. Your blackboard key: findings_regulatory. Before researching, you must write a methodology plan to the blackboard.",
+    "expectations": [
+      {
+        "description": "Methodology plan is written to blackboard before any WebSearch",
+        "deterministic_checks": [
+          { "type": "output_contains", "value": "methodology_plan_regulatory" }
+        ]
+      },
+      {
+        "description": "Plan references Framework Identification",
+        "deterministic_checks": [
+          { "type": "output_contains", "value": "Framework Identification" }
+        ]
+      },
+      {
+        "description": "Plan references Penalty Ranges",
+        "deterministic_checks": [
+          { "type": "output_contains", "value": "Penalty Ranges" }
+        ]
+      },
+      {
+        "description": "Plan references Risk Matrix",
+        "deterministic_checks": [
+          { "type": "output_contains", "value": "Risk Matrix" }
+        ]
+      },
+      {
+        "description": "blackboard_write for methodology_plan occurs before any WebSearch invocation in execution order"
+      }
+    ]
+  },
+  {
+    "id": "analyst-competitive-porters-structural",
+    "description": "Analyst produces a Porter's 5 Forces analysis with explicit ratings for each force",
+    "prompt": "You are a dimension-analyst for competitive research on 'enterprise CRM platforms'. Produce a Porter's 5 Forces analysis with explicit ratings.",
+    "expectations": [
+      {
+        "description": "Competitive Rivalry force is analyzed",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["Competitive Rivalry", "competitive rivalry"]
+          }
+        ]
+      },
+      {
+        "description": "Supplier Power force is analyzed",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["Supplier Power", "supplier power", "Bargaining Power of Suppliers"]
+          }
+        ]
+      },
+      {
+        "description": "Buyer Power force is analyzed",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["Buyer Power", "buyer power", "Bargaining Power of Buyers"]
+          }
+        ]
+      },
+      {
+        "description": "Threat of Substitution force is analyzed",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["Threat of Substitution", "threat of substitution", "Threat of Substitutes"]
+          }
+        ]
+      },
+      {
+        "description": "Threat of New Entry force is analyzed",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["Threat of New Entry", "threat of new entry", "Threat of New Entrants"]
+          }
+        ]
+      },
+      {
+        "description": "Explicit severity ratings are provided for each force",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["HIGH", "MODERATE", "LOW"]
+          }
+        ]
+      },
+      {
+        "description": "Each of the 5 forces includes an assessment statement explaining the rating with supporting evidence"
+      }
+    ]
+  },
+  {
+    "id": "analyst-competitive-positioning-map",
+    "description": "Analyst produces a Mermaid quadrantChart for competitive positioning",
+    "prompt": "You are a dimension-analyst for competitive research on 'cloud infrastructure providers'. Produce a competitive positioning map as a Mermaid quadrant chart.",
+    "expectations": [
+      {
+        "description": "Mermaid quadrantChart syntax is used",
+        "deterministic_checks": [
+          { "type": "output_contains", "value": "quadrantChart" }
+        ]
+      },
+      {
+        "description": "Chart is enclosed in a Mermaid code block",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["```mermaid", "mermaid"]
+          }
+        ]
+      },
+      {
+        "description": "Positioning map includes axis labels and competitor placements that reflect the competitive landscape"
+      }
+    ]
+  },
+  {
+    "id": "analyst-trends-full-structure",
+    "description": "Analyst produces full trend analysis structure including Macro table, Micro table, Emerging Signals, stateDiagram-v2, Terminal Scenarios, and Monitoring Indicators",
+    "prompt": "You are a dimension-analyst for trends research on 'decentralized identity solutions'. Produce a full trend analysis with all required structural elements.",
+    "expectations": [
+      {
+        "description": "Macro trends table is present",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["Macro Trends", "Macro trends", "macro trends"]
+          }
+        ]
+      },
+      {
+        "description": "Micro trends table is present",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["Micro Trends", "Micro trends", "micro trends"]
+          }
+        ]
+      },
+      {
+        "description": "Emerging Signals section is present",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["Emerging Signals", "emerging signals", "Emerging signals"]
+          }
+        ]
+      },
+      {
+        "description": "Mermaid stateDiagram-v2 is used for scenario transitions",
+        "deterministic_checks": [
+          { "type": "output_contains", "value": "stateDiagram-v2" }
+        ]
+      },
+      {
+        "description": "Terminal Scenarios are defined",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["Terminal Scenarios", "terminal scenarios", "Terminal scenarios"]
+          }
+        ]
+      },
+      {
+        "description": "Monitoring Indicators are defined",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["Monitoring Indicators", "monitoring indicators", "Monitoring indicators"]
+          }
+        ]
+      },
+      {
+        "description": "All six structural elements are present and interconnected: Macro table feeds into Micro table, which feeds into Emerging Signals, visualized via stateDiagram-v2, leading to Terminal Scenarios with Monitoring Indicators"
+      }
+    ]
+  },
+  {
+    "id": "analyst-trends-correlation-threshold",
+    "description": "Analyst applies correlation thresholds r > 0.3 or r < -0.3 for trend relationships",
+    "prompt": "You are a dimension-analyst for trends research on 'remote work technology adoption'. When correlating trends, only report relationships with correlation |r| > 0.3. Convert weak correlations to narrative observations.",
+    "expectations": [
+      {
+        "description": "Correlation threshold is referenced",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["r > 0.3", "r < -0.3", "|r| > 0.3", "0.3"]
+          }
+        ]
+      },
+      {
+        "description": "Correlations above threshold are reported quantitatively, and those below are converted to narrative observations rather than being presented as strong relationships"
+      }
+    ]
+  },
+  {
+    "id": "analyst-sizing-tam-hierarchy",
+    "description": "Analyst produces TAM > SAM > SOM hierarchy with concrete dollar figures and no placeholder values",
+    "prompt": "You are a dimension-analyst for sizing research on 'AI-powered cybersecurity platforms'. Produce TAM/SAM/SOM estimates with concrete dollar figures. Do NOT use placeholder values like $X.XB.",
+    "expectations": [
+      {
+        "description": "TAM is present with dollar figure",
+        "deterministic_checks": [
+          { "type": "output_contains", "value": "TAM" }
+        ]
+      },
+      {
+        "description": "SAM is present with dollar figure",
+        "deterministic_checks": [
+          { "type": "output_contains", "value": "SAM" }
+        ]
+      },
+      {
+        "description": "SOM is present with dollar figure",
+        "deterministic_checks": [
+          { "type": "output_contains", "value": "SOM" }
+        ]
+      },
+      {
+        "description": "Dollar figures are present",
+        "deterministic_checks": [
+          { "type": "output_contains", "value": "$" }
+        ]
+      },
+      {
+        "description": "No placeholder values are used",
+        "deterministic_checks": [
+          { "type": "output_not_contains", "value": "$X.XB" },
+          { "type": "output_not_contains", "value": "$X.X" }
+        ]
+      },
+      {
+        "description": "TAM > SAM > SOM hierarchy is maintained with TAM being the largest, SAM a subset, and SOM the smallest addressable portion"
+      }
+    ]
+  },
+  {
+    "id": "analyst-sizing-scenario-modeling",
+    "description": "Analyst produces Bear/Base/Bull scenario models with distinct values for each scenario",
+    "prompt": "You are a dimension-analyst for sizing research on 'precision agriculture drone services'. Produce Bear, Base, and Bull scenario projections with distinct values.",
+    "expectations": [
+      {
+        "description": "Bear scenario is present",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["Bear", "bear", "Conservative"]
+          }
+        ]
+      },
+      {
+        "description": "Base scenario is present",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["Base", "base", "Moderate"]
+          }
+        ]
+      },
+      {
+        "description": "Bull scenario is present",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["Bull", "bull", "Aggressive"]
+          }
+        ]
+      },
+      {
+        "description": "Each scenario has distinct numerical values representing different growth trajectories, not identical numbers across all three"
+      }
+    ]
+  },
+  {
+    "id": "analyst-financial-unit-economics",
+    "description": "Analyst produces unit economics analysis with CAC, LTV, LTV:CAC ratio, and payback period",
+    "prompt": "You are a dimension-analyst for financial research on 'B2B SaaS for supply chain visibility'. Produce a unit economics analysis including CAC, LTV, LTV:CAC ratio, and payback period.",
+    "expectations": [
+      {
+        "description": "CAC (Customer Acquisition Cost) is present",
+        "deterministic_checks": [
+          { "type": "output_contains", "value": "CAC" }
+        ]
+      },
+      {
+        "description": "LTV (Lifetime Value) is present",
+        "deterministic_checks": [
+          { "type": "output_contains", "value": "LTV" }
+        ]
+      },
+      {
+        "description": "LTV:CAC ratio is present",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["LTV:CAC", "LTV/CAC", "LTV to CAC"]
+          }
+        ]
+      },
+      {
+        "description": "Payback period is present",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["payback", "Payback", "payback period"]
+          }
+        ]
+      },
+      {
+        "description": "All four metrics are present with quantified values, not just labels"
+      }
+    ]
+  },
+  {
+    "id": "analyst-financial-rule-of-40",
+    "description": "Analyst produces Rule of 40 calculation for SaaS financial analysis",
+    "prompt": "You are a dimension-analyst for financial research on 'cloud-native API management platforms'. Include a Rule of 40 calculation in your financial analysis.",
+    "expectations": [
+      {
+        "description": "Rule of 40 is referenced",
+        "deterministic_checks": [
+          { "type": "output_contains", "value": "Rule of 40" }
+        ]
+      },
+      {
+        "description": "Rule of 40 calculation shows revenue growth rate plus profit margin summing to evaluate against the 40% threshold"
+      }
+    ]
+  },
+  {
+    "id": "analyst-tech-trl-levels",
+    "description": "Analyst assigns Technology Readiness Levels (TRL) with justification for each assessment",
+    "prompt": "You are a dimension-analyst for tech research on 'neuromorphic computing chips'. Assign TRL levels to key technologies with justification for each level.",
+    "expectations": [
+      {
+        "description": "TRL levels are assigned",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["TRL", "Technology Readiness Level"]
+          }
+        ]
+      },
+      {
+        "description": "Numeric TRL levels are used",
+        "deterministic_checks": [
+          {
+            "type": "output_matches",
+            "pattern": "TRL[- ]?[1-9]"
+          }
+        ]
+      },
+      {
+        "description": "Each TRL assignment includes a justification explaining why that specific level was chosen based on evidence"
+      }
+    ]
+  },
+  {
+    "id": "analyst-regulatory-framework-mapping",
+    "description": "Analyst produces an industry-to-regulatory-framework mapping table",
+    "prompt": "You are a dimension-analyst for regulatory research on 'AI-powered medical devices in the US and EU'. Produce a regulatory framework mapping table showing which frameworks apply to which jurisdictions.",
+    "expectations": [
+      {
+        "description": "Regulatory frameworks are identified",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["FDA", "MDR", "HIPAA", "CE", "EU AI Act", "framework"]
+          }
+        ]
+      },
+      {
+        "description": "Mapping table format is used",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["|", "table", "Framework", "Jurisdiction"]
+          }
+        ]
+      },
+      {
+        "description": "Table maps specific industries/product categories to applicable regulatory frameworks per jurisdiction"
+      }
+    ]
+  },
+  {
+    "id": "analyst-large-doc-team-lead-routing",
+    "description": "Analyst routes large documents to team-lead for source-chunker coordination instead of processing directly or spawning sub-agents",
+    "prompt": "You are a dimension-analyst for competitive research on 'enterprise search'. You fetched a 100-page report that is approximately 80,000 tokens. How do you handle this?",
+    "expectations": [
+      {
+        "description": "SendMessage to team-lead is referenced for routing",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["SendMessage", "team-lead", "source_chunking_request"]
+          }
+        ]
+      },
+      {
+        "description": "Does not attempt direct processing of 80K tokens",
+        "deterministic_checks": [
+          { "type": "output_not_contains", "value": "process directly" }
+        ]
+      },
+      {
+        "description": "Does not reference spawning sub-agents",
+        "deterministic_checks": [
+          { "type": "output_not_contains", "value": "spawn" }
+        ]
+      },
+      {
+        "description": "Analyst routes the large document to team-lead via SendMessage with a source_chunking_request, delegating chunking coordination to the orchestrator rather than handling it itself"
+      }
+    ]
+  },
+  {
+    "id": "analyst-methodology-plan-before-research",
+    "description": "Analyst always writes methodology_plan to blackboard before any WebSearch regardless of dimension",
+    "prompt": "You are a dimension-analyst for competitive research on 'edge AI inference chips'. Blackboard scope: edge-ai-chips. Skill to load: skills/competitive-analysis/SKILL.md. Your blackboard key: findings_competitive. Conduct your research following proper methodology gating.",
+    "expectations": [
+      {
+        "description": "Methodology plan is written to blackboard",
+        "deterministic_checks": [
+          { "type": "output_contains", "value": "methodology_plan" }
+        ]
+      },
+      {
+        "description": "blackboard_write for methodology_plan occurs before any WebSearch in logical execution order",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["blackboard_write", "blackboard write"]
+          }
+        ]
+      },
+      {
+        "description": "Does not skip methodology planning step",
+        "deterministic_checks": [
+          { "type": "output_not_contains", "value": "skip methodology" }
+        ]
+      },
+      {
+        "description": "The methodology plan is written to the blackboard as the first research action, before any WebSearch or WebFetch calls"
+      }
+    ]
   }
 ]

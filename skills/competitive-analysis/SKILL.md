@@ -10,6 +10,15 @@ version: 0.2.0
 
 Competitive analysis systematically evaluates competitors to understand market positioning, identify gaps, and inform strategic decisions. This skill provides frameworks and methodologies for thorough competitive intelligence gathering.
 
+## Required Frameworks
+
+| Framework | Output Section | Required | Condition |
+|-----------|---------------|----------|-----------|
+| Porter's 5 Forces | Porter's 5 Forces Analysis | yes | — |
+| Competitor Matrix | Competitive Matrix | yes | — |
+| Positioning Map | Positioning Map | conditional | Needs 2+ comparable dimensions from elicitation or competitors |
+| Trend Indicators | throughout | yes | — |
+
 ## When to Use
 
 - Entering a new market or segment

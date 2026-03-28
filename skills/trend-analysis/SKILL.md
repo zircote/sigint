@@ -10,6 +10,17 @@ version: 0.1.0
 
 Trend analysis identifies patterns of change over time to anticipate future market conditions. This skill covers methodologies for discovering, validating, and projecting trends at macro and micro levels.
 
+## Required Frameworks
+
+| Framework | Output Section | Required | Condition |
+|-----------|---------------|----------|-----------|
+| Macro Trends Table | Macro Trends | yes | — |
+| Micro Trends Table | Micro Trends | yes | — |
+| Emerging Signals | Emerging Signals | yes | — |
+| Transitional Scenario Graph | Transitional Scenario Graph | yes | — |
+| Terminal Scenarios | Terminal Scenarios | yes | — |
+| Monitoring Indicators | Monitoring Indicators | yes | — |
+
 ## Trend Categories
 
 ### Macro Trends (3-10+ years)

@@ -135,6 +135,35 @@
         { "type": "output_contains", "value": "FTC" },
         { "type": "output_contains", "value": "Monitoring" }
       ]
+    },
+    {
+      "id": 8,
+      "prompt": "Assess the regulatory risks for a health data analytics platform operating in the US and EU.",
+      "expected_output": "A regulatory risk matrix with likelihood, impact, and trend (INC/DEC/CONST) columns for health data analytics compliance",
+      "files": [],
+      "expectations": [
+        "Risk matrix includes likelihood, impact, and trend (INC/DEC/CONST) columns",
+        "Both US and EU regulatory frameworks are covered",
+        "Health data specific regulations (HIPAA, GDPR) are assessed"
+      ],
+      "deterministic_checks": [
+        {
+          "type": "output_contains_any",
+          "values": ["Risk Matrix", "risk matrix", "Risk Assessment"]
+        },
+        {
+          "type": "output_contains_any",
+          "values": ["likelihood", "Likelihood"]
+        },
+        {
+          "type": "output_contains_any",
+          "values": ["impact", "Impact"]
+        },
+        {
+          "type": "output_contains_any",
+          "values": ["INC", "DEC", "CONST"]
+        }
+      ]
     }
   ]
 }

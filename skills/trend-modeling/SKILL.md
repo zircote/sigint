@@ -10,6 +10,17 @@ version: 0.1.0
 
 Based on research in trend-based optimization for product innovation, this skill applies three-valued logic (increasing/decreasing/constant) to analyze markets when precise numerical data is unavailable. This approach enables meaningful analysis with minimal information.
 
+## Required Frameworks
+
+| Framework | Output Section | Required | Condition |
+|-----------|---------------|----------|-----------|
+| Variables Table | Variables | yes | — |
+| Relationship Matrix | Relationship Matrix | yes | — |
+| Scenario Generation | Generated Scenarios | yes | — |
+| Transitional Graph | Transitional Scenario Graph (Mermaid stateDiagram) | yes | — |
+| Terminal Scenario Analysis | Terminal Scenario Analysis | yes | — |
+| Multi-Objective Trade-offs | Trade-offs | yes | — |
+
 ## Core Concept
 
 Traditional market analysis requires extensive quantitative data. Three-valued logic provides an alternative when:

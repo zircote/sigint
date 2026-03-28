@@ -356,6 +356,72 @@
         "The output acknowledges uncertainty where evidence is limited rather than presenting speculation as fact",
         "Common pitfalls like confirmation bias are avoided -- the analysis considers both growth and decline signals, not just flatness"
       ]
+    },
+    {
+      "id": 8,
+      "prompt": "I have correlation data between cloud spending and AI adoption (r=0.72), cloud spending and on-prem investment (r=-0.45), and cloud spending and hybrid deployments (r=0.15). Convert these to trend indicators.",
+      "expected_output": "Correct application of correlation-to-trend conversion: r=0.72 → INC, r=-0.45 → DEC, r=0.15 → CONST, with threshold explanation",
+      "files": [],
+      "deterministic_checks": [
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "INC",
+          "description": "Output includes INC classification for r=0.72"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "DEC",
+          "description": "Output includes DEC classification for r=-0.45"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "CONST",
+          "description": "Output includes CONST classification for r=0.15"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "0\\.3|threshold|correlation",
+          "description": "Output references the correlation threshold or conversion logic"
+        }
+      ],
+      "expectations": [
+        "r > 0.3 → INC, r < -0.3 → DEC, -0.3 < r < 0.3 → CONST correctly applied",
+        "Each correlation value is mapped to the correct trend indicator with explanation"
+      ]
+    },
+    {
+      "id": 9,
+      "prompt": "Create a transitional scenario graph for the autonomous vehicle insurance market over the next 5 years.",
+      "expected_output": "A Mermaid stateDiagram-v2 with start state, multiple transitions, and terminal states for autonomous vehicle insurance scenarios",
+      "files": [],
+      "deterministic_checks": [
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "stateDiagram-v2",
+          "description": "Output contains a Mermaid stateDiagram-v2 directive"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "\\[\\*\\]\\s*-->",
+          "description": "Mermaid diagram has a start state transition"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "mermaid",
+          "description": "Output uses Mermaid diagram format"
+        }
+      ],
+      "expectations": [
+        "Valid Mermaid stateDiagram with start state, multiple transitions, and terminal states identified",
+        "Scenarios are relevant to autonomous vehicle insurance market dynamics"
+      ]
     }
   ]
 }

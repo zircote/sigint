@@ -425,6 +425,43 @@
         "The assessment considers alternatives (e.g., centralized databases with audit trails) as part of the competitive position analysis",
         "Build vs Buy considerations are addressed given that supply chain blockchain platforms exist (IBM Food Trust, VeChain)"
       ]
+    },
+    {
+      "id": 8,
+      "prompt": "Should we build or buy a real-time data pipeline? We need Kafka-level throughput but have limited ops capacity. Score the options.",
+      "expected_output": "A weighted scoring build vs buy analysis with at least 5 factors, numeric weights, and a total score for each option",
+      "files": [],
+      "deterministic_checks": [
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "[Bb]uild vs [Bb]uy|[Bb]uild.vs.[Bb]uy",
+          "description": "Assessment frames the build vs buy comparison"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "[Ww]eight|[Ss]core|[0-9]+\\.[0-9]",
+          "description": "Assessment includes weighted scoring with numeric values"
+        },
+        {
+          "type": "file_contains",
+          "file": "transcript.md",
+          "literal": "Build",
+          "description": "Build option is evaluated"
+        },
+        {
+          "type": "file_contains",
+          "file": "transcript.md",
+          "literal": "Buy",
+          "description": "Buy option is evaluated"
+        }
+      ],
+      "expectations": [
+        "Weighted scoring matrix with at least 5 factors, numeric weights, and a total score",
+        "Assessment accounts for limited ops capacity as a key constraint favoring buy",
+        "Kafka-level throughput requirement is addressed in the technical evaluation"
+      ]
     }
   ]
 }

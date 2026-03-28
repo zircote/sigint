@@ -374,5 +374,88 @@
         ]
       }
     ]
+  },
+  {
+    "id": "tam-hierarchy-enforced",
+    "description": "TAM/SAM/SOM hierarchy with no placeholder values",
+    "prompt": "Size the market for AI-powered customer support tools. Give me TAM, SAM, and SOM with specific numbers.",
+    "expectations": [
+      {
+        "description": "Output contains TAM tier",
+        "deterministic_checks": [
+          {
+            "type": "output_contains",
+            "value": "TAM"
+          }
+        ]
+      },
+      {
+        "description": "Output contains SAM tier",
+        "deterministic_checks": [
+          {
+            "type": "output_contains",
+            "value": "SAM"
+          }
+        ]
+      },
+      {
+        "description": "Output contains SOM tier",
+        "deterministic_checks": [
+          {
+            "type": "output_contains",
+            "value": "SOM"
+          }
+        ]
+      },
+      {
+        "description": "Output does NOT contain placeholder $X.XB values",
+        "deterministic_checks": [
+          {
+            "type": "output_not_contains",
+            "value": "$X.XB"
+          }
+        ]
+      },
+      {
+        "description": "Output does NOT contain placeholder $X.X billion values",
+        "deterministic_checks": [
+          {
+            "type": "output_not_contains",
+            "value": "$X.X billion"
+          }
+        ]
+      },
+      {
+        "description": "TAM > SAM > SOM numerically, no placeholder values"
+      }
+    ]
+  },
+  {
+    "id": "methodology-selection-rationale",
+    "description": "Market sizing with explicit methodology selection rationale",
+    "prompt": "Estimate the market size for autonomous drone delivery in agricultural settings. Explain your methodology choice.",
+    "expectations": [
+      {
+        "description": "Output identifies a specific methodology approach",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["Top-Down", "Bottom-Up", "Value Theory"]
+          }
+        ]
+      },
+      {
+        "description": "Output includes rationale for methodology selection",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["selected", "chose", "approach", "methodology"]
+          }
+        ]
+      },
+      {
+        "description": "Explicit rationale for why the chosen methodology fits the autonomous drone delivery market"
+      }
+    ]
   }
 ]

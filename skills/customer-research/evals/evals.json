@@ -361,5 +361,68 @@
         "description": "Output is investor-ready: professional tone, no placeholder brackets remaining, and includes quantifiable or structured data"
       }
     ]
+  },
+  {
+    "name": "jtbd-format-validation",
+    "prompt": "Apply the Jobs-to-be-Done framework to analyze why mid-market companies adopt project management tools.",
+    "expectations": [
+      {
+        "description": "Output references the JTBD framework",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["Jobs-to-be-Done", "JTBD", "jobs to be done"]
+          }
+        ]
+      },
+      {
+        "description": "Output includes functional jobs",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["functional", "Functional"]
+          }
+        ]
+      },
+      {
+        "description": "Output includes emotional jobs",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["emotional", "Emotional"]
+          }
+        ]
+      },
+      {
+        "description": "JTBD includes functional AND emotional jobs with structured job statements"
+      }
+    ]
+  },
+  {
+    "name": "journey-map-structure",
+    "prompt": "Map the customer journey for a B2B buyer evaluating enterprise analytics platforms.",
+    "expectations": [
+      {
+        "description": "Output references a journey map",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["Journey", "journey"]
+          }
+        ]
+      },
+      {
+        "description": "Output includes standard journey stages",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["Awareness", "Consideration", "Decision", "awareness", "consideration", "decision"]
+          }
+        ]
+      },
+      {
+        "description": "Journey map includes stages with Actions, Thoughts, Emotions, and Friction Points"
+      }
+    ]
   }
 ]

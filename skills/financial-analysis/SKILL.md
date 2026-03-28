@@ -10,6 +10,16 @@ version: 0.1.0
 
 Financial analysis evaluates economic viability and business model health through metrics, projections, and benchmarking. This skill covers key financial frameworks for market and business analysis.
 
+## Required Frameworks
+
+| Framework | Output Section | Required | Condition |
+|-----------|---------------|----------|-----------|
+| Unit Economics | Unit Economics | yes | — |
+| Revenue Model Classification | Revenue Model | yes | — |
+| Pricing Strategy | Pricing Analysis | yes | — |
+| Cost Structure | Cost Structure | yes | — |
+| Rule of 40 | Profitability Assessment | yes | — |
+
 ## Core Metrics
 
 ### Unit Economics
