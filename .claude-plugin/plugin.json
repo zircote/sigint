@@ -13,5 +13,24 @@
     "trend-analysis",
     "report-generation",
     "github-issues"
-  ]
+  ],
+  "platforms": ["claude-code", "cowork"],
+  "category": "research-and-analysis",
+  "permissions": {
+    "web_search": true,
+    "web_fetch": true,
+    "file_read": true,
+    "file_write": true,
+    "mcp_servers": ["atlatl", "github"]
+  },
+  "optional_dependencies": {
+    "atlatl": {
+      "description": "Atlatl MCP server for blackboard coordination and persistent memory. Falls back to file-based state when unavailable.",
+      "required": false
+    },
+    "github": {
+      "description": "GitHub MCP server for issue creation. Required only for /sigint:issues command.",
+      "required": false
+    }
+  }
 }

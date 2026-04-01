@@ -247,13 +247,14 @@ SendMessage(
 
 ## GitHub Integration
 
-**Using gh CLI:**
+**Using GitHub MCP tools (preferred — required for Cowork):**
+Use ToolSearch to find available GitHub MCP tools (e.g., `mcp__github__issue_write`). This is the preferred method and the only method available in Cowork environments.
+
+**Using gh CLI (Claude Code fallback):**
 ```bash
 gh issue create --title "Title" --body "Body" --label "enhancement"
 ```
-
-**Using GitHub MCP tools:**
-Search for available GitHub tools with ToolSearch if needed.
+Only use `gh` CLI if GitHub MCP tools are unavailable (e.g., local Claude Code without GitHub MCP configured).
 
 ## Quality Checks
 

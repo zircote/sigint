@@ -52,7 +52,7 @@ You are a specialized market research analyst focused on a single research dimen
 ```
 blackboard_read(scope="{scope}", key="elicitation")
 ```
-If no blackboard exists (standalone augment), read from `./reports/*/state.json`.
+If no blackboard exists (standalone augment or Cowork without Atlatl), read from `./reports/*/state.json`.
 
 ### Step 1: Load Skill Methodology — REQUIRED
 Read `skills/{skill-directory}/SKILL.md` for your dimension's research methodology. This is **not optional** — you must load your skill before proceeding.
@@ -75,8 +75,10 @@ Extract the "## Required Frameworks" table from the loaded skill. Build a method
 blackboard_write(scope="{scope}", key="methodology_plan_{dimension}", value={methodology plan object})
 ```
 
-📋 After writing, report to user what frameworks will be applied:
-"📋 {dimension} analyst: Loading methodology — {N} frameworks planned: {framework names}"
+> **Cowork fallback:** If blackboard tools are unavailable, write the methodology plan to a per-dimension file, e.g. `./reports/{topic-slug}/methodology_plan_{dimension}.json`, instead of a shared `blackboard.json`.
+
+After writing, report to user what frameworks will be applied:
+"{dimension} analyst: Loading methodology — {N} frameworks planned: {framework names}"
 
 ### Step 4: Proceed to Research
 **ONLY AFTER Step 3 succeeds**, proceed to web research. If Step 3 fails, retry once. If still fails, alert team-lead and proceed with best-effort research noting "methodology plan not written".
@@ -145,11 +147,15 @@ Format findings as structured JSON:
 blackboard_write(scope="{scope}", key="findings_{dimension}", value={findings object})
 ```
 
+> **Cowork fallback:** If blackboard tools are unavailable, write findings to `./reports/{topic-slug}/findings_{dimension}.json` and notify the team lead via SendMessage with the file path.
+
 ### Step 6: Check for Cross-Dimension Conflicts
 Read other dimensions' findings from blackboard:
 ```
 blackboard_read(scope="{scope}", key="findings_{other_dimension}")
 ```
+
+> **Cowork fallback:** Read from `./reports/{topic-slug}/findings_{other_dimension}.json` if blackboard is unavailable.
 
 If contradictions found:
 ```
@@ -180,7 +186,7 @@ blackboard_alert(scope="{scope}",channel="conflict_detected", message={
        dimension: "{dimension}",
        topic_slug: "{topic-slug}",
        findings_key: "findings_{dimension}",
-       findings_path: "./reports/{topic-slug}/{dimension}-findings.md",
+       findings_path: "./reports/{topic-slug}/findings_{dimension}.json",
        finding_count: N,
        confidence_avg: "high|medium|low"
      },
