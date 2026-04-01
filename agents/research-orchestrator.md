@@ -308,21 +308,48 @@ Compare planned vs applied frameworks per dimension. Write to state.json.
 
 ### Step 3.4: Merge into State
 
-Update `./reports/{topic-slug}/state.json`:
-- Append all findings arrays (only non-quarantined findings)
-- Append all sources arrays
+Update `./reports/{topic-slug}/state.json` using mode-appropriate merge strategy:
+
+#### Full Mode (initial research)
+
+No prior findings exist. Write new findings and sources directly:
+- Set `findings` to the new findings array (non-quarantined only)
+- Set `sources` to the new sources array
 - Set `phase: "complete"`, `last_updated: "{ISO_DATE}"`
-- Append to `lineage[]`:
-  ```json
-  {
-    "session_id": "{ISO_DATE}",
-    "action": "{initial_research|scheduled_update|augment}",
-    "dimensions": [...],
-    "finding_count": N,
-    "quarantined_count": N,
-    "delta_from_previous": {delta object or null}
-  }
-  ```
+
+#### Update Mode (reconciling against prior state)
+
+Prior findings exist in state.json. **Do NOT blindly append.** Reconcile:
+
+1. **Load prior findings** from `state.json.findings[]`
+2. **Match new findings against prior** by stable ID (`f_{dimension}_{n}`) or dimension + title similarity (>0.8)
+3. **Apply delta classifications** (from Delta Detection Protocol):
+   - **NEW** findings: add to findings array
+   - **UPDATED** findings: **replace** the matched prior finding in-place with the new version
+   - **CONFIRMED** findings: keep the prior finding, update `last_confirmed: "{ISO_DATE}"`
+   - **POTENTIALLY_REMOVED** findings: move to `archived_findings[]` in state.json with `archived_at: "{ISO_DATE}"` and `reason: "not found in refresh"` — do NOT leave them in the active `findings[]` array
+4. **Deduplicate**: After reconciliation, verify no duplicate finding IDs exist in the active findings array
+5. **Update sources**: Replace sources for updated dimensions; keep sources for non-refreshed dimensions
+
+#### Augment Mode (single dimension addition)
+
+- If the dimension was previously researched: replace that dimension's findings (same as update mode for one dimension)
+- If the dimension is new: append findings
+
+#### All Modes — Lineage Entry
+
+Append to `lineage[]`:
+```json
+{
+  "session_id": "{ISO_DATE}",
+  "action": "{initial_research|scheduled_update|augment}",
+  "dimensions": [...],
+  "finding_count": N,
+  "quarantined_count": N,
+  "archived_count": N,
+  "delta_from_previous": {delta object or null}
+}
+```
 
 ### Step 3.5: Write Merged Findings to Blackboard
 
@@ -442,7 +469,7 @@ Update progress file:
 
 ## Delta Detection Protocol (Update Mode)
 
-When mode is `update`, run delta detection after finding merge:
+When mode is `update`, run delta detection **BEFORE** Phase 3.4 merge. The delta classifications drive the reconciliation logic in Step 3.4:
 
 ### Step D.1: Load Previous State
 

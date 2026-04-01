@@ -76,9 +76,9 @@ Agent(
   4. Spawn dimension-analysts for DIMENSIONS (Phase 2)
   5. Verify methodology plans (Phase 2.5)
   6. Run post-findings codex review gates (Phase 2.75)
-  7. Merge findings (Phase 3)
-  8. Run post-merge codex review gate (Phase 3.5)
-  9. Run delta detection against prior findings (Delta Protocol)
+  7. Run delta detection BEFORE merge (Delta Protocol) — classify findings as NEW/UPDATED/CONFIRMED/POTENTIALLY_REMOVED
+  8. Reconcile merge (Phase 3.4) — replace updated, archive removed, add new. Do NOT append blindly.
+  9. Run post-merge codex review gate (Phase 3.5)
   10. Render progress view (Phase 3.75)
   11. Cleanup (Phase 4)
 
