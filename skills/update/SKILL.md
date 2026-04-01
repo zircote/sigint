@@ -1,7 +1,7 @@
 ---
 name: update
 description: Refresh existing research with latest data using swarm orchestration and delta detection. Delegates to the research-orchestrator agent in update mode.
-argument-hint: "[--area <specific-area>] [--since <date>] [--delta] [--dimensions <dim1,dim2,...>]"
+argument-hint: "[--topic <slug>] [--area <area>] [--since <date>] [--no-delta] [--dimensions <dim1,dim2,...>]"
 ---
 
 # Sigint Update Skill (Swarm Orchestration)
@@ -12,9 +12,10 @@ This skill refreshes existing research by delegating to the research-orchestrato
 
 Parse `$ARGUMENTS` before any other processing:
 
+- `--topic <topic-slug>` — Optional: specify which research session to update. Required when multiple sessions exist.
 - `--area <area>` — Optional: specific area to update (maps to a dimension)
 - `--since <date>` — Optional: only fetch data since this date
-- `--delta` — Enable delta detection (compare against prior findings). Default: enabled.
+- `--no-delta` — Disable delta detection. By default, delta detection is enabled for all updates.
 - `--dimensions <dim1,dim2,...>` — Optional: comma-separated dimensions to update. Default: all dimensions from prior research.
 
 ---
@@ -30,11 +31,13 @@ Glob("./reports/*/state.json")
 
 If no state.json found: inform user "No active research session found. Use `/sigint:start` to begin." and stop.
 
-If multiple sessions found: list them and ask user to specify (or use `--area` to resolve).
+If multiple sessions found:
+- If `--topic` was provided: use that topic-slug
+- Otherwise: list all sessions and ask user to specify
 
 ### Step 0.2: Load Prior State
 
-Read `./reports/{topic-slug}/state.json`. Extract:
+Read `./reports/{topic-slug}/state.json` (where `topic-slug` is resolved from `--topic` argument, single-session auto-detect, or user selection). Extract:
 - `topic`, `topic_slug`
 - `elicitation` (reuse for dimension-analysts)
 - `findings[]` (for delta detection baseline)
@@ -65,7 +68,7 @@ Agent(
   TOPIC_SLUG: {topic-slug}
   DIMENSIONS: {resolved dimensions list}
   SINCE_DATE: {--since value or null}
-  DELTA_ENABLED: {true unless --delta=false}
+  DELTA_ENABLED: {false if --no-delta, otherwise true}
   PRIOR_STATE: {summary of prior state — finding count, dimensions, last updated}
   ELICITATION: {prior elicitation JSON from state.json}
 

@@ -227,28 +227,32 @@ Before creating ANY issues, you MUST:
 
 ### Step 5.5: Post-Issues Codex Review Gate (BLOCKING)
 
-Before creating issues (if not dry-run), request a codex review via SendMessage to the team lead:
-```
-SendMessage(
-  to: "team-lead",
-  message: {
-    type: "codex_review_request",
-    gate: "post-issues",
-    issues_data: {planned issues JSON},
-    state_path: "./reports/{topic-slug}/state.json",
-    review_criteria: [
-      "ISSUE_FINDING_LINKAGE: Every issue traces to a research finding",
-      "ACCEPTANCE_CRITERIA_COMPLETENESS: Every issue has measurable criteria",
-      "PRIORITY_JUSTIFICATION: Priority ratings supported by research evidence"
-    ]
-  },
-  summary: "Requesting post-issues codex review"
-)
-```
-Wait for the team lead to respond with gate results. If gate fails:
-- Revise flagged issues (unlinked issues, missing criteria, unjustified priorities)
-- Re-submit for review (max 1 retry)
-- If still failing, proceed with creation but add a "Review Warning" label to flagged issues
+Before creating issues (if not dry-run), self-review the planned issues against findings data:
+
+**Step 5.5a: Load findings for cross-reference**
+Read `./reports/{topic-slug}/state.json` to get the authoritative findings array.
+
+**Step 5.5b: Verify issue-finding linkage**
+For each planned issue:
+- Check: does the issue's "Source" / "Finding" field reference a valid finding ID in state.json?
+- Flag issues with no traceable finding
+
+**Step 5.5c: Verify acceptance criteria completeness**
+For each planned issue:
+- Check: does it have at least 2 measurable acceptance criteria?
+- Flag issues with vague or missing criteria
+
+**Step 5.5d: Verify priority justification**
+For each planned issue:
+- Check: is the priority rating (P0-P3) supported by the referenced finding's confidence and evidence?
+- Flag priorities that seem inflated relative to evidence strength
+
+**Step 5.5e: Remediate or warn**
+- If flagged issues found: revise (fix linkage, strengthen criteria, adjust priorities) — max 1 revision pass
+- If issues remain after revision: add a `review-warning` label to flagged issues before creation
+- If no issues: proceed
+
+**Fallback:** If spawned with a `team_name` and a team lead is available, send flagged issues via SendMessage for awareness. Do not wait for a response — the self-review is authoritative.
 
 ### Step 6: Document Results
 - Save issue manifest to reports directory

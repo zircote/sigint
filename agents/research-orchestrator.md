@@ -258,17 +258,17 @@ Update progress file:
      FINDINGS DATA:
      {paste findings JSON}
      
-     RESPOND WITH JSON:
+     RESPOND WITH VALID JSON (double-quoted keys and strings):
      {
-       'gate': 'pass' or 'fail',
-       'findings_reviewed': N,
-       'quarantined': [
-         {'finding_id': '...', 'reason': '...', 'gate': 'post-findings'}
+       "gate": "pass or fail",
+       "findings_reviewed": N,
+       "quarantined": [
+         {"finding_id": "...", "reason": "...", "gate": "post-findings"}
        ],
-       'source_verification': [
-         {'url': '...', 'alive': true|false|unknown, 'snippet_verified': true|false}
+       "source_verification": [
+         {"url": "...", "alive": true, "snippet_verified": true}
        ],
-       'methodology_gaps': ['...']
+       "methodology_gaps": ["..."]
      }"
    )
    ```
@@ -395,14 +395,14 @@ Agent(
   MERGED FINDINGS:
   {paste merged findings}
   
-  RESPOND WITH JSON:
+  RESPOND WITH VALID JSON (double-quoted keys and strings):
   {
-    'gate': 'pass' or 'fail',
-    'contradictions': [...],
-    'duplicates': [...],
-    'gaps': [...],
-    'quarantined': [
-      {'finding_id': '...', 'reason': '...', 'gate': 'post-merge'}
+    "gate": "pass or fail",
+    "contradictions": [],
+    "duplicates": [],
+    "gaps": [],
+    "quarantined": [
+      {"finding_id": "...", "reason": "...", "gate": "post-merge"}
     ]
   }"
 )
@@ -416,7 +416,7 @@ Update progress file.
 
 ## Phase 3.75: Render Progress View
 
-Generate `./reports/{topic-slug}/research-progress.md` from state.json:
+**Append** a rendered status section to `./reports/{topic-slug}/research-progress.md`. Do NOT overwrite the file — prior phase transition entries form an audit trail that must be preserved. Append the following section after the existing log entries:
 
 ```markdown
 # Research Progress: {topic}
@@ -651,12 +651,12 @@ Agent(
   FINDINGS DATA:
   {state.json findings}
   
-  RESPOND WITH JSON:
+  RESPOND WITH VALID JSON (double-quoted keys and strings):
   {
-    'gate': 'pass' or 'fail',
-    'untraced_claims': [...],
-    'hallucinated_stats': [...],
-    'balance_issues': [...]
+    "gate": "pass or fail",
+    "untraced_claims": [],
+    "hallucinated_stats": [],
+    "balance_issues": []
   }"
 )
 ```
@@ -680,12 +680,12 @@ Agent(
   FINDINGS DATA:
   {state.json findings}
   
-  RESPOND WITH JSON:
+  RESPOND WITH VALID JSON (double-quoted keys and strings):
   {
-    'gate': 'pass' or 'fail',
-    'unlinked_issues': [...],
-    'missing_criteria': [...],
-    'unjustified_priorities': [...]
+    "gate": "pass or fail",
+    "unlinked_issues": [],
+    "missing_criteria": [],
+    "unjustified_priorities": []
   }"
 )
 ```
