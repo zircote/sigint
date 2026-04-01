@@ -49,7 +49,9 @@ Priority order:
 1. `--repo` argument (if provided)
 2. `elicitation.default_repo` (if set in state.json)
 3. `./.claude/sigint.local.md` `default_repo` setting
-4. `gh repo view --json nameWithOwner -q .nameWithOwner` (auto-detect from git remote)
+4. Auto-detect from git remote: use GitHub MCP tools (`mcp__github__get_me` or similar) if available, otherwise fall back to `gh repo view --json nameWithOwner -q .nameWithOwner`
+
+> **Cowork note:** In Cowork environments, `gh` CLI may not be available. Always prefer GitHub MCP tools for repository detection and issue creation.
 
 If `dry_run = true`, repository resolution is informational only — no issues will be created.
 

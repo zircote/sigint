@@ -43,6 +43,8 @@ See the [Getting Started Tutorial](docs/tutorials/getting-started.md) for a deta
 
 ## Installation
 
+### Claude Code
+
 ```bash
 # Option 1: Plugin Marketplace (recommended)
 /plugins add sigint
@@ -53,6 +55,14 @@ claude --plugin-dir /path/to/sigint
 # Option 3: Manual install to plugins directory
 cp -r sigint ~/.claude/plugins/
 ```
+
+### Cowork
+
+1. Open Claude Desktop app > **Cowork** tab
+2. Click **Customize** > **Browse plugins**
+3. Search for "sigint" and click **Install**
+
+For organization-wide deployment and detailed setup, see the [Cowork deployment guide](docs/how-to/deploy-to-cowork.md).
 
 ## Commands
 
@@ -172,9 +182,12 @@ EOF
 
 ## Dependencies
 
-- GitHub CLI (`gh`) for issue creation
-- Atlatl MCP server for memory persistence and blackboard coordination
+**Required:**
 - WebSearch/WebFetch tools for research
+
+**Optional:**
+- Atlatl MCP server for blackboard coordination and persistent memory (falls back to file-based state)
+- GitHub MCP server or GitHub CLI (`gh`) for issue creation
 
 ## References
 

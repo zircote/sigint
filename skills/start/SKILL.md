@@ -77,6 +77,8 @@ blackboard_create(scope="{topic-slug}", ttl=86400)
 ```
 Store the scope as `blackboard_scope = "{topic-slug}"`.
 
+> **Cowork fallback:** If `blackboard_create` fails (Atlatl MCP unavailable), use file-based coordination instead. Write shared state to `./reports/{topic-slug}/blackboard.json` and coordinate via TaskCreate/SendMessage only. Set `blackboard_scope = null` and skip all subsequent `blackboard_read`/`blackboard_write` calls — use file reads/writes to `blackboard.json` as the coordination mechanism.
+
 **Step 0.1.4**: **CRITICAL — DO NOT SKIP.** Immediately after blackboard_create returns, use **TaskCreate** to create 3 high-level phase tasks (dimension tasks are created after elicitation when priorities are known):
 - `"Phase 1: Elicitation"`
 - `"Phase 3: Merge Findings"` — blockedBy Phase 2 tasks (add blockers after Phase 2 tasks are created)
