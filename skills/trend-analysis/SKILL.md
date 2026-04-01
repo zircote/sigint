@@ -213,7 +213,7 @@ For detailed methodologies, see:
 
 ## Orchestration Hints
 
-- **Blackboard key**: `findings_trends`
+- **Blackboard key**: `findings_trends` (trend-modeling uses separate key `findings_trend_modeling`)
 - **Cross-reference dimensions**: tech (adoption curves, technology maturity), regulatory (regulatory shifts impacting trends)
 - **Alert triggers**:
   - Trend reversal detected (INC→DEC or DEC→INC)

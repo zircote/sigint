@@ -377,8 +377,32 @@ After documentation review, run the human-voice plugin to ensure report language
 10. **Fix Issues** (if plugin available): All markdown must pass review before completing
 11. **Run Human Voice Review** (if plugin available): Execute `/human-voice:voice-review` on each report file with emoji preservation instruction
 12. **Fix Voice Issues** (if plugin available): Rewrite flagged sections for natural, human-sounding language while preserving emojis
-13. **Capture Summary**: `capture_memory(namespace="_semantic/knowledge", tags=["sigint-research", "report"], title="Report generated: {topic}", ...)` then `enrich_memory(id)`
-14. **Signal Completion** (required when spawned as a swarm teammate with `team_name`):
+13. **Post-Report Codex Review Gate (BLOCKING):**
+    Before delivering the report, request a codex review via SendMessage to the team lead:
+    ```
+    SendMessage(
+      to: "team-lead",
+      message: {
+        type: "codex_review_request",
+        gate: "post-report",
+        report_path: "./reports/{topic-slug}/YYYY-MM-DD-report.md",
+        state_path: "./reports/{topic-slug}/state.json",
+        review_criteria: [
+          "CLAIM_TRACEABILITY: Every assertion traces to a finding with provenance",
+          "NO_HALLUCINATED_STATISTICS: Every number appears in findings data",
+          "BALANCED_REPRESENTATION: No dimension is over/under-represented vs priorities",
+          "SOURCE_ATTRIBUTION: All claims cite their sources"
+        ]
+      },
+      summary: "Requesting post-report codex review"
+    )
+    ```
+    Wait for the team lead to respond with gate results. If gate fails:
+    - Revise flagged sections (untraced claims, hallucinated stats)
+    - Re-submit for review (max 1 retry)
+    - If still failing, deliver report with a "Provenance Warnings" appendix listing unresolved issues
+14. **Capture Summary**: `capture_memory(namespace="_semantic/knowledge", tags=["sigint-research", "report"], title="Report generated: {topic}", ...)` then `enrich_memory(id)`
+15. **Signal Completion** (required when spawned as a swarm teammate with `team_name`):
     ```
     TaskUpdate(taskId, status: "completed")
     SendMessage(

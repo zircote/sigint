@@ -220,7 +220,7 @@ For theoretical background and advanced techniques, see:
 
 ## Orchestration Hints
 
-- **Blackboard key**: `findings_trends` (shared with trend-analysis — trend-modeling extends trend-analysis findings with scenario modeling)
+- **Blackboard key**: `findings_trend_modeling` (separate from trend-analysis which uses `findings_trends` — trend-modeling produces scenario models that complement but do not overwrite trend-analysis findings)
 - **Cross-reference dimensions**: All dimensions provide input variables for scenario modeling
 - **Alert triggers**:
   - Scenario with >50% probability of adverse outcome

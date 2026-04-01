@@ -225,6 +225,31 @@ Before creating ANY issues, you MUST:
 - Apply labels and assignments
 - Link related issues
 
+### Step 5.5: Post-Issues Codex Review Gate (BLOCKING)
+
+Before creating issues (if not dry-run), request a codex review via SendMessage to the team lead:
+```
+SendMessage(
+  to: "team-lead",
+  message: {
+    type: "codex_review_request",
+    gate: "post-issues",
+    issues_data: {planned issues JSON},
+    state_path: "./reports/{topic-slug}/state.json",
+    review_criteria: [
+      "ISSUE_FINDING_LINKAGE: Every issue traces to a research finding",
+      "ACCEPTANCE_CRITERIA_COMPLETENESS: Every issue has measurable criteria",
+      "PRIORITY_JUSTIFICATION: Priority ratings supported by research evidence"
+    ]
+  },
+  summary: "Requesting post-issues codex review"
+)
+```
+Wait for the team lead to respond with gate results. If gate fails:
+- Revise flagged issues (unlinked issues, missing criteria, unjustified priorities)
+- Re-submit for review (max 1 retry)
+- If still failing, proceed with creation but add a "Review Warning" label to flagged issues
+
 ### Step 6: Document Results
 - Save issue manifest to reports directory
 - Capture to Atlatl: `capture_memory(namespace="_semantic/knowledge", tags=["sigint-research", "issues"], ...)` then `enrich_memory(id)`

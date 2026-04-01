@@ -10,20 +10,30 @@ Sigint uses 5 specialized agents for research orchestration, analysis, reporting
 
 ## research-orchestrator
 
-Coordinates parallel market research across multiple dimensions.
+**File**: `agents/research-orchestrator.md`
+
+Orchestrator agent for sigint research sessions. Owns all phase management: team lifecycle, dimension-analyst spawning, codex review gates, finding merge, progress tracking, delta detection, and cleanup. Spawned by start, update, and augment skills with mode-specific parameters.
 
 | Property | Value |
 |----------|-------|
-| **Version** | 0.4.0 |
+| **Version** | 0.5.0 |
 | **Color** | cyan |
 | **Model** | inherit |
-| **Spawned by** | `/sigint:start` |
+| **Spawned by** | `/sigint:start`, `/sigint:update`, `/sigint:augment` |
 
-**Tools:** Read, Write, Grep, Glob, Agent, SendMessage, TaskCreate, TaskUpdate, TaskList, TaskGet
+**Tools:** Read, Write, Edit, Grep, Glob, Agent, TeamCreate, TeamDelete, SendMessage, TaskCreate, TaskUpdate, TaskList, TaskGet, AskUserQuestion
 
 **Atlatl tools:** blackboard_create, blackboard_write, blackboard_read, blackboard_alert, blackboard_pending_alerts, blackboard_ack_alert, recall_memories, capture_memory, enrich_memory
 
-**Behavior:** Creates blackboard (TTL 24h), writes elicitation context, spawns parallel dimension-analysts (max 5 concurrent), monitors via blackboard alerts, merges findings into state.json, captures summary to Atlatl.
+**Modes**: `full` (start), `update` (update), `augment` (augment)
+
+**Key capabilities**:
+- Blocking codex review gates at 4 pipeline boundaries (post-findings, post-merge, post-report, post-issues)
+- Quarantine mechanism for gate failures (`quarantine.json`)
+- Delta detection protocol for update mode (NEW/UPDATED/CONFIRMED/POTENTIALLY_REMOVED/TREND_REVERSAL)
+- Progress file generation (`research-progress.md`) for cross-session continuity
+- Lineage tracking in `state.json` for full provenance chain
+- Blackboard dual-write (blackboard + file) as default behavior
 
 ---
 
@@ -38,7 +48,9 @@ Focused research on a single market dimension, parameterized by skill.
 | **Model** | inherit |
 | **Spawned by** | research-orchestrator, `/sigint:augment` |
 
-**Tools:** Read, Write, Grep, Glob, WebSearch, WebFetch, Skill, Agent, SendMessage, TaskCreate, TaskUpdate, TaskList, TaskGet
+**Tools:** Read, Write, Grep, Glob, WebSearch, WebFetch, Skill, SendMessage, TaskCreate, TaskUpdate, TaskList, TaskGet
+
+**Atlatl tools:** blackboard_write, blackboard_read, blackboard_alert, recall_memories, capture_memory, enrich_memory
 
 **Dimension-to-skill mapping:**
 
@@ -51,6 +63,7 @@ Focused research on a single market dimension, parameterized by skill.
 | tech | tech-assessment | `findings_tech` |
 | financial | financial-analysis | `findings_financial` |
 | regulatory | regulatory-review | `findings_regulatory` |
+| trend_modeling | trend-modeling | `findings_trend_modeling` |
 
 ---
 
@@ -63,7 +76,7 @@ RLM processor for large documents exceeding context limits.
 | **Version** | 0.4.0 |
 | **Color** | blue |
 | **Model** | inherit |
-| **Spawned by** | dimension-analyst |
+| **Spawned by** | research-orchestrator (on behalf of dimension-analyst request) |
 
 **Tools:** Read, Write, WebFetch, Grep, Glob, Agent, SendMessage, TaskCreate, TaskUpdate, TaskList, TaskGet
 
