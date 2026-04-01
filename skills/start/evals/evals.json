@@ -1,0 +1,209 @@
+{
+  "skill_name": "start",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Research the competitive landscape of AI code assistants",
+      "expected_output": "Skill parses 'the competitive landscape of AI code assistants' as the topic, derives a topic-slug, checks for .sigint.config.json, checks for prior research via Glob, and delegates to the research-orchestrator agent in full mode with QUICK_MODE: false",
+      "files": [],
+      "deterministic_checks": [
+        {
+          "type": "output_contains",
+          "value": "research-orchestrator",
+          "description": "Delegates to the research-orchestrator agent"
+        },
+        {
+          "type": "output_contains",
+          "value": "MODE: full",
+          "description": "Spawns orchestrator in full mode"
+        }
+      ],
+      "expectations": [
+        "The skill derives a topic-slug from the input topic using lowercase and hyphens",
+        "The skill checks for .sigint.config.json configuration before delegating",
+        "The skill checks for previous research via Glob on ./reports/*/state.json",
+        "The orchestrator agent is spawned with the topic, topic-slug, config, and max_dimensions parameters"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "--quick AI code assistants market sizing",
+      "expected_output": "Skill extracts the --quick flag, sets QUICK_MODE to true, and uses 'AI code assistants market sizing' as the remaining topic. Delegates to research-orchestrator with abbreviated elicitation (3 questions instead of 8).",
+      "files": [],
+      "deterministic_checks": [
+        {
+          "type": "output_contains",
+          "value": "QUICK_MODE",
+          "description": "Quick mode flag is passed to the orchestrator"
+        },
+        {
+          "type": "output_contains",
+          "value": "research-orchestrator",
+          "description": "Delegates to the research-orchestrator agent"
+        }
+      ],
+      "expectations": [
+        "The --quick flag is extracted from arguments and QUICK_MODE is set to true",
+        "The remaining text after --quick is used as the topic hint, not '--quick' itself",
+        "Abbreviated elicitation with 3 questions is indicated in the orchestrator prompt"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Research Cloud-Native Database Solutions for Enterprise!!!",
+      "expected_output": "Skill normalizes the topic to a slug: lowercase, special characters replaced with hyphens, truncated to 40 characters. The slug should be something like 'cloud-native-database-solutions-for-ent' (truncated at 40 chars).",
+      "files": [],
+      "deterministic_checks": [
+        {
+          "type": "output_contains",
+          "value": "TOPIC_SLUG",
+          "description": "Topic slug is passed to the orchestrator"
+        }
+      ],
+      "expectations": [
+        "The topic-slug is derived as lowercase with hyphens replacing spaces and special characters",
+        "The topic-slug is truncated to 40 characters maximum",
+        "Exclamation marks and other special characters are replaced with hyphens or removed in the slug",
+        "The original topic text is preserved separately from the normalized slug"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "",
+      "expected_output": "When no topic is provided, the skill uses 'research' as the default topic-slug and proceeds to delegate to the research-orchestrator. The orchestrator handles elicitation to determine the actual topic.",
+      "files": [],
+      "deterministic_checks": [
+        {
+          "type": "output_contains",
+          "value": "research-orchestrator",
+          "description": "Still delegates to orchestrator even with no topic"
+        }
+      ],
+      "expectations": [
+        "When no topic hint is provided, the skill uses 'research' as the default topic-slug",
+        "The skill still proceeds to delegate to the research-orchestrator without error",
+        "The orchestrator is spawned and will handle topic elicitation interactively"
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "Research autonomous vehicle regulations",
+      "expected_output": "Skill loads .sigint.config.json if it exists and merges with defaults. If the config file does not exist, defaults are used silently without creating the file. Default maxDimensions is 5.",
+      "files": [
+        {
+          "path": ".sigint.config.json",
+          "content": "{\n  \"version\": \"1.0\",\n  \"research\": {\n    \"maxDimensions\": 3,\n    \"dimensionTimeout\": 600,\n    \"defaultPriorities\": [\"regulatory\", \"competitive\"]\n  }\n}"
+        }
+      ],
+      "deterministic_checks": [
+        {
+          "type": "output_contains",
+          "value": "MAX_DIMENSIONS",
+          "description": "Max dimensions parameter is passed to orchestrator"
+        },
+        {
+          "type": "output_contains",
+          "value": "CONFIG",
+          "description": "Config is serialized and passed to orchestrator"
+        }
+      ],
+      "expectations": [
+        "The skill reads and parses .sigint.config.json successfully",
+        "MAX_DIMENSIONS is set to 3 (from the custom config, not the default 5)",
+        "The config is serialized and passed to the orchestrator agent prompt",
+        "The custom defaultPriorities from config are preserved"
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "Research supply chain optimization",
+      "expected_output": "Skill checks for previous research at ./reports/supply-chain-optimization/state.json via Glob. If prior research exists, the user is asked whether to resume or start fresh. If no prior research, proceeds directly to orchestrator delegation.",
+      "files": [
+        {
+          "path": "reports/supply-chain-optimization/state.json",
+          "content": "{\n  \"topic\": \"supply chain optimization\",\n  \"phase\": \"complete\",\n  \"elicitation\": {\"questions\": [], \"answers\": []}\n}"
+        }
+      ],
+      "deterministic_checks": [
+        {
+          "type": "output_contains",
+          "value": "state.json",
+          "description": "Checks for prior state.json via Glob"
+        }
+      ],
+      "expectations": [
+        "The skill detects existing research at reports/supply-chain-optimization/state.json",
+        "The user is asked whether to use prior research context or start completely fresh",
+        "If resuming, --resume-from context is passed to the orchestrator",
+        "The prior elicitation data from state.json is loaded for potential reuse"
+      ]
+    },
+    {
+      "id": 7,
+      "prompt": "--quick",
+      "expected_output": "When only --quick is passed with no topic, the skill extracts the flag and uses 'research' as the default topic-slug. Delegates to orchestrator with QUICK_MODE: true.",
+      "files": [],
+      "deterministic_checks": [
+        {
+          "type": "output_contains",
+          "value": "QUICK_MODE",
+          "description": "Quick mode is set even with no topic"
+        },
+        {
+          "type": "output_contains",
+          "value": "research-orchestrator",
+          "description": "Delegates to orchestrator"
+        }
+      ],
+      "expectations": [
+        "The --quick flag is extracted leaving no remaining topic text",
+        "The default topic-slug 'research' is used when no topic remains after flag extraction",
+        "QUICK_MODE is set to true in the orchestrator prompt",
+        "The orchestrator is spawned successfully despite no explicit topic"
+      ]
+    },
+    {
+      "id": 8,
+      "prompt": "Research the emerging trends in quantum computing hardware & software ecosystems across North America and Europe",
+      "expected_output": "Long topic text is handled correctly. The slug is truncated to 40 characters. The full topic text is preserved in the TOPIC parameter passed to the orchestrator.",
+      "files": [],
+      "deterministic_checks": [
+        {
+          "type": "output_contains",
+          "value": "TOPIC:",
+          "description": "Full topic is passed to orchestrator"
+        },
+        {
+          "type": "output_contains",
+          "value": "TOPIC_SLUG:",
+          "description": "Truncated slug is passed to orchestrator"
+        }
+      ],
+      "expectations": [
+        "The topic-slug is truncated to exactly 40 characters",
+        "The full untruncated topic text is passed separately as the TOPIC parameter",
+        "Ampersands and special characters in the topic are handled in slug normalization",
+        "The orchestrator receives both the full topic and the normalized slug"
+      ]
+    },
+    {
+      "id": 9,
+      "prompt": "Research fintech payment processing",
+      "expected_output": "After the orchestrator completes, the skill indicates where outputs are saved: state.json, research-progress.md, and optionally quarantine.json in the reports/{topic-slug}/ directory. Next steps reference /sigint:report, /sigint:augment, /sigint:update, /sigint:issues.",
+      "files": [],
+      "deterministic_checks": [
+        {
+          "type": "output_contains",
+          "value": "reports/",
+          "description": "Output references the reports directory"
+        }
+      ],
+      "expectations": [
+        "The skill indicates research session state is saved to ./reports/{topic-slug}/state.json",
+        "Progress view location at ./reports/{topic-slug}/research-progress.md is mentioned",
+        "Next steps reference available follow-up commands: /sigint:report, /sigint:augment, /sigint:update, /sigint:issues",
+        "The orchestrator handles all 9 phases from initialization through cleanup"
+      ]
+    }
+  ]
+}

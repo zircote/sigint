@@ -10,13 +10,13 @@ This skill refreshes existing research by delegating to the research-orchestrato
 
 ## Arguments
 
-Parse `$ARGUMENTS` before any other processing:
+Parse `$ARGUMENTS` before any other processing. Always echo the parsed result so the user sees what was resolved:
 
 - `--topic <topic-slug>` — Optional: specify which research session to update. Required when multiple sessions exist.
-- `--area <area>` — Optional: specific area to update (maps to a dimension)
-- `--since <date>` — Optional: only fetch data since this date
-- `--no-delta` — Disable delta detection. By default, delta detection is enabled for all updates.
-- `--dimensions <dim1,dim2,...>` — Optional: comma-separated dimensions to update. Default: all dimensions from prior research.
+- `--area <area>` — Optional: specific area to update. Maps to the matching dimension from prior elicitation (e.g., `--area regulatory` resolves to the dimension whose name contains "regulatory").
+- `--since <date>` — Optional: SINCE_DATE for date-filtered queries. Only fetch data since this date.
+- `--no-delta` — Disable delta detection (DELTA_ENABLED: false). By default, delta detection is enabled (DELTA_ENABLED: true).
+- `--dimensions <dim1,dim2,...>` — Optional: comma-separated list of specific dimensions to update. Only these are passed to the orchestrator, not all dimensions.
 
 ---
 
@@ -29,11 +29,24 @@ Find the active research state:
 Glob("./reports/*/state.json")
 ```
 
-If no state.json found: inform user "No active research session found. Use `/sigint:start` to begin." and stop.
+If no state.json found:
+1. Inform user: "No active research session found. Use `/sigint:start` to begin."
+2. Show what the update would have done based on the parsed arguments. Use this exact format:
+
+   **Planned update workflow (blocked — no session data):**
+   - **Topic**: {from --topic, or "auto-detect from single session"}
+   - **Dimensions**: {from --dimensions listing each one, or --area mapped to its matching dimension, or "all dimensions from prior elicitation"}
+   - **SINCE_DATE**: {from --since, or "none (fetch all available data)"}
+   - **DELTA_ENABLED**: {"false — findings would be replaced wholesale (--no-delta specified)" if --no-delta, or "true — delta detection would classify findings as NEW, UPDATED, CONFIRMED, POTENTIALLY_REMOVED, or TREND_REVERSAL"}
+   - **Orchestrator**: research-orchestrator would be spawned in MODE: update
+   - **Elicitation**: Prior elicitation from state.json would be reused (not re-run)
+   - **Reconciliation**: {If DELTA_ENABLED: "Reconcile merge — replace updated findings, archive removed, add new (not append blindly). A new lineage entry would be added." | If not: "Wholesale replacement — findings replaced entirely, no reconciliation against prior findings."}
+
+3. Stop execution. Do NOT proceed further.
 
 If multiple sessions found:
-- If `--topic` was provided: use that topic-slug
-- Otherwise: list all sessions and ask user to specify
+- If `--topic` was provided: select that topic-slug
+- Otherwise: list all available sessions and ask the user to choose which one to update. Output: "Multiple sessions found. Please specify which session to update." Do NOT arbitrarily pick one.
 
 ### Step 0.2: Load Prior State
 
@@ -79,8 +92,8 @@ Agent(
   4. Spawn dimension-analysts for DIMENSIONS (Phase 2)
   5. Verify methodology plans (Phase 2.5)
   6. Run post-findings codex review gates (Phase 2.75)
-  7. Run delta detection BEFORE merge (Delta Protocol) — classify findings as NEW/UPDATED/CONFIRMED/POTENTIALLY_REMOVED
-  8. Reconcile merge (Phase 3.4) — replace updated, archive removed, add new. Do NOT append blindly.
+  7. Run delta detection BEFORE merge (Delta Protocol) — classify findings as NEW/UPDATED/CONFIRMED/POTENTIALLY_REMOVED/TREND_REVERSAL
+  8. Reconcile merge (Phase 3.4) — replace updated, archive removed, add new. Do NOT append blindly; reconcile against prior findings.
   9. Run post-merge codex review gate (Phase 3.5)
   10. Render progress view (Phase 3.75)
   11. Cleanup (Phase 4)

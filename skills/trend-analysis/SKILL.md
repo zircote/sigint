@@ -24,12 +24,14 @@ Trend analysis identifies patterns of change over time to anticipate future mark
 ## Trend Categories
 
 ### Macro Trends (3-10+ years)
-Large-scale shifts affecting multiple industries:
-- **Economic**: Interest rates, inflation, employment
-- **Technological**: AI, blockchain, quantum computing
-- **Social**: Demographics, values, behaviors
-- **Environmental**: Climate, sustainability, resources
-- **Political**: Regulation, trade, governance
+Large-scale shifts affecting multiple industries. **Always classify each macro trend into one of these five categories and label it explicitly**:
+- **Economic**: Interest rates, inflation, employment, trade flows, pricing pressure
+- **Technological**: AI, blockchain, quantum computing, automation, platform shifts
+- **Social**: Demographics, values, behaviors, workforce changes, cultural shifts
+- **Environmental**: Climate, sustainability, resources, regulatory carbon targets
+- **Political**: Regulation, trade policy, governance, geopolitical risk
+
+When presenting macro trends, include the category label (e.g., "Technological: AI-driven precision agriculture") so the classification is visible in the output.
 
 ### Micro Trends (1-3 years)
 Industry or segment-specific patterns:
@@ -47,9 +49,11 @@ Early indicators of potential trends:
 - Early adopter behavior
 - Influencer attention
 
+**For each emerging signal, always state what it may indicate or suggest** using language such as "This signal suggests...", "This may indicate...", "The implication is...", or "This points to...". Every signal must be paired with its potential implication.
+
 ## Three-Valued Trend Logic
 
-From the trend-based modeling research, apply minimal-information quantifiers:
+From the trend-based modeling research, apply minimal-information quantifiers. The three values are **INC** (Increasing), **DEC** (Decreasing), and **CONST** (Constant). When explaining the system, always introduce all three values together in a single summary before elaborating on each.
 
 **INC (Increasing)**
 - Measurable upward movement
@@ -158,9 +162,9 @@ Rate trend confidence:
 ## Trend Analysis Summary
 
 ### Macro Trends
-| Trend | Direction | Confidence | Timeframe |
-|-------|-----------|------------|-----------|
-| [Name] | INC/DEC/CONST | High/Med/Low | X years |
+| Category | Trend | Direction | Confidence | Timeframe |
+|----------|-------|-----------|------------|-----------|
+| Economic/Technological/Social/Environmental/Political | [Name] | INC/DEC/CONST | High/Med/Low | X years |
 
 ### Micro Trends
 | Trend | Direction | Confidence | Timeframe |
@@ -168,8 +172,8 @@ Rate trend confidence:
 | [Name] | INC/DEC/CONST | High/Med/Low | X months |
 
 ### Emerging Signals
-- [Signal 1]: [Potential implication]
-- [Signal 2]: [Potential implication]
+- [Signal 1]: This suggests/indicates [potential implication]
+- [Signal 2]: This suggests/indicates [potential implication]
 
 ## Transitional Scenario Graph
 [Mermaid diagram]

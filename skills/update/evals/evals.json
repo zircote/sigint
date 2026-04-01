@@ -1,0 +1,281 @@
+{
+  "skill_name": "update",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Update my research on the enterprise observability market. I want to refresh all dimensions with the latest data.",
+      "expected_output": "The skill locates the active research session via state.json, loads prior state and elicitation, delegates to research-orchestrator in update mode with all dimensions, performs delta detection, and produces an updated state.json with a new lineage entry and delta report",
+      "files": [],
+      "deterministic_checks": [
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "state\\.json",
+          "description": "Skill searches for or reads state.json to locate the active research session"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "(research-orchestrator|orchestrator)",
+          "description": "Skill delegates to the research-orchestrator agent"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "MODE:\\s*update|mode.*update|update.*mode",
+          "description": "Orchestrator is spawned in update mode"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "DELTA_ENABLED.*true|delta.*detect|delta.*enabled",
+          "description": "Delta detection is enabled by default"
+        }
+      ],
+      "expectations": [
+        "The skill reads state.json to load prior findings, elicitation, lineage, and dimensions",
+        "The research-orchestrator is spawned with MODE: update and receives the prior elicitation",
+        "All dimensions from the prior research are included in the update delegation",
+        "Delta detection is enabled by default since --no-delta was not specified",
+        "The output references a summary of changes: new, updated, confirmed, or removed findings"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "/sigint:update --topic enterprise-observability --dimensions market-size,competitive-landscape --since 2026-01-01",
+      "expected_output": "The skill uses the specified topic slug, updates only the market-size and competitive-landscape dimensions, and passes the since date to the orchestrator for date-filtered queries",
+      "files": [],
+      "deterministic_checks": [
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "enterprise-observability",
+          "description": "Skill resolves to the enterprise-observability topic slug"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "market-size",
+          "description": "market-size dimension is included in the update"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "competitive-landscape",
+          "description": "competitive-landscape dimension is included in the update"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "2026-01-01|SINCE_DATE",
+          "description": "The since date is passed to the orchestrator"
+        }
+      ],
+      "expectations": [
+        "Only market-size and competitive-landscape dimensions are updated, not all dimensions",
+        "The SINCE_DATE parameter is passed to the orchestrator so analysts prioritize data from 2026-01-01 onward",
+        "The skill does NOT re-run elicitation -- it reuses the prior elicitation from state.json"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "/sigint:update --no-delta",
+      "expected_output": "The skill performs a full refresh of existing research with delta detection disabled, meaning findings are replaced wholesale without NEW/UPDATED/CONFIRMED/POTENTIALLY_REMOVED classification",
+      "files": [],
+      "deterministic_checks": [
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "state\\.json",
+          "description": "Skill locates and reads state.json"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "DELTA_ENABLED.*false|no.delta|delta.*disabled",
+          "description": "Delta detection is explicitly disabled"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "(research-orchestrator|orchestrator)",
+          "description": "Skill still delegates to the research-orchestrator"
+        }
+      ],
+      "expectations": [
+        "Delta detection is disabled because --no-delta was specified",
+        "The orchestrator does NOT classify findings as NEW/UPDATED/CONFIRMED/POTENTIALLY_REMOVED",
+        "Findings are replaced wholesale rather than reconciled against prior findings",
+        "The rest of the update pipeline (orchestrator delegation, dimension analysts, merge) still executes normally"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "/sigint:update --area regulatory",
+      "expected_output": "The skill maps the --area argument to the corresponding dimension and updates only that single dimension",
+      "files": [],
+      "deterministic_checks": [
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "regulatory|regulation",
+          "description": "The regulatory area is identified and mapped to a dimension"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "state\\.json",
+          "description": "Skill loads prior state from state.json"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "(research-orchestrator|orchestrator)",
+          "description": "Skill delegates to the research-orchestrator"
+        }
+      ],
+      "expectations": [
+        "The --area regulatory argument is mapped to a specific dimension from the prior elicitation",
+        "Only the resolved dimension is passed to the orchestrator, not all dimensions",
+        "Delta detection is enabled by default for the single-dimension update"
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "Update my research.",
+      "expected_output": "When no state.json exists, the skill informs the user that no active research session was found and suggests using /sigint:start",
+      "files": [],
+      "deterministic_checks": [
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "state\\.json|Glob",
+          "description": "Skill searches for state.json files"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "[Nn]o active research|[Nn]o.*session|not found",
+          "description": "Skill reports that no active research session was found"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "sigint:start|/start",
+          "description": "Skill suggests using /sigint:start to begin a new session"
+        }
+      ],
+      "expectations": [
+        "The skill searches for state.json files using Glob",
+        "When no state.json is found, the skill stops and does NOT attempt to create a new session",
+        "The error message suggests using /sigint:start to begin research"
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "Update my research. I have sessions for both enterprise-observability and ai-coding-assistants.",
+      "expected_output": "When multiple sessions exist and no --topic is specified, the skill lists all sessions and asks the user to specify which one to update",
+      "files": [],
+      "deterministic_checks": [
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "state\\.json|Glob",
+          "description": "Skill searches for state.json files"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "(multiple|which|specify|select|choose)",
+          "description": "Skill asks the user to choose which session to update"
+        }
+      ],
+      "expectations": [
+        "The skill finds multiple state.json files across different topic directories",
+        "The skill lists all available sessions for the user to choose from",
+        "The skill does NOT arbitrarily pick one session -- it asks the user to specify"
+      ]
+    },
+    {
+      "id": 7,
+      "prompt": "/sigint:update --topic enterprise-observability --dimensions market-size",
+      "expected_output": "The skill performs an update on a single dimension, delegates to the orchestrator, receives delta detection results classifying findings as NEW/UPDATED/CONFIRMED/POTENTIALLY_REMOVED, and reconciles by replacing updated findings rather than appending",
+      "files": [],
+      "deterministic_checks": [
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "enterprise-observability",
+          "description": "Skill uses the specified topic slug"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "market-size",
+          "description": "Only market-size dimension is updated"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "(NEW|UPDATED|CONFIRMED|POTENTIALLY_REMOVED|TREND_REVERSAL)",
+          "description": "Delta detection classifies findings using the defined categories"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "(reconcil|replace|merge|not append)",
+          "description": "Findings are reconciled (replaced, not appended blindly)"
+        }
+      ],
+      "expectations": [
+        "Delta detection classifies findings using at least some of: NEW, UPDATED, CONFIRMED, POTENTIALLY_REMOVED, TREND_REVERSAL",
+        "Reconciliation replaces updated findings rather than blindly appending new ones alongside old",
+        "The updated state.json includes a new lineage entry recording this update"
+      ]
+    },
+    {
+      "id": 8,
+      "prompt": "/sigint:update --topic enterprise-observability --since 2026-03-01 --dimensions competitive-landscape,customer-research",
+      "expected_output": "The skill combines --since date filtering with specific dimensions, passing SINCE_DATE to the orchestrator so analysts use date-filtered web searches. A delta report is generated showing changes since the prior update.",
+      "files": [],
+      "deterministic_checks": [
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "2026-03-01|SINCE_DATE",
+          "description": "The since date is propagated to the orchestrator"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "competitive-landscape",
+          "description": "competitive-landscape dimension is included"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "customer-research",
+          "description": "customer-research dimension is included"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "delta|DELTA",
+          "description": "Delta detection is referenced in the output"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "elicitation|ELICITATION",
+          "description": "Prior elicitation is loaded and passed to the orchestrator"
+        }
+      ],
+      "expectations": [
+        "The SINCE_DATE is included in analyst spawn prompts so they prioritize recent data via date-filtered searches",
+        "Only competitive-landscape and customer-research dimensions are updated",
+        "Prior elicitation from state.json is reused without re-running the elicitation phase",
+        "A delta report summarizing changes is generated or referenced in the output"
+      ]
+    }
+  ]
+}

@@ -48,7 +48,7 @@ Traditional market analysis requires extensive quantitative data. Three-valued l
 
 ## Extended Notation
 
-For more nuanced analysis:
+For more nuanced analysis, use acceleration/deceleration modifiers. **When using extended notation, ALWAYS include this definition table in the output** so the reader understands the codes:
 
 | Code | Meaning | Description |
 |------|---------|-------------|
@@ -57,24 +57,37 @@ For more nuanced analysis:
 | AD | Accelerating Decrease | DEC with increasing rate |
 | DD | Decelerating Decrease | DEC with decreasing rate |
 
+When a user requests extended notation, the output MUST:
+1. Include the definition table above (with the "Accelerating Growth", "Decelerating Growth", etc. labels)
+2. Use AG/DG/AD/DD codes in scenario assignments
+3. Explain which extended code applies to each variable and why
+
 ## Correlation-to-Trend Conversion
 
-Transform correlation relationships into trend relationships:
+Transform correlation relationships into trend relationships using the **required notation format**:
 
 **If variables X and Y have positive correlation:**
 - When X is INC → Y is INC
 - When X is DEC → Y is DEC
-- Notation: INC(X, Y)
+- **MUST use notation**: `INC(X, Y)` — meaning X and Y trend in the same direction
 
 **If variables X and Y have negative correlation:**
 - When X is INC → Y is DEC
 - When X is DEC → Y is INC
-- Notation: DEC(X, Y)
+- **MUST use notation**: `DEC(X, Y)` — meaning X and Y trend in opposite directions
+
+**CRITICAL**: When the user provides correlation data, you MUST:
+1. Explicitly label each correlation as "positive correlation" or "negative correlation"
+2. Use the `INC(X, Y)` or `DEC(X, Y)` notation format for each relationship
+3. Show the conversion step clearly before building the relationship matrix
 
 **Example:**
-- Market size and competition have positive correlation
+- Market size and competition have **positive correlation** → `INC(Market Size, Competition)`
 - If Market Size = INC, then Competition = INC
 - If Market Size = DEC, then Competition = DEC
+- Price and demand have **negative correlation** → `DEC(Price, Demand)`
+- If Price = INC, then Demand = DEC
+- If Price = DEC, then Demand = INC
 
 ## Trend Model Construction
 
@@ -203,6 +216,7 @@ When analyzing terminal scenarios:
 - **Document uncertainty**: Note where relationships are speculative
 - **Update iteratively**: Refine model as new information emerges
 - **Focus on transitions**: The paths between scenarios often matter more than endpoints
+- **Large models (7+ variables)**: Focus the relationship matrix on direct relationships only. Not every variable pair needs a relationship — use CONST for pairs without clear correlation. Generate 3-5 key scenarios rather than exhaustively enumerating all combinations. Prioritize terminal scenarios and the most likely transitional paths.
 
 ## Advantages of This Approach
 
