@@ -75,7 +75,7 @@ Extract the "## Required Frameworks" table from the loaded skill. Build a method
 blackboard_write(scope="{scope}", key="methodology_plan_{dimension}", value={methodology plan object})
 ```
 
-> **Cowork fallback:** If blackboard tools are unavailable, write the methodology plan to `./reports/{topic-slug}/blackboard.json` under key `methodology_plan_{dimension}` instead.
+> **Cowork fallback:** If blackboard tools are unavailable, write the methodology plan to a per-dimension file, e.g. `./reports/{topic-slug}/methodology_plan_{dimension}.json`, instead of a shared `blackboard.json`.
 
 After writing, report to user what frameworks will be applied:
 "{dimension} analyst: Loading methodology — {N} frameworks planned: {framework names}"
@@ -186,7 +186,7 @@ blackboard_alert(scope="{scope}",channel="conflict_detected", message={
        dimension: "{dimension}",
        topic_slug: "{topic-slug}",
        findings_key: "findings_{dimension}",
-       findings_path: "./reports/{topic-slug}/{dimension}-findings.md",
+       findings_path: "./reports/{topic-slug}/findings_{dimension}.json",
        finding_count: N,
        confidence_avg: "high|medium|low"
      },

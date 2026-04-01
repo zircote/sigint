@@ -72,12 +72,19 @@ TeamCreate with team_name: "sigint-{topic-slug}-research"
 If TeamCreate fails, retry once. If it fails again, report the error and stop.
 
 **Step 0.1.3**: Create research directory and blackboard:
+
+First, ensure the reports directory exists:
+```bash
+mkdir -p ./reports/{topic-slug}
+```
+
+Then create the blackboard:
 ```
 blackboard_create(scope="{topic-slug}", ttl=86400)
 ```
 Store the scope as `blackboard_scope = "{topic-slug}"`.
 
-> **Cowork fallback:** If `blackboard_create` fails (Atlatl MCP unavailable), use file-based coordination instead. Write shared state to `./reports/{topic-slug}/blackboard.json` and coordinate via TaskCreate/SendMessage only. Set `blackboard_scope = null` and skip all subsequent `blackboard_read`/`blackboard_write` calls — use file reads/writes to `blackboard.json` as the coordination mechanism.
+> **Cowork fallback:** If `blackboard_create` fails (Atlatl MCP unavailable), use file-based coordination instead. The `./reports/{topic-slug}/` directory was already created above. Write per-key files to `./reports/{topic-slug}/` (e.g., `methodology_plan_{dimension}.json`, `findings_{dimension}.json`) and coordinate via TaskCreate/SendMessage only. Set `blackboard_scope = null` and skip all subsequent `blackboard_read`/`blackboard_write` calls — use per-key file reads/writes as the coordination mechanism.
 
 **Step 0.1.4**: **CRITICAL — DO NOT SKIP.** Immediately after blackboard_create returns, use **TaskCreate** to create 3 high-level phase tasks (dimension tasks are created after elicitation when priorities are known):
 - `"Phase 1: Elicitation"`
