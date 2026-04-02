@@ -11,6 +11,7 @@ color: cyan
 tools:
   - Agent
   - AskUserQuestion
+  - Bash
   - Edit
   - Glob
   - Grep
