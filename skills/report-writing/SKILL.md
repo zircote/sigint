@@ -184,7 +184,7 @@ When selecting a visualization, follow these rules strictly:
       y-axis "Revenue ($B)" 0 --> 10
       line [2.1, 3.4, 5.2, 7.8]
   ```
-- **Full reports** MUST include at least one `quadrantChart` AND one `stateDiagram` to cover positioning and scenario analysis.
+- **Full reports** MUST include at least one `quadrantChart` (when competitive dimension is present) AND one `stateDiagram` (when scenario or trend data is available) to cover positioning and scenario analysis.
 - **Executive briefs** MUST include at least one diagram (typically `pie` for market share).
 
 ### Mermaid Diagram Types

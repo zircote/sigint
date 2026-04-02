@@ -21,7 +21,7 @@
         {
           "type": "regex_match",
           "file": "transcript.md",
-          "pattern": "TeamCreate|sigint-enterprise-observability-issues",
+          "pattern": "TeamCreate.*sigint-enterprise-observability-issues",
           "description": "TeamCreate is called with the expected team name"
         },
         {
@@ -100,7 +100,7 @@
         },
         {
           "path": "sigint.config.json",
-          "content": "{\n  \"version\": \"2.0\",\n  \"default_repo\": \"myorg/cloud-platform\",\n  \"research\": {\n    \"maxDimensions\": 5\n  }\n}"
+          "content": "{\n  \"version\": \"2.0\",\n  \"defaults\": {\n    \"default_repo\": \"myorg/cloud-platform\"\n  },\n  \"research\": {\n    \"maxDimensions\": 5\n  }\n}"
         }
       ],
       "deterministic_checks": [
@@ -241,7 +241,7 @@
         },
         {
           "path": "sigint.config.json",
-          "content": "{\n  \"version\": \"2.0\",\n  \"default_repo\": \"myorg/WRONG-repo-should-not-be-used\",\n  \"research\": {\n    \"maxDimensions\": 5\n  }\n}"
+          "content": "{\n  \"version\": \"2.0\",\n  \"defaults\": {\n    \"default_repo\": \"myorg/WRONG-repo-should-not-be-used\"\n  },\n  \"research\": {\n    \"maxDimensions\": 5\n  }\n}"
         }
       ],
       "deterministic_checks": [

@@ -70,7 +70,7 @@ Agent(
   prompt: """
     [ATLATL CONTEXT]
     Atlatl MCP tools are available for persistent memory.
-    Search: recall_memories(query="sigint <user_input>{topic}</user_input> report") before starting.
+    Search: recall_memories(query="sigint {topic} report") before starting.
     Capture findings after completing.
 
     BLACKBOARD: {topic_slug}

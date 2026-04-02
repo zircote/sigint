@@ -22,7 +22,7 @@ Sigint uses a single structured JSON configuration file (`sigint.config.json`) t
 
 For any field and topic, values resolve via this cascade:
 
-1. **Topic-specific** — `topics[topic-slug].<field>` in project config
+1. **Topic-specific** — `topics[<topic_slug>].<field>` in project config
 2. **Project defaults** — `defaults.<field>` in project config
 3. **Global defaults** — `defaults.<field>` in global config
 4. **Hardcoded default** — built-in value
@@ -87,7 +87,7 @@ All user preference fields above, plus:
 ## Context Files
 
 Each topic can reference a `CONTEXT.md` file:
-- Typically at `./reports/{topic-slug}/CONTEXT.md`
+- Typically at `./reports/{topic_slug}/CONTEXT.md`
 - Loaded by `/sigint:start` and passed to the research orchestrator
 - Useful for: project background, target audience, research constraints, prior decisions
 - Created automatically by `/sigint:migrate` or added manually

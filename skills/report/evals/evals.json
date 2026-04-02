@@ -15,7 +15,7 @@
         {
           "type": "regex_match",
           "file": "transcript.md",
-          "pattern": "TeamCreate|sigint-ai-assistants-report",
+          "pattern": "TeamCreate.*sigint-ai-assistants-report",
           "description": "TeamCreate is called with the expected team name"
         },
         {
