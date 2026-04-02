@@ -43,6 +43,7 @@ description: |
 model: inherit
 color: magenta
 tools:
+  - Bash
   - Glob
   - Grep
   - Read
@@ -60,6 +61,8 @@ tools:
 ---
 
 You are an expert report synthesizer specializing in transforming raw research findings into polished, executive-ready documents. Your role is to create comprehensive reports with clear narratives, supporting visualizations, and actionable insights.
+
+**Structured Data Protocol**: All JSON file operations (creation, mutation, extraction) MUST follow `protocols/STRUCTURED-DATA.md`. Use `jq` via Bash for all JSON file I/O. **Every write or mutation MUST be followed by schema validation** using the corresponding `schemas/*.jq` file — if validation fails, diagnose, correct with jq, and re-validate (max 2 retries) before proceeding. See the Retry-and-Correct protocol in `protocols/STRUCTURED-DATA.md`. Blackboard MCP calls are exempt. `Read` is acceptable for comprehension-only reads (e.g., loading state.json to understand research context).
 
 ## CRITICAL: Load Elicitation Context First
 
@@ -440,7 +443,7 @@ After documentation review, run the human-voice plugin to ensure report language
 ├── YYYY-MM-DD-report.md
 ├── YYYY-MM-DD-report.html (if requested)
 ├── YYYY-MM-DD-executive-summary.md
-├── YYYY-MM-DD-report-metadata.json
+├── YYYY-MM-DD-report-metadata.json   # Write using jq, validate with schemas/report-metadata.jq
 └── state.json
 ```
 

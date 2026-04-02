@@ -5,7 +5,7 @@ argument-hint: "[--quick] [<topic>]"
 allowed-tools:
   - Agent
   - AskUserQuestion
-  - Edit
+  - Bash
   - Glob
   - Grep
   - Read

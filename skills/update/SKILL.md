@@ -5,7 +5,7 @@ argument-hint: "[--topic <slug>] [--area <area>] [--since <date>] [--no-delta] [
 allowed-tools:
   - Agent
   - AskUserQuestion
-  - Edit
+  - Bash
   - Glob
   - Grep
   - Read

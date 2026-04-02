@@ -2,7 +2,7 @@
 description: Manually initialize or reload Atlatl memory context for sigint
 version: 0.1.0
 argument-hint: [--full] [--topic <topic>]
-allowed-tools: Glob, Grep, Read, Write, mcp__atlatl__recall_memories
+allowed-tools: Bash, Glob, Grep, Read, Write, mcp__atlatl__recall_memories
 ---
 
 Manually initialize the Atlatl memory context for sigint research.
@@ -43,22 +43,23 @@ Manually initialize the Atlatl memory context for sigint research.
    2. Apply with `topic_slug = null` (init operates at project level, not topic level).
    3. Result: `config` and `project_config` are now available.
 
-   **If `./sigint.config.json` does not exist**, create it with the minimal v2.0 template:
-   ```json
-   {
-     "version": "2.0",
-     "defaults": {
-       "report_format": "markdown",
-       "audiences": ["technical"],
-       "auto_atlatl": true
+   **If `./sigint.config.json` does not exist**, create it using jq (per Structured Data Protocol):
+   ```bash
+   jq -n '{
+     version: "2.0",
+     defaults: {
+       report_format: "markdown",
+       audiences: ["technical"],
+       auto_atlatl: true
      },
-     "research": {
-       "maxDimensions": 5,
-       "dimensionTimeout": 300,
-       "defaultPriorities": ["competitive", "sizing", "trends"]
+     research: {
+       maxDimensions: 5,
+       dimensionTimeout: 300,
+       defaultPriorities: ["competitive", "sizing", "trends"]
      },
-     "topics": {}
-   }
+     topics: {}
+   }' > ./sigint.config.json
+   jq -e -f schemas/sigint-config.jq ./sigint.config.json > /dev/null
    ```
 
    **Legacy config detection**: After config resolution, check for:

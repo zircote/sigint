@@ -46,7 +46,7 @@ The resume command follows the Anthropic long-running agent harness pattern: rea
    If `research-progress.md` does not exist (legacy session), fall back to state.json only
    and note: "Legacy session — no progress file. Consider running `/sigint:update` to generate one."
 
-5. **Restore research context:**
+5. **Restore research context** (comprehension-only — Read is acceptable per Structured Data Protocol):
    From state.json:
    - Load all findings and sources
    - Read `lineage[]` to understand session history

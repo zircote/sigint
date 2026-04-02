@@ -23,6 +23,12 @@
     "file_write": true,
     "mcp_servers": ["atlatl", "github"]
   },
+  "prerequisites": {
+    "jq": {
+      "description": "JSON processor required for structured data operations per protocols/STRUCTURED-DATA.md (https://jqlang.github.io/jq/)",
+      "required": true
+    }
+  },
   "optional_dependencies": {
     "atlatl": {
       "description": "Atlatl MCP server for blackboard coordination and persistent memory. Falls back to file-based state when unavailable.",

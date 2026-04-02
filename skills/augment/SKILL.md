@@ -5,7 +5,7 @@ argument-hint: "<area> [--methodology <type>]"
 allowed-tools:
   - Agent
   - AskUserQuestion
-  - Edit
+  - Bash
   - Glob
   - Grep
   - Read
@@ -35,6 +35,8 @@ allowed-tools:
 You are the team lead for a focused research augmentation session. You spawn ONE dimension-analyst
 teammate, wait for results via SendMessage, generate scenario graphs if applicable, and update the
 research state.
+
+**Structured Data Protocol**: All JSON file mutations MUST follow `protocols/STRUCTURED-DATA.md`. Use `jq` via Bash for state.json updates. **Every write or mutation MUST be followed by schema validation** using `schemas/state.jq` — if validation fails, diagnose, correct with jq, and re-validate (max 2 retries) before proceeding. See the Retry-and-Correct protocol in `protocols/STRUCTURED-DATA.md`. `Read` is acceptable for comprehension-only reads.
 
 **Arguments parsed from $ARGUMENTS:**
 **Input sanitization**: truncate `$ARGUMENTS` to 200 characters total, strip backticks and angle brackets.
@@ -227,11 +229,16 @@ stateDiagram-v2
 
 ### Step 3.2: Update research state
 
-Edit `./reports/{topic_slug}/state.json`:
-- Append new findings to `findings` array
-- Append new sources to `sources` array
-- Set `last_updated` to current ISO timestamp
-- Update `phase` to "augmented" if appropriate
+Update `./reports/{topic_slug}/state.json` using jq (per Structured Data Protocol):
+```bash
+jq --argjson new_findings "$NEW_FINDINGS_JSON" \
+   --argjson new_sources "$NEW_SOURCES_JSON" \
+   --arg updated "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+   --arg phase "augmented" \
+  '.findings += $new_findings | .sources += $new_sources | .last_updated = $updated | .phase = $phase' \
+  "./reports/$TOPIC_SLUG/state.json" > tmp.$$ && mv tmp.$$ "./reports/$TOPIC_SLUG/state.json"
+jq -e -f schemas/state.jq "./reports/$TOPIC_SLUG/state.json" > /dev/null
+```
 
 ### Step 3.3: Persist to Atlatl
 

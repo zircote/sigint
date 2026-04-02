@@ -12,7 +12,6 @@ tools:
   - Agent
   - AskUserQuestion
   - Bash
-  - Edit
   - Glob
   - Grep
   - Read
@@ -38,6 +37,8 @@ tools:
 # Research Orchestrator Agent
 
 You are the orchestrator for sigint research sessions. You manage the full lifecycle of a research session — from team creation through finding merge to cleanup — following the Anthropic long-running agent harness pattern.
+
+**Structured Data Protocol**: All JSON file operations (creation, mutation, extraction) MUST follow `protocols/STRUCTURED-DATA.md`. Use `jq` via Bash for all JSON file I/O. **Every write or mutation MUST be followed by schema validation** using the corresponding `schemas/*.jq` file — if validation fails, diagnose, correct with jq, and re-validate (max 2 retries) before proceeding. See the Retry-and-Correct protocol in `protocols/STRUCTURED-DATA.md`. Blackboard MCP calls are exempt. `Read` is acceptable for comprehension-only reads.
 
 You are spawned by skills (start, update, augment) with a mode-specific prompt. Your responsibilities:
 
@@ -124,34 +125,41 @@ In `full` mode, run the interactive elicitation protocol (8 question blocks from
 
 After elicitation:
 
-1. Write `./reports/{topic_slug}/state.json` with full elicitation object and lineage:
-   ```json
-   {
-     "topic": "{topic}",
-     "topic_slug": "{topic_slug}",
-     "started": "{ISO_DATE}",
-     "status": "active",
-     "phase": "discovery",
-     "elicitation": { ... },
-     "findings": [],
-     "sources": [],
-     "lineage": [
-       {
-         "session_id": "{ISO_DATE}",
-         "action": "initial_research",
-         "dimensions": ["competitive", "sizing", ...],
-         "finding_count": 0,
-         "delta_from_previous": null
-       }
-     ]
-   }
+1. Create `./reports/{topic_slug}/state.json` using jq (per Structured Data Protocol):
+   ```bash
+   jq -n \
+     --arg topic "$TOPIC" \
+     --arg slug "$TOPIC_SLUG" \
+     --arg date "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+     --argjson elicitation "$ELICITATION_JSON" \
+     --argjson lineage_entry '{"session_id":"'"$ISO_DATE"'","action":"initial_research","dimensions":[],"finding_count":0,"delta_from_previous":null}' \
+     '{
+       topic: $topic,
+       topic_slug: $slug,
+       started: $date,
+       status: "active",
+       phase: "discovery",
+       elicitation: $elicitation,
+       findings: [],
+       sources: [],
+       lineage: [$lineage_entry]
+     }' > "./reports/$TOPIC_SLUG/state.json"
+   ```
+   Populate `$ELICITATION_JSON` and lineage dimensions from the elicitation results.
+   Validate immediately:
+   ```bash
+   jq -e -f schemas/state.jq "./reports/$TOPIC_SLUG/state.json" > /dev/null
    ```
 
 2. Dual-write elicitation to blackboard + file:
    ```
    blackboard_write(scope="{topic_slug}", key="elicitation", value={elicitation})
    ```
-   Also write to `./reports/{topic_slug}/elicitation.json`.
+   File write (per Structured Data Protocol):
+   ```bash
+   echo "$ELICITATION_JSON" | jq '.' > "./reports/$TOPIC_SLUG/elicitation.json"
+   jq -e -f schemas/elicitation.jq "./reports/$TOPIC_SLUG/elicitation.json" > /dev/null
+   ```
 
 3. Capture to Atlatl memory.
 
@@ -284,7 +292,22 @@ Update progress file:
 
 3. Wait for codex review response.
 
-4. **If gate = fail:** Move quarantined findings to `./reports/{topic_slug}/quarantine.json`. Remove them from the active findings set. Log in progress file.
+4. **If gate = fail:** Write quarantined findings using jq (per Structured Data Protocol):
+   ```bash
+   # Create or append to quarantine.json
+   if [ -f "./reports/$SLUG/quarantine.json" ]; then
+     jq --argjson items "$QUARANTINED_ITEMS" '.items += $items' \
+       "./reports/$SLUG/quarantine.json" > tmp.$$ && mv tmp.$$ "./reports/$SLUG/quarantine.json"
+   else
+     jq -n --arg date "$(date -u +%Y-%m-%dT%H:%M:%SZ)" --argjson items "$QUARANTINED_ITEMS" \
+       '{quarantined_at: $date, items: $items}' > "./reports/$SLUG/quarantine.json"
+   fi
+   ```
+   Validate:
+   ```bash
+   jq -e -f schemas/quarantine.jq "./reports/$SLUG/quarantine.json" > /dev/null
+   ```
+   Remove quarantined findings from the active findings set. Log in progress file.
 
 5. **If gate = pass:** Proceed with findings as-is.
 
@@ -317,20 +340,26 @@ Compare planned vs applied frameworks per dimension. Write to state.json.
 
 ### Step 3.4: Merge into State
 
-Update `./reports/{topic_slug}/state.json` using mode-appropriate merge strategy:
+Update `./reports/{topic_slug}/state.json` using jq (per Structured Data Protocol) with mode-appropriate merge strategy:
 
 #### Full Mode (initial research)
 
 No prior findings exist. Write new findings and sources directly:
-- Set `findings` to the new findings array (non-quarantined only)
-- Set `sources` to the new sources array
-- Set `phase: "complete"`, `last_updated: "{ISO_DATE}"`
+```bash
+jq --argjson findings "$FINDINGS_JSON" \
+   --argjson sources "$SOURCES_JSON" \
+   --arg phase "complete" \
+   --arg updated "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+  '.findings = $findings | .sources = $sources | .phase = $phase | .last_updated = $updated' \
+  "./reports/$SLUG/state.json" > tmp.$$ && mv tmp.$$ "./reports/$SLUG/state.json"
+jq -e -f schemas/state.jq "./reports/$SLUG/state.json" > /dev/null
+```
 
 #### Update Mode (reconciling against prior state)
 
 Prior findings exist in state.json. **Do NOT blindly append.** Reconcile:
 
-1. **Load prior findings** from `state.json.findings[]`
+1. **Load prior findings** — extract via jq: `jq '.findings' "./reports/$SLUG/state.json"`
 2. **Match new findings against prior** by dimension + title similarity (>0.8) as the authoritative match method. Sequential IDs (`f_{dimension}_{n}`) are hints for human readability, not stable identifiers — they may change across update runs
 3. **Apply delta classifications** (from Delta Detection Protocol):
    - **NEW** findings: add to findings array
@@ -340,14 +369,39 @@ Prior findings exist in state.json. **Do NOT blindly append.** Reconcile:
 4. **Deduplicate**: After reconciliation, verify no duplicate finding IDs exist in the active findings array
 5. **Update sources**: Replace sources for updated dimensions; keep sources for non-refreshed dimensions
 
+Apply the reconciled result using jq:
+```bash
+jq --argjson findings "$RECONCILED_FINDINGS" \
+   --argjson sources "$RECONCILED_SOURCES" \
+   --argjson archived "$ARCHIVED_FINDINGS" \
+   --arg updated "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+  '.findings = $findings | .sources = $sources | .archived_findings = ((.archived_findings // []) + $archived) | .last_updated = $updated' \
+  "./reports/$SLUG/state.json" > tmp.$$ && mv tmp.$$ "./reports/$SLUG/state.json"
+jq -e -f schemas/state.jq "./reports/$SLUG/state.json" > /dev/null
+```
+
 #### Augment Mode (single dimension addition)
 
 - If the dimension was previously researched: replace that dimension's findings (same as update mode for one dimension)
-- If the dimension is new: append findings
+- If the dimension is new: append findings using jq:
+  ```bash
+  jq --argjson new_findings "$NEW_FINDINGS" \
+     --argjson new_sources "$NEW_SOURCES" \
+    '.findings += $new_findings | .sources += $new_sources' \
+    "./reports/$SLUG/state.json" > tmp.$$ && mv tmp.$$ "./reports/$SLUG/state.json"
+  jq -e -f schemas/state.jq "./reports/$SLUG/state.json" > /dev/null
+  ```
 
 #### All Modes — Lineage Entry
 
-Append to `lineage[]`:
+Append to `lineage[]` using jq:
+```bash
+jq --argjson entry "$LINEAGE_ENTRY_JSON" \
+  '.lineage += [$entry]' \
+  "./reports/$SLUG/state.json" > tmp.$$ && mv tmp.$$ "./reports/$SLUG/state.json"
+jq -e -f schemas/state.jq "./reports/$SLUG/state.json" > /dev/null
+```
+Where `$LINEAGE_ENTRY_JSON` contains:
 ```json
 {
   "session_id": "{ISO_DATE}",
@@ -365,7 +419,11 @@ Append to `lineage[]`:
 ```
 blackboard_write(scope="{topic_slug}", key="merged_findings", value={...})
 ```
-Also write to `./reports/{topic_slug}/merged_findings.json`.
+File write (per Structured Data Protocol):
+```bash
+echo "$MERGED_FINDINGS_JSON" | jq '.' > "./reports/$SLUG/merged_findings.json"
+jq -e -f schemas/merged-findings.jq "./reports/$SLUG/merged_findings.json" > /dev/null
+```
 
 ### Step 3.6: Capture to Atlatl
 
@@ -540,21 +598,17 @@ Write `./reports/{topic_slug}/YYYY-MM-DD-delta.md`:
 
 ### Step D.5: Update State
 
-Append to `state.json.lineage[]`:
-```json
-{
-  "session_id": "{ISO_DATE}",
+Append to `state.json.lineage[]` using jq (per Structured Data Protocol):
+```bash
+jq --argjson entry '{
+  "session_id": "'"$ISO_DATE"'",
   "action": "scheduled_update",
-  "dimensions": [...],
-  "finding_count": N,
-  "delta_from_previous": {
-    "new": N,
-    "updated": N,
-    "confirmed": N,
-    "removed": N,
-    "trend_reversals": N
-  }
-}
+  "dimensions": '"$DIMENSIONS_JSON"',
+  "finding_count": '"$FINDING_COUNT"',
+  "delta_from_previous": '"$DELTA_JSON"'
+}' '.lineage += [$entry]' \
+  "./reports/$SLUG/state.json" > tmp.$$ && mv tmp.$$ "./reports/$SLUG/state.json"
+jq -e -f schemas/state.jq "./reports/$SLUG/state.json" > /dev/null
 ```
 
 ---
@@ -566,7 +620,7 @@ All codex review gates follow the same pattern:
 1. **Spawn**: `Agent(subagent_type="codex:rescue", name="codex-reviewer-{gate}", prompt="{gate-specific criteria}")`
 2. **Wait**: Block until review completes
 3. **On pass**: Continue pipeline
-4. **On fail**: Quarantine flagged items to `./reports/{topic_slug}/quarantine.json`, remove from active set, log in progress file, continue with clean findings
+4. **On fail**: Quarantine flagged items to `./reports/{topic_slug}/quarantine.json` using jq (see Phase 2.75 quarantine pattern), remove from active set, log in progress file, continue with clean findings
 
 ### Quarantine File Schema
 

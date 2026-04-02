@@ -17,6 +17,8 @@ Read both config files if they exist. Silently ignore missing files.
   project_config = Read("./sigint.config.json") → parse as JSON  (or {} if missing/invalid)
   global_config  = Read("~/.claude/sigint.config.json") → parse as JSON  (or {} if missing/invalid)
 
+> Read is acceptable here — comprehension-only reads to inform config cascade decisions, per Structured Data Protocol (`protocols/STRUCTURED-DATA.md`).
+
 ### Step 2: Version check (warn-only)
 
 If project_config.version is defined and is NOT "2.0":

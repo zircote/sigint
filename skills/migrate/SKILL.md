@@ -14,6 +14,8 @@ allowed-tools:
 
 Migrates legacy sigint configuration to the v2.0 JSON format with per-topic support. Safe to run multiple times (idempotent). Always backs up source files before overwriting.
 
+**Structured Data Protocol**: JSON file creation MUST follow `protocols/STRUCTURED-DATA.md`. Use `jq` via Bash for writing sigint.config.json. **Every write MUST be followed by schema validation** using `schemas/sigint-config.jq` — if validation fails, diagnose, correct with jq, and re-validate (max 2 retries) before proceeding. See the Retry-and-Correct protocol in `protocols/STRUCTURED-DATA.md`.
+
 ## Arguments
 
 Parse `$ARGUMENTS`:
@@ -206,8 +208,15 @@ Write("./reports/{slug}/CONTEXT.md", content)
 
 ### Step 5.2: Write sigint.config.json
 
-```
-Write("./sigint.config.json", formatted JSON of v2_config)
+Write using jq (per Structured Data Protocol):
+```bash
+jq -n \
+  --argjson defaults "$DEFAULTS_JSON" \
+  --argjson research "$RESEARCH_JSON" \
+  --argjson topics "$TOPICS_JSON" \
+  '{version: "2.0", defaults: $defaults, research: $research, topics: $topics}' \
+  > ./sigint.config.json
+jq -e -f schemas/sigint-config.jq ./sigint.config.json > /dev/null
 ```
 
 ### Step 5.3: Rename legacy files to .bak

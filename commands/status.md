@@ -15,7 +15,7 @@ Display the current sigint research session status and progress.
 1. **Find active research session:**
    Scan `./reports/*/state.json` for sessions with status "active".
 
-2. **Load session state:**
+2. **Load session state** (comprehension-only — Read is acceptable per Structured Data Protocol):
    Read state.json and parse:
    - Topic and scope
    - Current phase
