@@ -48,7 +48,7 @@ If no active session found, error: "No active research session. Run `/sigint:sta
 Priority order:
 1. `--repo` argument (if provided)
 2. `elicitation.default_repo` (if set in state.json)
-3. `./.claude/sigint.local.md` `default_repo` setting
+3. Config Resolution Protocol: Apply the **Config Resolution Protocol** (read `protocols/CONFIG-RESOLUTION.md`) with `topic_slug` from the active session. Use resolved `config.default_repo` if non-null.
 4. Auto-detect from git remote: run `git remote get-url origin` (if inside a git repo), parse the GitHub URL to infer `<owner>/<repo>`, and if git is unavailable or the remote is not GitHub, fall back to `gh repo view --json nameWithOwner -q .nameWithOwner`
 
 > **Cowork note:** In Cowork environments, `gh` CLI may not be available. If needed, use ToolSearch to discover an MCP tool that can resolve the current repo/context, or fall back to asking the user for the `<owner>/<repo>` value.

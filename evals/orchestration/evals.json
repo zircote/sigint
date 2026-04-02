@@ -616,5 +616,25 @@
         "description": "When a methodology plan is not written within the expected timeout, the orchestrator logs a warning, marks that dimension's methodology as unverified, and continues the session rather than aborting the entire research run"
       }
     ]
+  },
+  {
+    "id": "start-mono-repo-multi-topic-isolation",
+    "description": "Two topics in same project use independent configs from their respective topics[] entries",
+    "prompt": "/sigint:start --topic topic-a (both topic-a and topic-b have entries in sigint.config.json with different maxDimensions)",
+    "expectations": [
+      {
+        "description": "Only topic-a config values are used, not topic-b values",
+        "deterministic_checks": [
+          { "type": "output_contains", "value": "topic-a" },
+          { "type": "output_not_contains", "value": "topic-b" }
+        ]
+      },
+      {
+        "description": "Research orchestrator is invoked with the correct scope",
+        "deterministic_checks": [
+          { "type": "output_contains", "value": "research-orchestrator" }
+        ]
+      }
+    ]
   }
 ]

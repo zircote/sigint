@@ -600,21 +600,38 @@
   },
   {
     "id": "init-config-loading",
-    "description": "Verify /sigint:init references cascading config loading",
+    "description": "Verify /sigint:init references cascading config loading from sigint.config.json v2.0",
     "prompt": "/sigint:init",
     "expectations": [
       {
-        "description": "Output mentions config loading from global and/or project sources",
+        "description": "Output mentions config loading from sigint.config.json",
         "deterministic_checks": [
           {
             "type": "output_contains_any",
             "values": [
-              "config",
+              "sigint.config.json",
               "configuration",
-              "sigint.local.md",
               "global",
               "project"
             ]
+          }
+        ]
+      },
+      {
+        "description": "Output does NOT reference deprecated sigint.local.md as config source",
+        "deterministic_checks": [
+          {
+            "type": "output_not_contains",
+            "value": "sigint.local.md"
+          }
+        ]
+      },
+      {
+        "description": "Output references v2.0 schema or JSON config format",
+        "deterministic_checks": [
+          {
+            "type": "output_contains_any",
+            "values": ["version", "2.0", "defaults", "topics"]
           }
         ]
       },
@@ -2043,6 +2060,222 @@
             "type": "output_not_contains",
             "value": "market-researcher"
           }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "init-creates-sigint-config-json",
+    "description": "Fresh project: /sigint:init creates sigint.config.json (not sigint.local.md)",
+    "prompt": "/sigint:init",
+    "expectations": [
+      {
+        "description": "Output references sigint.config.json as the created file",
+        "deterministic_checks": [
+          { "type": "output_contains", "value": "sigint.config.json" }
+        ]
+      },
+      {
+        "description": "Output does NOT create sigint.local.md",
+        "deterministic_checks": [
+          { "type": "output_not_contains", "value": "sigint.local.md" }
+        ]
+      },
+      {
+        "description": "Schema version 2.0 is used",
+        "deterministic_checks": [
+          { "type": "output_contains_any", "values": ["2.0", "\"version\""] }
+        ]
+      },
+      {
+        "description": "Config structure includes a defaults block"
+      },
+      {
+        "description": "Config structure includes a topics block"
+      }
+    ]
+  },
+  {
+    "id": "init-detects-legacy-local-md",
+    "description": "Legacy sigint.local.md detected: init warns and suggests /sigint:migrate instead of overwriting",
+    "prompt": "/sigint:init (assuming .claude/sigint.local.md already exists in working context)",
+    "expectations": [
+      {
+        "description": "Output mentions sigint:migrate as the recommended next step",
+        "deterministic_checks": [
+          { "type": "output_contains_any", "values": ["sigint:migrate", "migrate"] }
+        ]
+      },
+      {
+        "description": "Output warns that a legacy configuration was found",
+        "deterministic_checks": [
+          { "type": "output_contains_any", "values": ["legacy", "existing", "already exists", "found"] }
+        ]
+      },
+      {
+        "description": "Output does NOT overwrite or create a new sigint.config.json without confirmation"
+      }
+    ]
+  },
+  {
+    "id": "init-topic-scaffolding",
+    "description": "/sigint:init --topic creates a topics[slug] entry in sigint.config.json",
+    "prompt": "/sigint:init --topic ai-code-assistants",
+    "expectations": [
+      {
+        "description": "Output references the topic slug in the created config",
+        "deterministic_checks": [
+          { "type": "output_contains_any", "values": ["ai-code-assistants", "topics"] }
+        ]
+      },
+      {
+        "description": "Output references sigint.config.json as target",
+        "deterministic_checks": [
+          { "type": "output_contains", "value": "sigint.config.json" }
+        ]
+      },
+      {
+        "description": "Output does not create sigint.local.md",
+        "deterministic_checks": [
+          { "type": "output_not_contains", "value": "sigint.local.md" }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "init-no-longer-creates-local-md",
+    "description": "Regression: /sigint:init never creates or references .claude/sigint.local.md as the config output",
+    "prompt": "/sigint:init",
+    "expectations": [
+      {
+        "description": "Output does NOT reference creating sigint.local.md",
+        "deterministic_checks": [
+          { "type": "output_not_contains", "value": "sigint.local.md" }
+        ]
+      },
+      {
+        "description": "Output does NOT reference .claude/ directory as config target",
+        "deterministic_checks": [
+          { "type": "output_not_contains", "value": ".claude/sigint" }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "migrate-happy-path",
+    "description": "/sigint:migrate converts sigint.local.md to sigint.config.json and CONTEXT.md",
+    "prompt": "/sigint:migrate",
+    "expectations": [
+      {
+        "description": "Output references writing sigint.config.json",
+        "deterministic_checks": [
+          { "type": "output_contains", "value": "sigint.config.json" }
+        ]
+      },
+      {
+        "description": "Output references writing CONTEXT.md",
+        "deterministic_checks": [
+          { "type": "output_contains", "value": "CONTEXT.md" }
+        ]
+      },
+      {
+        "description": "Output references renaming original to .bak",
+        "deterministic_checks": [
+          { "type": "output_contains_any", "values": [".bak", "backup", "renamed"] }
+        ]
+      },
+      {
+        "description": "Output does NOT delete the source file (must preserve as .bak)"
+      }
+    ]
+  },
+  {
+    "id": "migrate-dry-run",
+    "description": "/sigint:migrate --dry-run shows planned changes without writing files",
+    "prompt": "/sigint:migrate --dry-run",
+    "expectations": [
+      {
+        "description": "Output shows what would be written without committing",
+        "deterministic_checks": [
+          { "type": "output_contains_any", "values": ["dry-run", "dry run", "would", "preview"] }
+        ]
+      },
+      {
+        "description": "Output shows sigint.config.json content that would be created",
+        "deterministic_checks": [
+          { "type": "output_contains", "value": "sigint.config.json" }
+        ]
+      },
+      {
+        "description": "Output explicitly states no files were written",
+        "deterministic_checks": [
+          { "type": "output_contains_any", "values": ["no files", "not written", "dry run", "preview only"] }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "migrate-idempotent-already-v2",
+    "description": "/sigint:migrate when sigint.config.json v2.0 already exists triggers merge mode prompt",
+    "prompt": "/sigint:migrate (when sigint.config.json already exists at v2.0)",
+    "expectations": [
+      {
+        "description": "Output detects that v2.0 config already exists",
+        "deterministic_checks": [
+          { "type": "output_contains_any", "values": ["already exists", "existing", "found", "v2", "2.0"] }
+        ]
+      },
+      {
+        "description": "Output offers merge mode or asks for confirmation before overwriting",
+        "deterministic_checks": [
+          { "type": "output_contains_any", "values": ["merge", "overwrite", "confirm", "already"] }
+        ]
+      },
+      {
+        "description": "Output does NOT silently overwrite existing v2.0 config"
+      }
+    ]
+  },
+  {
+    "id": "migrate-no-source-files",
+    "description": "/sigint:migrate with no source config files produces a clear error",
+    "prompt": "/sigint:migrate (no sigint.local.md or .sigint.config.json present)",
+    "expectations": [
+      {
+        "description": "Output reports no source config files found",
+        "deterministic_checks": [
+          { "type": "output_contains_any", "values": ["not found", "no config", "nothing to migrate", "does not exist"] }
+        ]
+      },
+      {
+        "description": "Output suggests running /sigint:init to create a fresh config",
+        "deterministic_checks": [
+          { "type": "output_contains_any", "values": ["sigint:init", "init"] }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "migrate-absorbs-old-sigint-config-json",
+    "description": "/sigint:migrate absorbs old .sigint.config.json v1.0 runtime fields into new format",
+    "prompt": "/sigint:migrate (when .sigint.config.json with version:1.0 exists but no sigint.local.md)",
+    "expectations": [
+      {
+        "description": "Output references migrating runtime config fields",
+        "deterministic_checks": [
+          { "type": "output_contains_any", "values": ["maxDimensions", "dimensionTimeout", "research", "runtime"] }
+        ]
+      },
+      {
+        "description": "Output produces sigint.config.json v2.0",
+        "deterministic_checks": [
+          { "type": "output_contains", "value": "sigint.config.json" }
+        ]
+      },
+      {
+        "description": "Old .sigint.config.json is renamed to .bak",
+        "deterministic_checks": [
+          { "type": "output_contains_any", "values": [".bak", "backed up", "renamed"] }
         ]
       }
     ]

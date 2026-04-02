@@ -17,27 +17,20 @@ Parse `$ARGUMENTS` before any other processing:
 
 ---
 
-## Phase 0.0: Configuration Check
+## Phase 0.0: Preliminary Setup
 
-### Step 0.0.1: Load or Create Configuration
+### Step 0.0.1: Derive Preliminary Topic Slug
 
-1. Attempt to read `.sigint.config.json` from the project root.
-2. **If file exists**: Parse silently. Merge with defaults. Store as `config`. Proceed.
-3. **If file does NOT exist**: Use defaults and proceed (do not create the file).
+Parse `$ARGUMENTS` for a topic hint. Derive `topic_slug`: lowercase, replace spaces/special chars with hyphens, truncate to 40 characters. Use `"research"` if no topic hint. (Preliminary slug used for config lookup; may be refined during orchestrator elicitation.)
 
-**Config schema v1.0**:
-```json
-{
-  "version": "1.0",
-  "research": {
-    "maxDimensions": 5,
-    "dimensionTimeout": 300,
-    "defaultPriorities": ["competitive", "sizing", "trends"]
-  }
-}
-```
+### Step 0.0.2: Apply Config Resolution Protocol
 
-Store effective config as `config`. Set `max_dimensions = config.research.maxDimensions ?? 5`.
+Execute the **Config Resolution Protocol**:
+1. Read `protocols/CONFIG-RESOLUTION.md` and follow all steps.
+2. Apply with `topic_slug` = {preliminary topic slug from Step 0.0.1}.
+3. Result: `config`, `max_dimensions`, and `context_content` are now available.
+
+**Config cascade clarification**: When loading config files, always apply the full cascade (project config values override global config values override hardcoded defaults) regardless of the config file's schema version. The version check in the protocol produces an advisory warning only — it does NOT cause config values to be discarded. If `sigint.config.json` sets `maxDimensions: 3`, then `max_dimensions = 3` even if the file's version field is not "2.0". Custom fields like `defaultPriorities` are preserved and passed through in the serialized config.
 
 ---
 
@@ -77,6 +70,7 @@ Agent(
   TOPIC_SLUG: {topic-slug}
   CONFIG: {serialized config}
   MAX_DIMENSIONS: {max_dimensions}
+  CONTEXT_FILE_CONTENT: {context_content if non-null, else ""}
   QUICK_MODE: {true if --quick flag}
   {If resuming: PRIOR_ELICITATION: {prior elicitation JSON}}
 

@@ -674,5 +674,229 @@
         "description": "Competitive dimension applies Porter's 5 Forces with explicit HIGH/MODERATE/LOW ratings, not just a competitor list"
       }
     ]
+  },
+  {
+    "id": "start-reads-v2-config-per-topic",
+    "description": "/sigint:start with --topic reads topics[slug] block from sigint.config.json v2.0",
+    "prompt": "/sigint:start --topic ai-code-assistants",
+    "expectations": [
+      {
+        "description": "Output references config lookup using the topic slug",
+        "deterministic_checks": [
+          { "type": "output_contains_any", "values": ["ai-code-assistants", "topic", "sigint.config.json"] }
+        ]
+      },
+      {
+        "description": "Output passes config to research-orchestrator",
+        "deterministic_checks": [
+          { "type": "output_contains", "value": "research-orchestrator" }
+        ]
+      },
+      {
+        "description": "Output does NOT read sigint.local.md as config source",
+        "deterministic_checks": [
+          { "type": "output_not_contains", "value": "sigint.local.md" }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "start-v1-config-detection-warning",
+    "description": "/sigint:start detects old .sigint.config.json v1.0 and emits migration hint",
+    "prompt": "/sigint:start market sizing research (with .sigint.config.json version:1.0 in context)",
+    "expectations": [
+      {
+        "description": "Output warns that the config is using the old v1.0 format",
+        "deterministic_checks": [
+          { "type": "output_contains_any", "values": ["v1.0", "1.0", "migrate", "old format", "upgrade"] }
+        ]
+      },
+      {
+        "description": "Output continues to function (does not fail) despite old format",
+        "deterministic_checks": [
+          { "type": "output_contains", "value": "research-orchestrator" }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "start-no-config-uses-hardcoded-defaults",
+    "description": "/sigint:start with no config file present uses hardcoded defaults silently",
+    "prompt": "/sigint:start supply chain risk analysis",
+    "expectations": [
+      {
+        "description": "Output proceeds to research-orchestrator delegation without config errors",
+        "deterministic_checks": [
+          { "type": "output_contains", "value": "research-orchestrator" }
+        ]
+      },
+      {
+        "description": "Output does NOT report a config error or missing file error",
+        "deterministic_checks": [
+          { "type": "output_not_contains", "value": "config not found" }
+        ]
+      },
+      {
+        "description": "Output does NOT reference sigint.local.md as a config source",
+        "deterministic_checks": [
+          { "type": "output_not_contains", "value": "sigint.local.md" }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "start-context-file-loading",
+    "description": "/sigint:start loads context_file (CONTEXT.md) when present in topics block",
+    "prompt": "/sigint:start --topic ai-code-assistants (topics block has context_file: ai-code-assistants/CONTEXT.md)",
+    "expectations": [
+      {
+        "description": "Output references loading or reading the CONTEXT.md file",
+        "deterministic_checks": [
+          { "type": "output_contains_any", "values": ["CONTEXT.md", "context_file", "context file"] }
+        ]
+      },
+      {
+        "description": "Output passes context to the research-orchestrator",
+        "deterministic_checks": [
+          { "type": "output_contains", "value": "research-orchestrator" }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "start-context-file-missing-graceful",
+    "description": "/sigint:start gracefully warns when context_file is configured but file does not exist",
+    "prompt": "/sigint:start --topic ai-code-assistants (topics block has context_file pointing to non-existent file)",
+    "expectations": [
+      {
+        "description": "Output warns that the context file was not found",
+        "deterministic_checks": [
+          { "type": "output_contains_any", "values": ["not found", "missing", "does not exist", "context"] }
+        ]
+      },
+      {
+        "description": "Output continues to research-orchestrator delegation despite missing context file",
+        "deterministic_checks": [
+          { "type": "output_contains", "value": "research-orchestrator" }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "start-topic-defaults-fallback",
+    "description": "/sigint:start with --topic not in topics block falls back to defaults block",
+    "prompt": "/sigint:start --topic unknown-topic (topics block exists but has no entry for 'unknown-topic')",
+    "expectations": [
+      {
+        "description": "Output does not error or abort on missing topic slug",
+        "deterministic_checks": [
+          { "type": "output_not_contains", "value": "error" },
+          { "type": "output_not_contains", "value": "abort" }
+        ]
+      },
+      {
+        "description": "Research session proceeds normally using defaults",
+        "deterministic_checks": [
+          { "type": "output_contains", "value": "research-orchestrator" }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "issues-default-repo-from-topics-block",
+    "description": "/sigint:issues resolves default_repo from topics[slug] in sigint.config.json",
+    "prompt": "/sigint:issues (active session has topic slug matching a topics entry with default_repo set)",
+    "expectations": [
+      {
+        "description": "Output references the repository from config rather than prompting user",
+        "deterministic_checks": [
+          { "type": "output_contains_any", "values": ["owner/repo", "repository", "default_repo"] }
+        ]
+      },
+      {
+        "description": "Output does NOT reference sigint.local.md as repo source",
+        "deterministic_checks": [
+          { "type": "output_not_contains", "value": "sigint.local.md" }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "issues-default-repo-from-defaults-block",
+    "description": "/sigint:issues resolves default_repo from defaults block when no per-topic override",
+    "prompt": "/sigint:issues (active session topic has no per-topic default_repo, but defaults block has one)",
+    "expectations": [
+      {
+        "description": "Issue creation proceeds using the defaults block repo",
+        "deterministic_checks": [
+          { "type": "output_contains_any", "values": ["default_repo", "defaults", "repository", "repo"] }
+        ]
+      },
+      {
+        "description": "Output does NOT reference sigint.local.md as the source",
+        "deterministic_checks": [
+          { "type": "output_not_contains", "value": "sigint.local.md" }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "hooks-session-start-references-new-config",
+    "description": "SessionStart hook text references sigint.config.json (not sigint.local.md)",
+    "prompt": "What configuration files does sigint use?",
+    "expectations": [
+      {
+        "description": "Output references sigint.config.json as the configuration file",
+        "deterministic_checks": [
+          { "type": "output_contains", "value": "sigint.config.json" }
+        ]
+      },
+      {
+        "description": "Output does NOT reference sigint.local.md as a config file",
+        "deterministic_checks": [
+          { "type": "output_not_contains", "value": "sigint.local.md" }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "config-resolution-topic-wins-over-defaults",
+    "description": "Config cascade: topic-specific value overrides defaults block value",
+    "prompt": "/sigint:start --topic ai-code-assistants (topics block has maxDimensions:3, defaults block has maxDimensions:5)",
+    "expectations": [
+      {
+        "description": "The topic-specific maxDimensions value (3) is used",
+        "deterministic_checks": [
+          { "type": "output_contains", "value": "maxDimensions" },
+          { "type": "output_contains_any", "values": ["MAX_DIMENSIONS: 3", "max_dimensions: 3", "maxDimensions: 3", "max_dimensions = 3"] }
+        ]
+      },
+      {
+        "description": "The defaults value (5) is not used for maxDimensions",
+        "deterministic_checks": [
+          { "type": "output_not_contains", "value": "MAX_DIMENSIONS: 5" }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "config-resolution-project-over-global",
+    "description": "Config cascade: project sigint.config.json overrides global ~/.claude/sigint.config.json",
+    "prompt": "/sigint:start research topic (project config has maxDimensions:4, global has maxDimensions:7)",
+    "expectations": [
+      {
+        "description": "Project config value (4) takes precedence over global (7)",
+        "deterministic_checks": [
+          { "type": "output_contains_any", "values": ["MAX_DIMENSIONS: 4", "max_dimensions: 4", "maxDimensions: 4"] },
+          { "type": "output_not_contains", "value": "MAX_DIMENSIONS: 7" }
+        ]
+      },
+      {
+        "description": "Research session proceeds normally",
+        "deterministic_checks": [
+          { "type": "output_contains", "value": "research-orchestrator" }
+        ]
+      }
+    ]
   }
 ]
