@@ -1,5 +1,5 @@
 ---
-name: Financial Analysis
+name: financial-analysis
 description: This skill should be used when the user asks to "analyze financials", "revenue model", "unit economics", "pricing analysis", "cost structure", "profitability analysis", "financial projections", "business model economics", or needs guidance on financial metrics, revenue analysis, or economic viability assessment.
 version: 0.1.0
 ---
@@ -19,6 +19,8 @@ Financial analysis evaluates economic viability and business model health throug
 | Pricing Strategy | Pricing Analysis | yes | — |
 | Cost Structure | Cost Structure | yes | — |
 | Rule of 40 | Profitability Assessment | yes | — |
+
+**Trend Indicators**: Load and apply the trend indicator definitions from `protocols/TREND-INDICATORS.md`.
 
 ## Core Metrics
 
@@ -174,9 +176,9 @@ Growth Rate % + Profit Margin % ≥ 40%
 
 | Scenario | Revenue Growth | Margin | Cash Position |
 |----------|----------------|--------|---------------|
-| Bear | X% | Y% | $Z |
-| Base | X% | Y% | $Z |
-| Bull | X% | Y% | $Z |
+| Bear | 5% | 12% | $850M |
+| Base | 12% | 18% | $1.2B |
+| Bull | 22% | 25% | $1.8B |
 
 ## Benchmarking
 
@@ -245,6 +247,13 @@ For detailed templates, see:
 - `examples/financial-analysis.md` - Sample analysis
 
 ## Orchestration Hints
+
+**Confidence tiers (universal scale):**
+- **High**: 3+ independent, recent (<12mo) sources that converge
+- **Medium**: 2 sources OR sources >12mo old OR indirect evidence
+- **Low**: Single source, inference, or extrapolation
+
+Dimension-specific confidence criteria below REFINE (not replace) these universal definitions.
 
 - **Blackboard key**: `findings_financial`
 - **Cross-reference dimensions**: sizing (market size validates revenue potential), competitive (competitor revenue and pricing)

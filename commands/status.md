@@ -2,7 +2,7 @@
 description: Show current research session state and progress
 version: 0.1.0
 argument-hint: [--verbose]
-allowed-tools: Read, Grep, Glob
+allowed-tools: Glob, Grep, Read, mcp__atlatl__blackboard_read
 ---
 
 Display the current sigint research session status and progress.
@@ -26,7 +26,7 @@ Display the current sigint research session status and progress.
 2b. **Check blackboard for live progress:**
     If a research session is active, check blackboard for real-time team status:
     ```
-    blackboard_read(scope="{topic-slug}", key="team_status")
+    blackboard_read(scope="{topic_slug}", key="team_status")
     ```
     If blackboard data exists, show live analyst progress in the dashboard.
 

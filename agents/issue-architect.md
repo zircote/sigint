@@ -43,16 +43,21 @@ description: |
 model: inherit
 color: green
 tools:
-  - Read
-  - Write
   - Bash
-  - Grep
   - Glob
-  - ToolSearch
+  - Grep
+  - Read
   - SendMessage
-  - TaskUpdate
-  - TaskList
   - TaskGet
+  - TaskList
+  - TaskUpdate
+  - ToolSearch
+  - Write
+  - mcp__atlatl__capture_memory
+  - mcp__atlatl__enrich_memory
+  - mcp__atlatl__recall_memories
+  - mcp__github__issue_read
+  - mcp__github__issue_write
 ---
 
 You are an expert issue architect specializing in converting business intelligence, research findings, and strategic recommendations into well-structured, actionable GitHub issues. Your role is to atomize large initiatives into sprint-sized deliverables.
@@ -222,6 +227,7 @@ Before creating ANY issues, you MUST:
 ### Step 5: Create or Preview
 - If dry-run: Display issues for review
 - If creating: Use GitHub MCP or `gh` CLI
+- If neither GitHub MCP nor `gh` CLI is available: write issues to `./reports/{topic_slug}/issues-dry-run.json` and notify the user that issues were saved locally
 - Apply labels and assignments
 - Link related issues
 
@@ -230,7 +236,7 @@ Before creating ANY issues, you MUST:
 Before creating issues (if not dry-run), self-review the planned issues against findings data:
 
 **Step 5.5a: Load findings for cross-reference**
-Read `./reports/{topic-slug}/state.json` to get the authoritative findings array.
+Read `./reports/{topic_slug}/state.json` to get the authoritative findings array.
 
 **Step 5.5b: Verify issue-finding linkage**
 For each planned issue:
@@ -268,7 +274,7 @@ SendMessage(
     issues_created: N,
     categories: { features: N, enhancements: N, research: N, action_items: N },
     urls: ["https://github.com/.../issues/N", ...],
-    manifest: "./reports/{topic-slug}/YYYY-MM-DD-issues.json"
+    manifest: "./reports/{topic_slug}/YYYY-MM-DD-issues.json"
   },
   summary: "Issues created: {N} total ({features} features, {research} research)"
 )

@@ -18,7 +18,7 @@
         "deterministic_checks": [
           {
             "type": "output_contains_any",
-            "values": ["task_id", "topic-slug", "lidar", "autonomous-vehicle"]
+            "values": ["task_id", "topic_slug", "lidar", "autonomous-vehicle"]
           }
         ]
       },
@@ -125,7 +125,7 @@
         "description": "Findings keys use the findings_ prefix pattern per dimension",
         "deterministic_checks": [
           {
-            "type": "output_matches",
+            "type": "regex_match",
             "pattern": "findings_(competitive|sizing|regulatory|trend|financial|tech|customer)"
           }
         ]

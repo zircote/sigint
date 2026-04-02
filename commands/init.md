@@ -2,7 +2,7 @@
 description: Manually initialize or reload Atlatl memory context for sigint
 version: 0.1.0
 argument-hint: [--full] [--topic <topic>]
-allowed-tools: Read, Write, Grep, Glob
+allowed-tools: Glob, Grep, Read, Write, mcp__atlatl__recall_memories
 ---
 
 Manually initialize the Atlatl memory context for sigint research.

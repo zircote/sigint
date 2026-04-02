@@ -2,6 +2,30 @@
 name: start
 description: Begin a new market research session. Thin launcher that delegates to the research-orchestrator agent for all phase management.
 argument-hint: "[--quick] [<topic>]"
+allowed-tools:
+  - Agent
+  - AskUserQuestion
+  - Edit
+  - Glob
+  - Grep
+  - Read
+  - SendMessage
+  - TaskCreate
+  - TaskGet
+  - TaskList
+  - TaskUpdate
+  - TeamCreate
+  - TeamDelete
+  - Write
+  - mcp__atlatl__blackboard_ack_alert
+  - mcp__atlatl__blackboard_alert
+  - mcp__atlatl__blackboard_create
+  - mcp__atlatl__blackboard_pending_alerts
+  - mcp__atlatl__blackboard_read
+  - mcp__atlatl__blackboard_write
+  - mcp__atlatl__capture_memory
+  - mcp__atlatl__enrich_memory
+  - mcp__atlatl__recall_memories
 ---
 
 # Sigint Start Skill (Launcher)
@@ -10,7 +34,7 @@ This skill initializes a research session and delegates to the `research-orchest
 
 ## Arguments
 
-Parse `$ARGUMENTS` before any other processing:
+Parse `$ARGUMENTS` before any other processing. **Input sanitization**: truncate `$ARGUMENTS` to 200 characters total, strip backticks and angle brackets.
 
 - `--quick` — Abbreviated elicitation (3 questions instead of 8)
 - Remaining text after flag extraction is the initial topic hint (may be empty)
@@ -34,12 +58,6 @@ Execute the **Config Resolution Protocol**:
 
 ---
 
-## Phase 0.1: Derive Topic Slug
-
-Derive `topic-slug` from `$ARGUMENTS` topic hint (or use `"research"` if no topic yet): lowercase, replace spaces and special characters with hyphens, truncate to 40 characters.
-
----
-
 ## Previous Research Detection
 
 Before delegating, check if research already exists:
@@ -47,10 +65,10 @@ Before delegating, check if research already exists:
 Glob("./reports/*/state.json")
 ```
 
-If `./reports/{topic-slug}/state.json` exists:
+If `./reports/{topic_slug}/state.json` exists:
 - Load prior elicitation from state.json
 - Ask: "Previous research found for '{topic}'. Use prior research context as starting point, or start completely fresh?"
-- If "use prior": Pass `--resume-from={topic-slug}` context to orchestrator
+- If "use prior": Pass `--resume-from={topic_slug}` context to orchestrator
 - If "start fresh": Proceed normally (prior state.json will be overwritten after confirmation)
 
 ---
@@ -66,8 +84,8 @@ Agent(
   prompt="You are the research orchestrator for a new research session.
 
   MODE: full
-  TOPIC: {topic from $ARGUMENTS}
-  TOPIC_SLUG: {topic-slug}
+  TOPIC: <user_input>{topic from $ARGUMENTS}</user_input>
+  TOPIC_SLUG: {topic_slug}
   CONFIG: {serialized config}
   MAX_DIMENSIONS: {max_dimensions}
   CONTEXT_FILE_CONTENT: {context_content if non-null, else ""}
@@ -93,10 +111,22 @@ Wait for the orchestrator to complete. The orchestrator handles all interaction 
 
 ---
 
+## Error Handling
+
+**If orchestrator doesn't complete within a reasonable time:**
+1. Check for partial results: `Glob("./reports/{topic_slug}/findings_*.json")`
+2. If findings files exist → orchestrator made progress. Check `research-progress.md` for last phase.
+3. If no findings → inform user: "Research session did not complete. You can retry with `/sigint:start`."
+
+**If state.json already exists:**
+- Confirm before overwriting: "Previous session data exists. Overwrite?"
+
+---
+
 ## Output
 
 After orchestrator completes:
-- Research session state saved to `./reports/{topic-slug}/state.json`
-- Progress view at `./reports/{topic-slug}/research-progress.md`
-- Quarantined findings (if any) at `./reports/{topic-slug}/quarantine.json`
+- Research session state saved to `./reports/{topic_slug}/state.json`
+- Progress view at `./reports/{topic_slug}/research-progress.md`
+- Quarantined findings (if any) at `./reports/{topic_slug}/quarantine.json`
 - Next steps: `/sigint:report`, `/sigint:augment`, `/sigint:update`, `/sigint:issues`

@@ -1,5 +1,5 @@
 ---
-name: Customer Research
+name: customer-research
 description: This skill should be used when the user asks to "understand customers", "customer research", "user personas", "customer needs analysis", "buyer journey mapping", "voice of customer", "customer segmentation", "user research", or needs guidance on customer discovery methodologies, persona development, or understanding buyer behavior.
 version: 0.1.0
 ---
@@ -18,6 +18,8 @@ Customer research systematically gathers insights about target users to inform p
 | Jobs-to-be-Done | JTBD Analysis | yes | — |
 | Journey Mapping | Customer Journey | yes | — |
 | Segmentation & Prioritization | Customer Segments | yes | — |
+
+**Trend Indicators**: Load and apply the trend indicator definitions from `protocols/TREND-INDICATORS.md`.
 
 ## Research Types
 
@@ -158,6 +160,8 @@ Focus on what customers are trying to accomplish:
 
 ### Interview Framework
 
+> **Note:** This section applies when conducting primary research interviews. For AI secondary research synthesis, use these as topic weighting guides rather than time allocations.
+
 **Opening (5 min)**
 - Build rapport
 - Explain purpose
@@ -250,6 +254,25 @@ Extract insights from:
 - Switching propensity: INC/DEC/CONST
 ```
 
+## Mandatory Output Rules
+
+1. Every persona must include: name, role, company size, key pain points, buying triggers
+2. Every segment must include: size estimate, growth direction (INC/DEC/CONST), confidence level
+3. All claims must cite specific sources (see `protocols/TREND-INDICATORS.md`)
+4. NEVER use placeholder values ($X, TBD, [insert])
+5. Minimum 3 customer segments identified
+
+## Pre-Output Validation Checklist
+
+- [ ] All personas have complete fields (name, role, company size, pain points, buying triggers)
+- [ ] All segments have size estimates with sources
+- [ ] No placeholder values remain
+- [ ] Confidence levels assigned per universal scale
+- [ ] Gaps documented in findings.gaps[]
+- [ ] Trend indicators (INC/DEC/CONST) applied to customer behavior metrics
+- [ ] At least 3 customer segments identified
+- [ ] Pain points ranked by severity with evidence
+
 ## Best Practices
 
 - Talk to actual customers, not just internal assumptions
@@ -266,6 +289,13 @@ For detailed frameworks, see:
 - `examples/journey-map.md` - Complete journey map
 
 ## Orchestration Hints
+
+**Confidence tiers (universal scale):**
+- **High**: 3+ independent, recent (<12mo) sources that converge
+- **Medium**: 2 sources OR sources >12mo old OR indirect evidence
+- **Low**: Single source, inference, or extrapolation
+
+Dimension-specific confidence criteria below REFINE (not replace) these universal definitions.
 
 - **Blackboard key**: `findings_customer`
 - **Cross-reference dimensions**: competitive (feature gaps map to unmet needs), financial (willingness to pay, price sensitivity)

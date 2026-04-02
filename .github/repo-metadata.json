@@ -1,5 +1,6 @@
 {
   "description": "Market intelligence toolkit for Claude Code. Comprehensive research workflows with trend modeling, competitive analysis, TAM/SAM/SOM sizing, and executive report generation. Converts findings to GitHub issues.",
+  "apply_command_note": "MANUAL ONLY — do not auto-execute. Copy-paste to terminal after review.",
   "topics": [
     "claude-code-plugin",
     "market-research",

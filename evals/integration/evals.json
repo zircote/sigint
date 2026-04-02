@@ -342,7 +342,19 @@
         ]
       },
       {
-        "description": "When competitive analysis finds concentrated market share (few major players controlling most of the market) but sizing estimates suggest high fragmentation, the conflict is detected, logged, and resolved with explicit rationale"
+        "description": "Conflicting dimensions are identified by name",
+        "deterministic_checks": [
+          { "type": "output_contains_any", "values": ["competitive", "sizing", "financial"] }
+        ]
+      },
+      {
+        "description": "Resolution rationale is provided",
+        "deterministic_checks": [
+          { "type": "output_contains_any", "values": ["resolution", "rationale", "reconcil"] }
+        ]
+      },
+      {
+        "description": "When competitive analysis finds concentrated market share (few major players controlling most of the market) but sizing estimates suggest high fragmentation, the conflict is detected with specific dimension names, logged with structured context, and resolved with explicit rationale"
       }
     ]
   },
@@ -862,7 +874,7 @@
   {
     "id": "config-resolution-topic-wins-over-defaults",
     "description": "Config cascade: topic-specific value overrides defaults block value",
-    "prompt": "/sigint:start --topic ai-code-assistants (topics block has maxDimensions:3, defaults block has maxDimensions:5)",
+    "prompt": "/sigint:start --topic ai-code-assistants\n\nAssume sigint.config.json contains:\n```json\n{\"version\": \"2.0\", \"defaults\": {\"maxDimensions\": 5}, \"topics\": {\"ai-code-assistants\": {\"maxDimensions\": 3}}}\n```",
     "expectations": [
       {
         "description": "The topic-specific maxDimensions value (3) is used",
@@ -882,7 +894,7 @@
   {
     "id": "config-resolution-project-over-global",
     "description": "Config cascade: project sigint.config.json overrides global ~/.claude/sigint.config.json",
-    "prompt": "/sigint:start research topic (project config has maxDimensions:4, global has maxDimensions:7)",
+    "prompt": "/sigint:start research topic\n\nAssume project ./sigint.config.json contains:\n```json\n{\"version\": \"2.0\", \"defaults\": {\"maxDimensions\": 4}}\n```\nAnd global ~/.claude/sigint.config.json contains:\n```json\n{\"version\": \"2.0\", \"defaults\": {\"maxDimensions\": 7}}\n```",
     "expectations": [
       {
         "description": "Project config value (4) takes precedence over global (7)",

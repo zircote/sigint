@@ -212,6 +212,8 @@ Write("./sigint.config.json", formatted JSON of v2_config)
 
 ### Step 5.3: Rename legacy files to .bak
 
+If a `.bak` file already exists at the target path, use a timestamped suffix instead (e.g., `.bak.20260402`) to avoid overwriting previous backups.
+
 ```
 Bash: mv ./.claude/sigint.local.md ./.claude/sigint.local.md.bak  (if existed)
 Bash: mv ./.sigint.config.json ./.sigint.config.json.bak  (if existed)

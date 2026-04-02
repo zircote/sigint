@@ -4,7 +4,7 @@
     {
       "id": 1,
       "prompt": "Research the competitive landscape of AI code assistants",
-      "expected_output": "Skill parses 'the competitive landscape of AI code assistants' as the topic, derives a topic-slug, checks for .sigint.config.json, checks for prior research via Glob, and delegates to the research-orchestrator agent in full mode with QUICK_MODE: false",
+      "expected_output": "Skill parses 'the competitive landscape of AI code assistants' as the topic, derives a topic_slug, checks for .sigint.config.json, checks for prior research via Glob, and delegates to the research-orchestrator agent in full mode with QUICK_MODE: false",
       "files": [],
       "deterministic_checks": [
         {
@@ -19,10 +19,10 @@
         }
       ],
       "expectations": [
-        "The skill derives a topic-slug from the input topic using lowercase and hyphens",
+        "The skill derives a topic_slug from the input topic using lowercase and hyphens",
         "The skill checks for .sigint.config.json configuration before delegating",
         "The skill checks for previous research via Glob on ./reports/*/state.json",
-        "The orchestrator agent is spawned with the topic, topic-slug, config, and max_dimensions parameters"
+        "The orchestrator agent is spawned with the topic, topic_slug, config, and max_dimensions parameters"
       ]
     },
     {
@@ -61,8 +61,8 @@
         }
       ],
       "expectations": [
-        "The topic-slug is derived as lowercase with hyphens replacing spaces and special characters",
-        "The topic-slug is truncated to 40 characters maximum",
+        "The topic_slug is derived as lowercase with hyphens replacing spaces and special characters",
+        "The topic_slug is truncated to 40 characters maximum",
         "Exclamation marks and other special characters are replaced with hyphens or removed in the slug",
         "The original topic text is preserved separately from the normalized slug"
       ]
@@ -70,7 +70,7 @@
     {
       "id": 4,
       "prompt": "",
-      "expected_output": "When no topic is provided, the skill uses 'research' as the default topic-slug and proceeds to delegate to the research-orchestrator. The orchestrator handles elicitation to determine the actual topic.",
+      "expected_output": "When no topic is provided, the skill uses 'research' as the default topic_slug and proceeds to delegate to the research-orchestrator. The orchestrator handles elicitation to determine the actual topic.",
       "files": [],
       "deterministic_checks": [
         {
@@ -80,7 +80,7 @@
         }
       ],
       "expectations": [
-        "When no topic hint is provided, the skill uses 'research' as the default topic-slug",
+        "When no topic hint is provided, the skill uses 'research' as the default topic_slug",
         "The skill still proceeds to delegate to the research-orchestrator without error",
         "The orchestrator is spawned and will handle topic elicitation interactively"
       ]
@@ -141,7 +141,7 @@
     {
       "id": 7,
       "prompt": "--quick",
-      "expected_output": "When only --quick is passed with no topic, the skill extracts the flag and uses 'research' as the default topic-slug. Delegates to orchestrator with QUICK_MODE: true.",
+      "expected_output": "When only --quick is passed with no topic, the skill extracts the flag and uses 'research' as the default topic_slug. Delegates to orchestrator with QUICK_MODE: true.",
       "files": [],
       "deterministic_checks": [
         {
@@ -157,7 +157,7 @@
       ],
       "expectations": [
         "The --quick flag is extracted leaving no remaining topic text",
-        "The default topic-slug 'research' is used when no topic remains after flag extraction",
+        "The default topic_slug 'research' is used when no topic remains after flag extraction",
         "QUICK_MODE is set to true in the orchestrator prompt",
         "The orchestrator is spawned successfully despite no explicit topic"
       ]
@@ -180,7 +180,7 @@
         }
       ],
       "expectations": [
-        "The topic-slug is truncated to exactly 40 characters",
+        "The topic_slug is truncated to exactly 40 characters",
         "The full untruncated topic text is passed separately as the TOPIC parameter",
         "Ampersands and special characters in the topic are handled in slug normalization",
         "The orchestrator receives both the full topic and the normalized slug"
@@ -189,7 +189,7 @@
     {
       "id": 9,
       "prompt": "Research fintech payment processing",
-      "expected_output": "After the orchestrator completes, the skill indicates where outputs are saved: state.json, research-progress.md, and optionally quarantine.json in the reports/{topic-slug}/ directory. Next steps reference /sigint:report, /sigint:augment, /sigint:update, /sigint:issues.",
+      "expected_output": "After the orchestrator completes, the skill indicates where outputs are saved: state.json, research-progress.md, and optionally quarantine.json in the reports/{topic_slug}/ directory. Next steps reference /sigint:report, /sigint:augment, /sigint:update, /sigint:issues.",
       "files": [],
       "deterministic_checks": [
         {
@@ -199,8 +199,8 @@
         }
       ],
       "expectations": [
-        "The skill indicates research session state is saved to ./reports/{topic-slug}/state.json",
-        "Progress view location at ./reports/{topic-slug}/research-progress.md is mentioned",
+        "The skill indicates research session state is saved to ./reports/{topic_slug}/state.json",
+        "Progress view location at ./reports/{topic_slug}/research-progress.md is mentioned",
         "Next steps reference available follow-up commands: /sigint:report, /sigint:augment, /sigint:update, /sigint:issues",
         "The orchestrator handles all 9 phases from initialization through cleanup"
       ]

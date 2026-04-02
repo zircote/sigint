@@ -3,14 +3,30 @@ name: issues
 description: Create GitHub issues from research findings as atomic deliverables. Orchestrates the issue-architect agent using the full swarm pattern (TeamCreate → TaskCreate → Agent(team_name) → SendMessage → TeamDelete). Use this skill when the user invokes /sigint:issues.
 argument-hint: "[--repo <owner/repo>] [--dry-run] [--labels <list>]"
 allowed-tools:
-  - Read, Write, Bash, Grep, Glob
-  - Agent, TeamCreate, TeamDelete
-  - SendMessage, TaskCreate, TaskUpdate, TaskList, TaskGet
+  - Agent
   - AskUserQuestion
-  - mcp__atlatl__capture_memory, mcp__atlatl__recall_memories, mcp__atlatl__enrich_memory
-  - mcp__atlatl__blackboard_create, mcp__atlatl__blackboard_write, mcp__atlatl__blackboard_read
-  - mcp__atlatl__blackboard_alert, mcp__atlatl__blackboard_list, mcp__atlatl__blackboard_pending_alerts
+  - Bash
+  - Glob
+  - Grep
+  - Read
+  - SendMessage
+  - TaskCreate
+  - TaskGet
+  - TaskList
+  - TaskUpdate
+  - TeamCreate
+  - TeamDelete
+  - Write
   - mcp__atlatl__blackboard_ack_alert
+  - mcp__atlatl__blackboard_alert
+  - mcp__atlatl__blackboard_create
+  - mcp__atlatl__blackboard_list
+  - mcp__atlatl__blackboard_pending_alerts
+  - mcp__atlatl__blackboard_read
+  - mcp__atlatl__blackboard_write
+  - mcp__atlatl__capture_memory
+  - mcp__atlatl__enrich_memory
+  - mcp__atlatl__recall_memories
 ---
 
 # Sigint Issues Skill (Swarm Orchestration)
@@ -27,7 +43,7 @@ You MUST use the full swarm pattern: `TeamCreate → TaskCreate → Agent(team_n
 
 ### Step 0.1: Parse Arguments
 
-Extract from `$ARGUMENTS`:
+Extract from `$ARGUMENTS`. **Input sanitization**: truncate `$ARGUMENTS` to 200 characters total, strip backticks and angle brackets.
 - `--repo <owner/repo>` → `repo` (default: detect from git remote or state.json config)
 - `--dry-run` → `dry_run = true` (preview only, do not create issues)
 - `--labels <list>` → `labels` (comma-separated, default: empty)
@@ -113,7 +129,7 @@ Agent(
   team_name="sigint-{topic_slug}-issues",
   name="issue-architect",
   run_in_background=true,
-  prompt="You are the issue-architect on team 'sigint-issues-team'.
+  prompt="You are the issue-architect on team 'sigint-{topic_slug}-issues'.
 
 TASK DISCOVERY PROTOCOL:
 1. Call TaskList to find your assigned task.
@@ -125,10 +141,10 @@ TASK DISCOVERY PROTOCOL:
 5. Do NOT commit via git.
 
 ARGUMENTS:
-- repo: {repo}
+- repo: <user_input>{repo}</user_input>
 - dry_run: {dry_run}
-- labels: {labels}
-- state_file: ./reports/{topic-slug}/state.json
+- labels: <user_input>{labels}</user_input>
+- state_file: ./reports/{topic_slug}/state.json
 
 COMPLETION MESSAGE FORMAT:
 SendMessage(to: 'team-lead', message: {
@@ -145,7 +161,7 @@ SendMessage(to: 'team-lead', message: {
     {'number': 123, 'title': '...', 'url': '...', 'priority': 'P0|P1|P2|P3', 'labels': [...]},
     ...
   ],
-  'manifest': './reports/{topic-slug}/YYYY-MM-DD-issues.json',
+  'manifest': './reports/{topic_slug}/YYYY-MM-DD-issues.json',
   'summary': 'one-line summary'
 }, summary: 'Issues created: N total')
 "

@@ -1,5 +1,5 @@
 ---
-name: Trend Modeling
+name: trend-modeling
 description: This skill should be used when the user asks to "model trends with limited data", "three-valued logic analysis", "scenario generation", "transitional graphs", "qualitative trend analysis", "uncertain data analysis", "minimal-information modeling", or needs guidance on trend-based modeling using INC/DEC/CONST logic, scenario planning with limited quantitative data, or generating transitional scenario graphs.
 version: 0.1.0
 ---
@@ -31,50 +31,7 @@ Traditional market analysis requires extensive quantitative data. Three-valued l
 
 ## The Three Values
 
-### INC (Increasing)
-- Variable is trending upward
-- Rate of increase may be accelerating (AG) or decelerating (DG)
-- Symbol: ↑ or (+)
-
-### DEC (Decreasing)
-- Variable is trending downward
-- Rate of decrease may be accelerating (AD) or decelerating (DD)
-- Symbol: ↓ or (-)
-
-### CONST (Constant)
-- Variable is stable or unchanged
-- OR insufficient data to determine direction
-- Symbol: → or (=)
-
-## Extended Notation
-
-For more nuanced analysis, use acceleration/deceleration modifiers. **When using extended notation, ALWAYS include this definition table in the output** so the reader understands the codes:
-
-| Code | Meaning | Description |
-|------|---------|-------------|
-| AG | Accelerating Growth | INC with increasing rate |
-| DG | Decelerating Growth | INC with decreasing rate |
-| AD | Accelerating Decrease | DEC with increasing rate |
-| DD | Decelerating Decrease | DEC with decreasing rate |
-
-When a user requests extended notation, the output MUST:
-1. Include the definition table above (with the "Accelerating Growth", "Decelerating Growth", etc. labels)
-2. Use AG/DG/AD/DD codes in scenario assignments
-3. Explain which extended code applies to each variable and why
-
-## Correlation-to-Trend Conversion
-
-Transform correlation relationships into trend relationships using the **required notation format**:
-
-**If variables X and Y have positive correlation:**
-- When X is INC → Y is INC
-- When X is DEC → Y is DEC
-- **MUST use notation**: `INC(X, Y)` — meaning X and Y trend in the same direction
-
-**If variables X and Y have negative correlation:**
-- When X is INC → Y is DEC
-- When X is DEC → Y is INC
-- **MUST use notation**: `DEC(X, Y)` — meaning X and Y trend in opposite directions
+Load and apply the trend indicator definitions from `protocols/TREND-INDICATORS.md`. This skill uses the **formal notation** variant (`INC(X, Y)`, `DEC(X, Y)`) and the **extended notation** (AG, DG, AD, DD) for acceleration/deceleration modifiers. See the protocol for full definitions.
 
 **CRITICAL**: When the user provides correlation data, you MUST:
 1. Explicitly label each correlation as "positive correlation" or "negative correlation"
@@ -233,6 +190,13 @@ For theoretical background and advanced techniques, see:
 - `examples/trend-model-example.md` - Worked example
 
 ## Orchestration Hints
+
+**Confidence tiers (universal scale):**
+- **High**: 3+ independent, recent (<12mo) sources that converge
+- **Medium**: 2 sources OR sources >12mo old OR indirect evidence
+- **Low**: Single source, inference, or extrapolation
+
+Dimension-specific confidence criteria below REFINE (not replace) these universal definitions.
 
 - **Blackboard key**: `findings_trend_modeling` (separate from trend-analysis which uses `findings_trends` — trend-modeling produces scenario models that complement but do not overwrite trend-analysis findings)
 - **Cross-reference dimensions**: All dimensions provide input variables for scenario modeling

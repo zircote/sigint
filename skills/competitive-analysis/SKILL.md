@@ -1,5 +1,5 @@
 ---
-name: Competitive Analysis
+name: competitive-analysis
 description: This skill should be used when the user asks to "analyze competitors", "map competitive landscape", "Porter's 5 Forces analysis", "competitor comparison", "competitive positioning", "identify competitors", "competitive intelligence", or needs guidance on competitor research methodology, market positioning analysis, or competitive strategy frameworks.
 version: 0.2.0
 ---
@@ -18,6 +18,8 @@ Competitive analysis systematically evaluates competitors to understand market p
 | Competitor Matrix | Competitive Matrix | yes | — |
 | Positioning Map | Positioning Map | conditional | Needs 2+ comparable dimensions from elicitation or competitors |
 | Trend Indicators | throughout | yes | — |
+
+**Trend Indicators**: Load and apply the trend indicator definitions from `protocols/TREND-INDICATORS.md`.
 
 ## When to Use
 
@@ -202,6 +204,13 @@ For detailed frameworks and templates, see:
 - `examples/competitive-analysis-report.md` - Sample report
 
 ## Orchestration Hints
+
+**Confidence tiers (universal scale):**
+- **High**: 3+ independent, recent (<12mo) sources that converge
+- **Medium**: 2 sources OR sources >12mo old OR indirect evidence
+- **Low**: Single source, inference, or extrapolation
+
+Dimension-specific confidence criteria below REFINE (not replace) these universal definitions.
 
 - **Blackboard key**: `findings_competitive`
 - **Cross-reference dimensions**: sizing (validate market share figures), customer (switching costs, satisfaction gaps)

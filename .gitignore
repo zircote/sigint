@@ -15,3 +15,8 @@ Thumbs.db
 # Sigint local config (contains user-specific settings)
 sigint.config.json
 *-autonomous/
+
+# Secrets and backups
+.env
+*.env
+*.bak

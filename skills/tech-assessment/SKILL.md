@@ -1,5 +1,5 @@
 ---
-name: Technology Assessment
+name: tech-assessment
 description: This skill should be used when the user asks to "assess technology", "technology evaluation", "tech stack analysis", "technical feasibility", "technology trends", "build vs buy", "technology roadmap", "architecture assessment", or needs guidance on evaluating technologies, technical due diligence, or technology strategy decisions.
 version: 0.1.0
 ---
@@ -18,6 +18,8 @@ Technology assessment evaluates technologies for strategic fit, technical feasib
 | Hype Cycle Mapping | Hype Cycle Position | yes | — |
 | Build vs Buy Matrix | Build vs Buy Analysis | yes | — |
 | Domain-Specific Due Diligence | Due Diligence | conditional | Applicable domain detected (AI/ML, Fintech, Healthcare, Infrastructure) |
+
+**Trend Indicators**: Load and apply the trend indicator definitions from `protocols/TREND-INDICATORS.md`.
 
 ## Critical Assessment Rules
 
@@ -339,6 +341,13 @@ For detailed frameworks, see:
 - `examples/tech-assessment-report.md` - Sample assessment
 
 ## Orchestration Hints
+
+**Confidence tiers (universal scale):**
+- **High**: 3+ independent, recent (<12mo) sources that converge
+- **Medium**: 2 sources OR sources >12mo old OR indirect evidence
+- **Low**: Single source, inference, or extrapolation
+
+Dimension-specific confidence criteria below REFINE (not replace) these universal definitions.
 
 - **Blackboard key**: `findings_tech`
 - **Cross-reference dimensions**: trends (technology adoption curves), competitive (competitor tech stacks and capabilities)
