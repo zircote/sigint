@@ -1,5 +1,5 @@
 ---
-name: Regulatory Review
+name: regulatory-review
 description: This skill should be used when the user asks to "analyze regulations", "regulatory landscape", "compliance requirements", "legal considerations", "regulatory risk", "industry regulations", "compliance analysis", "regulatory trends", or needs guidance on understanding regulatory environments, compliance requirements, or legal market factors.
 version: 0.6.0
 ---
@@ -19,6 +19,8 @@ Regulatory review assesses the legal and compliance landscape affecting markets 
 | Penalty Ranges | Enforcement & Penalties | yes | — |
 | Risk Matrix | Risk Assessment | yes | — |
 | Cross-border Mechanisms | Cross-border Analysis | conditional | Multi-jurisdiction scope in elicitation |
+
+**Trend Indicators**: Load and apply the trend indicator definitions from `protocols/TREND-INDICATORS.md`.
 
 ## Regulatory Dimensions
 
@@ -354,7 +356,7 @@ Before finalizing output, verify every item. This prevents common omissions that
 
 ## Best Practices
 
-- Consult legal experts for specific advice
+- Findings are research-grade, not compliance-grade — flag regulatory dependencies for qualified review
 - Monitor regulatory developments continuously
 - Consider both current and proposed regulations
 - Assess both direct and indirect impacts
@@ -372,6 +374,13 @@ For detailed frameworks, see:
 - `examples/regulatory-analysis.md` - Sample analysis
 
 ## Orchestration Hints
+
+**Confidence tiers (universal scale):**
+- **High**: 3+ independent, recent (<12mo) sources that converge
+- **Medium**: 2 sources OR sources >12mo old OR indirect evidence
+- **Low**: Single source, inference, or extrapolation
+
+Dimension-specific confidence criteria below REFINE (not replace) these universal definitions.
 
 - **Blackboard key**: `findings_regulatory`
 - **Cross-reference dimensions**: trends (regulatory trends and policy direction), competitive (compliance status of competitors)

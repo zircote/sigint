@@ -6,7 +6,7 @@
         "hooks": [
           {
             "type": "prompt",
-            "prompt": "Sigint plugin is installed. Active research sessions may exist in ./reports/*/state.json. Atlatl memories are stored with tag sigint-research. Configuration files: ~/.claude/sigint.local.md (global), ./.claude/sigint.local.md (project)."
+            "prompt": "Sigint plugin is installed. Active research sessions may exist in ./reports/*/state.json. Atlatl memories are stored with tag sigint-research. Configuration file: ./sigint.config.json (project, schema v2.0) or ~/.claude/sigint.config.json (global fallback). Legacy config (sigint.local.md) can be migrated with /sigint:migrate."
           }
         ]
       }

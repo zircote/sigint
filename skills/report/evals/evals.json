@@ -1,0 +1,97 @@
+{
+  "skill_name": "report",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "generate a report from my AI assistants research",
+      "expected_output": "Skill finds active research session via reports/*/state.json, creates a team via TeamCreate, creates a task for report-synthesizer, spawns report-synthesizer as a teammate, waits for completion, verifies output files exist, presents results to user, then cleans up via TeamDelete.",
+      "files": [
+        {
+          "path": "reports/ai-assistants/state.json",
+          "content": "{\n  \"topic\": \"AI Assistants\",\n  \"topic_slug\": \"ai-assistants\",\n  \"started\": \"2026-04-01\",\n  \"status\": \"active\",\n  \"phase\": \"synthesis\",\n  \"findings\": [{\"id\": \"f_competitive_1\", \"title\": \"Market leaders\", \"dimension\": \"competitive\"}],\n  \"elicitation\": {\n    \"scope\": \"AI Assistants market\"\n  }\n}"
+        }
+      ],
+      "deterministic_checks": [
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "TeamCreate.*sigint-ai-assistants-report",
+          "description": "TeamCreate is called with the expected team name"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "report-synthesizer",
+          "description": "report-synthesizer agent is spawned"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "TeamDelete|team.*delete",
+          "description": "TeamDelete is called for cleanup"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "TaskCreate|task.*create",
+          "description": "TaskCreate is called to assign work to the report-synthesizer"
+        }
+      ],
+      "expectations": [
+        "The skill follows the full swarm pattern: TeamCreate → TaskCreate → Agent(team_name) → SendMessage → TeamDelete",
+        "Default format is markdown, default audience is all, default sections is all",
+        "After completion, file paths are presented to the user",
+        "Next steps suggest /sigint:issues and /sigint:augment"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "--format html --audience executives generate report",
+      "expected_output": "When no state.json exists, the skill informs the user that no research session was found and suggests running /sigint:start first.",
+      "files": [],
+      "deterministic_checks": [
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "/sigint:start",
+          "description": "Error message includes suggestion to run /sigint:start"
+        }
+      ],
+      "expectations": [
+        "The skill detects no active research session",
+        "An error message is displayed mentioning /sigint:start",
+        "No TeamCreate, TaskCreate, or Agent spawn occurs"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "--format html --audience executives generate the report",
+      "expected_output": "Skill parses --format html and --audience executives from arguments and passes them to the report-synthesizer prompt. The synthesizer receives format=html and audience=executives parameters.",
+      "files": [
+        {
+          "path": "reports/test-topic/state.json",
+          "content": "{\n  \"topic\": \"Test Topic\",\n  \"topic_slug\": \"test-topic\",\n  \"started\": \"2026-04-01\",\n  \"status\": \"active\",\n  \"findings\": [],\n  \"elicitation\": {}\n}"
+        }
+      ],
+      "deterministic_checks": [
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "html",
+          "description": "HTML format is used as specified"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "executive",
+          "description": "Executive audience is used as specified"
+        }
+      ],
+      "expectations": [
+        "The --format html argument is parsed and passed to the synthesizer",
+        "The --audience executives argument is parsed and passed to the synthesizer",
+        "The synthesizer prompt includes both parameters"
+      ]
+    }
+  ]
+}

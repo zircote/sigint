@@ -2,7 +2,7 @@
 description: Resume a previous research session from progress file and Atlatl
 version: 0.5.0
 argument-hint: "[<topic>] [--list]"
-allowed-tools: Read, Write, Grep, Glob, mcp__atlatl__recall_memories, mcp__atlatl__inject_context
+allowed-tools: AskUserQuestion, Glob, Grep, Read, Write, mcp__atlatl__inject_context, mcp__atlatl__recall_memories
 ---
 
 Resume a previous sigint research session following the harness initialization protocol.
@@ -38,7 +38,7 @@ The resume command follows the Anthropic long-running agent harness pattern: rea
 
 4. **Read progress file first (harness init protocol):**
    ```
-   Read ./reports/{topic-slug}/research-progress.md
+   Read ./reports/{topic_slug}/research-progress.md
    ```
    This is the human/agent-readable log of all phase transitions, codex review results,
    and session events. It provides the cross-session continuity that state.json alone cannot.
@@ -51,7 +51,7 @@ The resume command follows the Anthropic long-running agent harness pattern: rea
    - Load all findings and sources
    - Read `lineage[]` to understand session history
    - Identify current research phase
-   - Check for quarantined findings in `./reports/{topic-slug}/quarantine.json`
+   - Check for quarantined findings in `./reports/{topic_slug}/quarantine.json`
    
    From research-progress.md:
    - Identify last completed phase

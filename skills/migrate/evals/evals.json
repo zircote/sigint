@@ -1,0 +1,86 @@
+{
+  "skill_name": "migrate",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "migrate my sigint config",
+      "expected_output": "Skill detects legacy config files (.claude/sigint.local.md or .sigint.config.json v1.0), parses the legacy settings, creates a backup (.bak), writes a new sigint.config.json v2.0 with the migrated settings, and displays a summary of what was migrated.",
+      "files": [
+        {
+          "path": ".claude/sigint.local.md",
+          "content": "# Sigint Configuration\n\n## Report Format\nmarkdown\n\n## Default Repo\nzircote/sigint\n\n## Audiences\ntechnical, executives"
+        }
+      ],
+      "deterministic_checks": [
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "sigint\\.local\\.md",
+          "description": "The legacy config file is detected"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "2\\.0|v2",
+          "description": "The output references v2.0 format"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "\\.bak|backup",
+          "description": "A backup is created before migration"
+        }
+      ],
+      "expectations": [
+        "The skill detects .claude/sigint.local.md as a legacy config source",
+        "Settings are parsed from the legacy markdown format",
+        "A .bak backup is created before overwriting",
+        "The new sigint.config.json has version 2.0 with migrated settings"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "migrate config",
+      "expected_output": "When no legacy config files exist, the skill reports that there is nothing to migrate and exits cleanly.",
+      "files": [],
+      "deterministic_checks": [
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "[Nn]othing to migrate|[Nn]o legacy|not found",
+          "description": "The skill reports no legacy config found"
+        }
+      ],
+      "expectations": [
+        "The skill checks for legacy config files and finds none",
+        "A clear message indicates nothing to migrate",
+        "No files are written or modified"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "--dry-run migrate config",
+      "expected_output": "With --dry-run, the skill detects legacy config files, shows what would be migrated and what the new sigint.config.json would contain, but does NOT write any files.",
+      "files": [
+        {
+          "path": ".sigint.config.json",
+          "content": "{\n  \"version\": \"1.0\",\n  \"report_format\": \"markdown\",\n  \"default_repo\": \"zircote/sigint\"\n}"
+        }
+      ],
+      "deterministic_checks": [
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "dry.run|preview|would",
+          "description": "The output indicates dry-run mode (preview only)"
+        }
+      ],
+      "expectations": [
+        "The --dry-run flag is parsed and respected",
+        "Legacy config is detected and parsed",
+        "The would-be output is shown but no files are written",
+        "The preview shows the v2.0 JSON structure"
+      ]
+    }
+  ]
+}

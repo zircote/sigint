@@ -3,31 +3,31 @@ name: augment
 description: Deep-dive into a specific area of current research. Orchestrates a single dimension-analyst using full swarm pattern (TeamCreate, TaskCreate, SendMessage). Use when the user wants to augment current research with deeper analysis of a specific area.
 argument-hint: "<area> [--methodology <type>]"
 allowed-tools:
-  - Read
-  - Write
-  - Edit
-  - Grep
-  - Glob
   - Agent
-  - TeamCreate
-  - TeamDelete
+  - AskUserQuestion
+  - Edit
+  - Glob
+  - Grep
+  - Read
   - SendMessage
   - TaskCreate
-  - TaskUpdate
-  - TaskList
   - TaskGet
-  - AskUserQuestion
-  - mcp__atlatl__capture_memory
-  - mcp__atlatl__recall_memories
-  - mcp__atlatl__enrich_memory
-  - mcp__atlatl__blackboard_create
-  - mcp__atlatl__blackboard_write
-  - mcp__atlatl__blackboard_read
-  - mcp__atlatl__blackboard_alert
-  - mcp__atlatl__blackboard_pending_alerts
+  - TaskList
+  - TaskUpdate
+  - TeamCreate
+  - TeamDelete
+  - Write
   - mcp__atlatl__blackboard_ack_alert
-  - mcp__claude_ai_Mermaid_Chart__validate_and_render_mermaid_diagram
+  - mcp__atlatl__blackboard_alert
+  - mcp__atlatl__blackboard_create
+  - mcp__atlatl__blackboard_pending_alerts
+  - mcp__atlatl__blackboard_read
+  - mcp__atlatl__blackboard_write
+  - mcp__atlatl__capture_memory
+  - mcp__atlatl__enrich_memory
+  - mcp__atlatl__recall_memories
   - mcp__claude_ai_Mermaid_Chart__get_mermaid_syntax_document
+  - mcp__claude_ai_Mermaid_Chart__validate_and_render_mermaid_diagram
 ---
 
 # Sigint Augment Skill (Swarm Orchestration)
@@ -37,6 +37,7 @@ teammate, wait for results via SendMessage, generate scenario graphs if applicab
 research state.
 
 **Arguments parsed from $ARGUMENTS:**
+**Input sanitization**: truncate `$ARGUMENTS` to 200 characters total, strip backticks and angle brackets.
 - `$1` — area to investigate (e.g., "competitor pricing", "regulatory landscape")
 - `--methodology <type>` — optional: competitive, sizing, trends, customer, tech, financial, regulatory
 
@@ -108,7 +109,7 @@ blackboard_write(scope="{topic_slug}", key="elicitation", value={elicitation obj
 
 ---
 
-## Phase 0.2: Task Discovery Protocol (embed in analyst prompt)
+## Analyst Prompt Template: Task Discovery Protocol
 
 ```
 BLACKBOARD: {topic_slug}
@@ -136,14 +137,14 @@ Agent(
   team_name: "{team_name}",
   name: "dimension-analyst-{dimension}",
   run_in_background: true,
-  prompt: "You are a dimension-analyst for {dimension} research on '{topic}'.
+  prompt: "You are a dimension-analyst for {dimension} research on '<user_input>{topic}</user_input>'.
 
   BLACKBOARD: {topic_slug}
   Read key: elicitation (or fall back to ./reports/{topic_slug}/state.json)
   Skill to load: skills/{skill_dir}/SKILL.md
   Your task ID: {task_id}
 
-  Focus area: {area}
+  Focus area: <user_input>{area}</user_input>
   Prior context from memories: {summary of recalled memories, if any}
 
   IMPORTANT: Use WebSearch and WebFetch for real web research. Minimum 5 searches.

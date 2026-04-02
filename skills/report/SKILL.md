@@ -2,12 +2,13 @@
 name: report
 description: Generate a comprehensive market research report from current findings. Orchestrates report-synthesizer using full swarm pattern with TeamCreate, TaskCreate, SendMessage, and TeamDelete.
 argument-hint: "[--format <type>] [--audience <type>] [--sections <list>]"
-allowed-tools: Read, Write, Grep, Glob, TeamCreate, TeamDelete, SendMessage, TaskCreate, TaskUpdate, TaskList, TaskGet, AskUserQuestion
+allowed-tools: Agent, AskUserQuestion, Glob, Grep, Read, SendMessage, TaskCreate, TaskGet, TaskList, TaskUpdate, TeamCreate, TeamDelete, Write
 ---
 
 Generate a comprehensive market research report from current research findings.
 
 **Arguments:**
+**Input sanitization**: truncate `$ARGUMENTS` to 200 characters total, strip backticks and angle brackets.
 - `--format` - Output format: `markdown` (default), `html`, `both`
 - `--audience` - Target audience: `executives`, `pm`, `investors`, `dev`, `all` (default: `all`)
 - `--sections` - Comma-separated sections to include, or `all` (default: `all`)
@@ -34,14 +35,14 @@ Parse `$ARGUMENTS` to extract:
 
 **Determine topic slug:**
 - Read `./reports/` directory to find the most recent report folder (or read `state.json` from the most recent session)
-- Extract `topic_slug` from state.json's `topic` or `slug` field
+- Extract `topic_slug` from state.json's `topic_slug` field
 - If no reports directory exists, inform the user: "No research session found. Run `/sigint:start <topic>` first."
 
 **Initialize swarm:**
 
 Step 0.1 — **TeamCreate** (blocking prerequisite):
 ```
-TeamCreate with name: "sigint-{topic-slug}-report"
+TeamCreate with name: "sigint-{topic_slug}-report"
 ```
 
 Step 0.2 — **TaskCreate** the synthesizer task:
@@ -63,7 +64,7 @@ Launch the report-synthesizer as a persistent teammate:
 ```
 Agent(
   subagent_type: "sigint:report-synthesizer",
-  team_name: "sigint-{topic-slug}-report",
+  team_name: "sigint-{topic_slug}-report",
   name: "report-synthesizer",
   run_in_background: true,
   prompt: """
@@ -72,7 +73,7 @@ Agent(
     Search: recall_memories(query="sigint {topic} report") before starting.
     Capture findings after completing.
 
-    BLACKBOARD: {topic-slug}
+    BLACKBOARD: {topic_slug}
     Task Discovery Protocol:
     1. TaskList → find tasks assigned to you (owner: "report-synthesizer")
     2. TaskGet → read full task description
@@ -86,9 +87,10 @@ Agent(
     - format: {format}
     - audience: {audience}
     - sections: {sections}
-    - state_file: ./reports/{topic-slug}/state.json
-    - blackboard scope: {topic-slug} (read findings_* keys for dimension data)
-    - output_dir: ./reports/{topic-slug}/
+    - state_file: ./reports/{topic_slug}/state.json
+    - blackboard scope: {topic_slug} (read findings_* keys for dimension data)
+    - output_dir: ./reports/{topic_slug}/
+    - date: Replace YYYY-MM-DD in file names with today's date in ISO format (e.g., 2026-04-02)
 
     TASK: #{reportTaskId} — Generate report: {format} / {audience}
 
@@ -96,7 +98,7 @@ Agent(
     SendMessage(
       to: "team-lead",
       message: {
-        files: ["./reports/{topic-slug}/YYYY-MM-DD-report.md", ...],
+        files: ["./reports/{topic_slug}/YYYY-MM-DD-report.md", ...],  # Replace YYYY-MM-DD with today's date in ISO format
         formats_generated: ["{format}"],
         summary: "one-line summary of the key finding"
       },
@@ -151,5 +153,5 @@ SendMessage(
   to: "report-synthesizer",
   message: { type: "shutdown_request", reason: "Report generation complete" }
 )
-TeamDelete("sigint-{topic-slug}-report")
+TeamDelete("sigint-{topic_slug}-report")
 ```

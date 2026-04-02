@@ -1,5 +1,5 @@
 ---
-name: Report Writing
+name: report-writing
 description: This skill should be used when the user asks to "write a report", "executive summary", "research report format", "report structure", "present findings", "business writing", "analysis documentation", or needs guidance on structuring research outputs, executive communication, or professional report formatting.
 version: 0.1.0
 ---
@@ -52,7 +52,7 @@ When the user does not specify a report type, use this decision table:
 - Detailed methodology
 - For: Analysts, implementers
 - Time to read: 30-60 minutes
-- MUST include: Table of Contents, at least 6 major sections, `quadrantChart` for competitive positioning, `stateDiagram` for scenario analysis, Appendix with methodology and data sources
+- MUST include: Table of Contents, at least 6 major sections, Appendix with methodology and data sources. Include `quadrantChart` for competitive positioning only when a competitive dimension is present in the findings. Include `stateDiagram` for scenario analysis only when scenario or trend data is available
 
 ### Appendix/Data Pack
 - Supporting data
@@ -176,8 +176,15 @@ When selecting a visualization, follow these rules strictly:
 - **Market share / composition data** → Use a `pie` chart. If there are more than 6 slices, group the smallest into "Others".
 - **Competitive positioning on two axes** → Use a `quadrantChart`. Label both axes with descriptive endpoints (e.g., "Low Price --> High Price").
 - **Scenarios / state transitions / decision paths** → Use a `stateDiagram-v2`. Show the starting state and possible outcomes.
-- **Trend data over time** → Use a table with year/value/growth columns. Mermaid does not support line charts natively — always explain this limitation.
-- **Full reports** MUST include at least one `quadrantChart` AND one `stateDiagram` to cover positioning and scenario analysis.
+- **Trend data over time** → Mermaid supports line charts via `xychart-beta`. Use `xychart-beta` for trend data over time. Example:
+  ```mermaid
+  xychart-beta
+      title "Market Growth"
+      x-axis [2022, 2023, 2024, 2025]
+      y-axis "Revenue ($B)" 0 --> 10
+      line [2.1, 3.4, 5.2, 7.8]
+  ```
+- **Full reports** MUST include at least one `quadrantChart` (when competitive dimension is present) AND one `stateDiagram` (when scenario or trend data is available) to cover positioning and scenario analysis.
 - **Executive briefs** MUST include at least one diagram (typically `pie` for market share).
 
 ### Mermaid Diagram Types

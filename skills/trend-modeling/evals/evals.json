@@ -60,7 +60,7 @@
         "description": "Output generates at least two named scenarios (e.g., S1, S2) with trend assignments for each variable",
         "deterministic_checks": [
           {
-            "type": "output_matches",
+            "type": "regex_match",
             "pattern": "S[0-9]|Scenario [0-9]|Scenario\\s+[0-9]"
           }
         ]
@@ -191,7 +191,7 @@
         "description": "Output uses the INC/DEC notation format described in the skill (e.g., INC(X, Y) or DEC(X, Y))",
         "deterministic_checks": [
           {
-            "type": "output_matches",
+            "type": "regex_match",
             "pattern": "(INC|DEC)\\("
           }
         ]

@@ -833,7 +833,7 @@
         "description": "Numeric TRL levels are used",
         "deterministic_checks": [
           {
-            "type": "output_matches",
+            "type": "regex_match",
             "pattern": "TRL[- ]?[1-9]"
           }
         ]

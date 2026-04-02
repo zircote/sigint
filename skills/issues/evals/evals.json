@@ -1,0 +1,314 @@
+{
+  "skill_name": "issues",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "--repo zircote/sigint create github issues from my enterprise observability research",
+      "expected_output": "Skill parses --repo argument, finds the active research session via reports/*/state.json, spawns a TeamCreate for the session, creates a TaskCreate for the issue-architect, spawns the issue-architect agent with team_name, asks for approval before creating issues, presents a results summary with issue count and categories after the issue-architect completes, then cleans up via TeamDelete.",
+      "files": [
+        {
+          "path": "reports/enterprise-observability/state.json",
+          "content": "{\n  \"topic\": \"Enterprise Observability\",\n  \"topic_slug\": \"enterprise-observability\",\n  \"started\": \"2026-04-01\",\n  \"status\": \"active\",\n  \"phase\": \"discovery\",\n  \"elicitation\": {\n    \"scope\": \"Enterprise Observability market\",\n    \"decision_context\": \"Investment decision\",\n    \"priorities\": [\"Market size\", \"Competitive landscape\"]\n  }\n}"
+        }
+      ],
+      "deterministic_checks": [
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "zircote/sigint",
+          "description": "--repo value is used as the target repository"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "TeamCreate.*sigint-enterprise-observability-issues",
+          "description": "TeamCreate is called with the expected team name"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "issue-architect",
+          "description": "issue-architect agent is spawned"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "TeamDelete|team.*delete|delete.*team",
+          "description": "TeamDelete is called for cleanup after completion"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "TaskCreate|task.*create",
+          "description": "TaskCreate is called to assign work to the issue-architect"
+        }
+      ],
+      "expectations": [
+        "The --repo zircote/sigint argument is parsed and used as the target repository throughout, not overridden by any other resolution path",
+        "The skill follows the full swarm pattern: TeamCreate → TaskCreate → Agent(team_name) → SendMessage, NOT a standalone Agent call",
+        "The approval gate (AskUserQuestion) is presented before creating issues, listing the estimated issue count and repo",
+        "After receiving the completion SendMessage from issue-architect, results are summarized by category (features, enhancements, research tasks, action items)",
+        "TeamDelete is called as the final cleanup step"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "--dry-run --repo myorg/myrepo preview issues from research",
+      "expected_output": "Skill sets dry_run=true, skips the approval gate, spawns issue-architect with dry_run flag, presents a preview of issues that would be created without actually creating any GitHub issues, and concludes with a message indicating no issues were created and how to create them.",
+      "files": [
+        {
+          "path": "reports/ai-coding-assistants/state.json",
+          "content": "{\n  \"topic\": \"AI Coding Assistants\",\n  \"topic_slug\": \"ai-coding-assistants\",\n  \"started\": \"2026-03-15\",\n  \"status\": \"active\",\n  \"phase\": \"complete\",\n  \"elicitation\": {\n    \"scope\": \"AI coding assistant competitive landscape\",\n    \"decision_context\": \"Product strategy\",\n    \"priorities\": [\"Market share\", \"Feature comparison\"]\n  }\n}"
+        }
+      ],
+      "deterministic_checks": [
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "dry.?run|preview|dry_run.*true",
+          "description": "Dry-run mode is active in the skill execution"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "myorg/myrepo",
+          "description": "The --repo argument value is used as target repo"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "issue-architect",
+          "description": "issue-architect agent is still spawned in dry-run mode"
+        }
+      ],
+      "expectations": [
+        "The --dry-run flag is parsed and dry_run is set to true before any GitHub API calls",
+        "The approval gate (AskUserQuestion) is SKIPPED in dry-run mode",
+        "The issue-architect agent receives dry_run=true in its task or prompt",
+        "The results summary uses 'previewed' instead of 'created' and states no issues were actually created",
+        "The next-steps suggestion tells the user to run without --dry-run to create the issues"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "create github issues from my research",
+      "expected_output": "When --repo is not provided and elicitation.default_repo is absent from state.json, the skill applies the Config Resolution Protocol: it reads sigint.config.json for default_repo, finds a value there, and uses it as the target repository.",
+      "files": [
+        {
+          "path": "reports/cloud-security/state.json",
+          "content": "{\n  \"topic\": \"Cloud Security\",\n  \"topic_slug\": \"cloud-security\",\n  \"started\": \"2026-03-20\",\n  \"status\": \"active\",\n  \"phase\": \"discovery\",\n  \"elicitation\": {\n    \"scope\": \"Cloud security market\",\n    \"decision_context\": \"Competitive positioning\"\n  }\n}"
+        },
+        {
+          "path": "sigint.config.json",
+          "content": "{\n  \"version\": \"2.0\",\n  \"defaults\": {\n    \"default_repo\": \"myorg/cloud-platform\"\n  },\n  \"research\": {\n    \"maxDimensions\": 5\n  }\n}"
+        }
+      ],
+      "deterministic_checks": [
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "CONFIG-RESOLUTION|config.*resolut|sigint\\.config\\.json",
+          "description": "Config Resolution Protocol is applied to find default_repo"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "myorg/cloud-platform",
+          "description": "The default_repo from sigint.config.json is used as target repository"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "issue-architect",
+          "description": "issue-architect agent is spawned with the resolved repo"
+        }
+      ],
+      "expectations": [
+        "Since --repo is not provided and elicitation.default_repo is absent, the skill reads sigint.config.json via the Config Resolution Protocol",
+        "The resolved default_repo (myorg/cloud-platform) from sigint.config.json is used as the target repository",
+        "The Config Resolution Protocol is applied — not a direct read of sigint.local.md or similar legacy file",
+        "The issue-architect receives the config-resolved repo value"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "--repo acme/backend --labels bug,research,sigint create issues",
+      "expected_output": "Skill parses the --labels argument as a comma-separated list and passes the labels to the issue-architect. The task creation and agent prompt both include the labels list.",
+      "files": [
+        {
+          "path": "reports/fintech-payments/state.json",
+          "content": "{\n  \"topic\": \"Fintech Payments\",\n  \"topic_slug\": \"fintech-payments\",\n  \"started\": \"2026-03-25\",\n  \"status\": \"active\",\n  \"phase\": \"complete\",\n  \"elicitation\": {\n    \"scope\": \"Fintech payment processing\",\n    \"decision_context\": \"Market entry strategy\",\n    \"priorities\": [\"Regulatory requirements\", \"Key players\"]\n  }\n}"
+        }
+      ],
+      "deterministic_checks": [
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "bug.*research.*sigint|labels.*bug|bug.*labels",
+          "description": "Labels are parsed and referenced in the issue creation workflow"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "acme/backend",
+          "description": "The --repo value is used as the target repository"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "issue-architect",
+          "description": "issue-architect agent is spawned"
+        }
+      ],
+      "expectations": [
+        "The --labels argument is parsed as the list [bug, research, sigint]",
+        "Labels are passed to the TaskCreate description and to the issue-architect agent prompt",
+        "The --repo and --labels flags are both extracted independently without interfering with each other",
+        "The approval gate shows the repo (acme/backend) and the label list before proceeding"
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "create issues from my research findings",
+      "expected_output": "When no active session exists (no reports/*/state.json files with status: active), the skill immediately errors with a clear message and does NOT attempt to spawn the swarm.",
+      "files": [],
+      "deterministic_checks": [
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "state\\.json|reports.*state|Glob",
+          "description": "Skill scans for state.json files before proceeding"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "[Nn]o active.*session|[Nn]o.*research session|not found",
+          "description": "Skill reports that no active research session was found"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "sigint:start|/start",
+          "description": "Skill suggests /sigint:start as the next step"
+        }
+      ],
+      "expectations": [
+        "The skill scans reports/*/state.json files before attempting any swarm operations",
+        "When no active session is found, the skill stops immediately with an error message",
+        "The error message explicitly references /sigint:start as the remedy",
+        "TeamCreate is NOT called — the error occurs before any swarm operations"
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "create github issues",
+      "expected_output": "When --repo is absent, elicitation.default_repo is absent, and sigint.config.json is absent, the skill falls back to auto-detecting the repository from git remote. It runs 'git remote get-url origin', parses the GitHub URL, and uses the result.",
+      "files": [
+        {
+          "path": "reports/supply-chain/state.json",
+          "content": "{\n  \"topic\": \"Supply Chain Optimization\",\n  \"topic_slug\": \"supply-chain\",\n  \"started\": \"2026-03-10\",\n  \"status\": \"active\",\n  \"phase\": \"discovery\",\n  \"elicitation\": {\n    \"scope\": \"Supply chain optimization\",\n    \"decision_context\": \"Operational efficiency\"\n  }\n}"
+        }
+      ],
+      "deterministic_checks": [
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "git remote|get-url origin|gh repo view",
+          "description": "Skill falls back to git remote detection when no config repo is available"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "issue-architect",
+          "description": "issue-architect is still spawned after repo detection"
+        }
+      ],
+      "expectations": [
+        "Priority 1 (--repo) is absent, priority 2 (elicitation.default_repo) is absent, priority 3 (sigint.config.json) is absent, so priority 4 (git remote detection) is used",
+        "The skill runs 'git remote get-url origin' or equivalent to detect the GitHub repo",
+        "If git remote succeeds, the parsed owner/repo value is used as the target",
+        "If git remote fails, the skill falls back to 'gh repo view --json nameWithOwner' before giving up"
+      ]
+    },
+    {
+      "id": 7,
+      "prompt": "create issues from my observability research",
+      "expected_output": "When elicitation.default_repo is set in state.json (priority 2), it takes precedence over sigint.config.json (priority 3) and git remote (priority 4). The skill uses the elicitation value without reading sigint.config.json for the repo field.",
+      "files": [
+        {
+          "path": "reports/observability-tools/state.json",
+          "content": "{\n  \"topic\": \"Observability Tools\",\n  \"topic_slug\": \"observability-tools\",\n  \"started\": \"2026-03-28\",\n  \"status\": \"active\",\n  \"phase\": \"discovery\",\n  \"elicitation\": {\n    \"scope\": \"Observability tooling landscape\",\n    \"decision_context\": \"Platform selection\",\n    \"default_repo\": \"myorg/observability-platform\",\n    \"priorities\": [\"OpenTelemetry adoption\", \"Vendor lock-in\"]\n  }\n}"
+        },
+        {
+          "path": "sigint.config.json",
+          "content": "{\n  \"version\": \"2.0\",\n  \"defaults\": {\n    \"default_repo\": \"myorg/WRONG-repo-should-not-be-used\"\n  },\n  \"research\": {\n    \"maxDimensions\": 5\n  }\n}"
+        }
+      ],
+      "deterministic_checks": [
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "myorg/observability-platform",
+          "description": "The elicitation.default_repo value is used as the target repo"
+        }
+      ],
+      "expectations": [
+        "elicitation.default_repo (priority 2) takes precedence over sigint.config.json default_repo (priority 3)",
+        "The value myorg/observability-platform from elicitation is used — NOT myorg/WRONG-repo-should-not-be-used from config",
+        "The team is named sigint-observability-tools-issues based on the topic_slug",
+        "The priority cascade is respected: the skill does not reach priority 3 when priority 2 is satisfied"
+      ]
+    },
+    {
+      "id": 8,
+      "prompt": "--dry-run --labels research,competitive-intel preview issues from competitive analysis research",
+      "expected_output": "In dry-run mode with labels, the issue-architect is spawned with dry_run=true and the labels list. The results show 'previewed' issues categorized by type. The SendMessage completion signal from the issue-architect includes the full issue preview payload. No approval gate is shown. TeamDelete is still called at the end.",
+      "files": [
+        {
+          "path": "reports/competitive-analysis-saas/state.json",
+          "content": "{\n  \"topic\": \"Competitive Analysis SaaS\",\n  \"topic_slug\": \"competitive-analysis-saas\",\n  \"started\": \"2026-03-30\",\n  \"status\": \"active\",\n  \"phase\": \"complete\",\n  \"elicitation\": {\n    \"scope\": \"SaaS competitive landscape\",\n    \"decision_context\": \"GTM strategy\",\n    \"default_repo\": \"myorg/saas-product\",\n    \"priorities\": [\"Feature parity\", \"Pricing\", \"Market position\"]\n  }\n}"
+        }
+      ],
+      "deterministic_checks": [
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "dry.?run|dry_run.*true|preview.*only",
+          "description": "Dry-run mode is active"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "research.*competitive-intel|competitive-intel|labels.*research",
+          "description": "Labels are passed to the issue-architect"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "TeamCreate|sigint-competitive-analysis-saas-issues",
+          "description": "Team is created with the correct slug-based name"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "TeamDelete|team.*delete",
+          "description": "TeamDelete is called even in dry-run mode"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "[Nn]o issues were created|dry run complete|preview",
+          "description": "Summary clearly states no issues were actually created"
+        }
+      ],
+      "expectations": [
+        "AskUserQuestion approval gate is skipped because dry_run=true",
+        "Both --dry-run and --labels flags are parsed without interfering with each other",
+        "The elicitation.default_repo (myorg/saas-product) is used since --repo was not provided",
+        "The SendMessage completion from issue-architect triggers the results display",
+        "Results are displayed as a preview with category breakdown and issue titles/priorities",
+        "TeamDelete is called for cleanup even though this was a dry run"
+      ]
+    }
+  ]
+}

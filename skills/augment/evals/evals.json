@@ -1,0 +1,115 @@
+{
+  "skill_name": "augment",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "competitive pricing for the AI code review market",
+      "expected_output": "Skill finds active research session via reports/*/state.json, maps 'competitive pricing' to the competitive dimension, creates a team via TeamCreate, spawns a single dimension-analyst with the competitive-analysis methodology, waits for completion via SendMessage, updates state.json with new findings, then cleans up via TeamDelete.",
+      "files": [
+        {
+          "path": "reports/ai-code-review/state.json",
+          "content": "{\n  \"topic\": \"AI Code Review\",\n  \"topic_slug\": \"ai-code-review\",\n  \"started\": \"2026-04-01\",\n  \"status\": \"active\",\n  \"phase\": \"discovery\",\n  \"elicitation\": {\n    \"scope\": \"AI Code Review market\",\n    \"decision_context\": \"Investment decision\",\n    \"priorities\": [\"Competitive landscape\", \"Market size\"]\n  }\n}"
+        }
+      ],
+      "deterministic_checks": [
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "TeamCreate.*sigint-ai-code-review-augment",
+          "description": "TeamCreate is called with the expected team name"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "dimension-analyst",
+          "description": "A dimension-analyst agent is spawned"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "competitive",
+          "description": "The competitive dimension is identified from the area argument"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "TeamDelete|team.*delete",
+          "description": "TeamDelete is called for cleanup"
+        }
+      ],
+      "expectations": [
+        "The skill maps 'competitive pricing' to the competitive dimension and competitive-analysis methodology",
+        "The skill follows the full swarm pattern: TeamCreate → TaskCreate → Agent(team_name) → SendMessage → TeamDelete",
+        "Only ONE dimension-analyst is spawned (augment is single-dimension, not multi)",
+        "The analyst is given the elicitation context from state.json"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "augment my research with deeper regulatory analysis",
+      "expected_output": "When no state.json exists, the skill informs the user that no active research session was found and suggests running /sigint:start first. It does NOT proceed with spawning agents or creating teams.",
+      "files": [],
+      "deterministic_checks": [
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "/sigint:start",
+          "description": "The error message includes a suggestion to run /sigint:start"
+        }
+      ],
+      "expectations": [
+        "The skill detects no active research session (no state.json files found)",
+        "An error message is displayed mentioning /sigint:start",
+        "No TeamCreate, TaskCreate, or Agent spawn occurs"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "augment with analysis of something ambiguous",
+      "expected_output": "When the area doesn't clearly map to a known dimension, the skill uses AskUserQuestion to ask which methodology best fits, presenting the available options: competitive, sizing, trends, customer, tech, financial, regulatory.",
+      "files": [
+        {
+          "path": "reports/test-topic/state.json",
+          "content": "{\n  \"topic\": \"Test Topic\",\n  \"topic_slug\": \"test-topic\",\n  \"started\": \"2026-04-01\",\n  \"status\": \"active\",\n  \"elicitation\": {}\n}"
+        }
+      ],
+      "deterministic_checks": [
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "competitive|sizing|trends|customer|tech|financial|regulatory",
+          "description": "The disambiguation question lists available methodology options"
+        }
+      ],
+      "expectations": [
+        "The skill recognizes the area is ambiguous and cannot be auto-mapped to a dimension",
+        "AskUserQuestion is used to present methodology choices",
+        "The skill does not guess or pick a random dimension"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "--methodology financial augment financial deep dive",
+      "expected_output": "When --methodology is explicitly provided, the skill skips area-to-dimension mapping and directly uses the specified dimension. Spawns a dimension-analyst with the financial-analysis methodology.",
+      "files": [
+        {
+          "path": "reports/test-topic/state.json",
+          "content": "{\n  \"topic\": \"Test Topic\",\n  \"topic_slug\": \"test-topic\",\n  \"started\": \"2026-04-01\",\n  \"status\": \"active\",\n  \"elicitation\": {}\n}"
+        }
+      ],
+      "deterministic_checks": [
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "financial",
+          "description": "The financial dimension is used as specified by --methodology"
+        }
+      ],
+      "expectations": [
+        "The --methodology financial flag is parsed and used directly without area mapping",
+        "A dimension-analyst is spawned for the financial dimension",
+        "The financial-analysis skill is loaded as the methodology"
+      ]
+    }
+  ]
+}

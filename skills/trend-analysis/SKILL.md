@@ -1,5 +1,5 @@
 ---
-name: Trend Analysis
+name: trend-analysis
 description: This skill should be used when the user asks to "identify trends", "analyze market trends", "trend forecasting", "macro trends", "micro trends", "emerging patterns", "future projections", "industry trends", or needs guidance on trend identification, pattern recognition, or market forecasting methodologies.
 version: 0.1.0
 ---
@@ -53,29 +53,7 @@ Early indicators of potential trends:
 
 ## Three-Valued Trend Logic
 
-From the trend-based modeling research, apply minimal-information quantifiers. The three values are **INC** (Increasing), **DEC** (Decreasing), and **CONST** (Constant). When explaining the system, always introduce all three values together in a single summary before elaborating on each.
-
-**INC (Increasing)**
-- Measurable upward movement
-- Multiple confirming signals
-- Example: "AI adoption growing 40% YoY"
-
-**DEC (Decreasing)**
-- Measurable downward movement
-- Multiple confirming signals
-- Example: "On-premise deployments declining 15% annually"
-
-**CONST (Constant)**
-- No significant directional movement
-- OR insufficient data to determine direction
-- Example: "Market share stable at ~30%"
-
-### Correlation-to-Trend Conversion
-
-Convert data relationships to trend indicators:
-- Positive correlation (r > 0.3) → INC relationship
-- Negative correlation (r < -0.3) → DEC relationship
-- Weak correlation (-0.3 < r < 0.3) → CONST relationship
+Load and apply the trend indicator definitions from `protocols/TREND-INDICATORS.md`. When explaining the system, always introduce all three values (INC, DEC, CONST) together in a single summary before elaborating on each.
 
 ## Trend Identification Process
 
@@ -216,6 +194,13 @@ For detailed methodologies, see:
 - `examples/trend-report.md` - Sample trend analysis
 
 ## Orchestration Hints
+
+**Confidence tiers (universal scale):**
+- **High**: 3+ independent, recent (<12mo) sources that converge
+- **Medium**: 2 sources OR sources >12mo old OR indirect evidence
+- **Low**: Single source, inference, or extrapolation
+
+Dimension-specific confidence criteria below REFINE (not replace) these universal definitions.
 
 - **Blackboard key**: `findings_trends` (trend-modeling uses separate key `findings_trend_modeling`)
 - **Cross-reference dimensions**: tech (adoption curves, technology maturity), regulatory (regulatory shifts impacting trends)

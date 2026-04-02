@@ -1,5 +1,5 @@
 ---
-name: Market Sizing
+name: market-sizing
 description: This skill should be used when the user asks to "calculate market size", "TAM SAM SOM analysis", "estimate market opportunity", "market sizing", "total addressable market", "serviceable market", "market potential", or needs guidance on market size estimation methodologies, market opportunity calculations, or growth projections.
 version: 0.3.0
 ---
@@ -18,6 +18,8 @@ Market sizing quantifies the revenue opportunity in a market. The TAM/SAM/SOM fr
 | TAM/SAM/SOM Hierarchy | Market Sizing Summary | yes | — |
 | Scenario Modeling | Scenarios | yes | — |
 | Growth Projections | CAGR/growth | yes | — |
+
+**Trend Indicators**: Load and apply the trend indicator definitions from `protocols/TREND-INDICATORS.md`.
 
 ## Key Definitions
 
@@ -196,7 +198,7 @@ Top-Down
 [Realistic share rationale with customer count or market share basis]
 
 ## Key Assumptions
-1. Market growth rate of 15% CAGR sustained through 2028; if growth slows to 10%, TAM drops to $X
+1. Market growth rate of 15% CAGR sustained through 2028; if growth slows to 10%, TAM drops to $3.2B
 2. Target segment represents 35% of total market based on [source]
 
 ## Data Sources
@@ -261,6 +263,13 @@ For detailed templates and examples, see:
 - `examples/market-sizing-report.md` - Sample sizing report
 
 ## Orchestration Hints
+
+**Confidence tiers (universal scale):**
+- **High**: 3+ independent, recent (<12mo) sources that converge
+- **Medium**: 2 sources OR sources >12mo old OR indirect evidence
+- **Low**: Single source, inference, or extrapolation
+
+Dimension-specific confidence criteria below REFINE (not replace) these universal definitions.
 
 - **Blackboard key**: `findings_sizing`
 - **Cross-reference dimensions**: financial (revenue validation), competitive (player count and share)

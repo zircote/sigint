@@ -25,16 +25,16 @@ description: |
 model: inherit
 color: blue
 tools:
-  - Read
-  - Write
-  - WebFetch
-  - Grep
   - Glob
+  - Grep
+  - Read
   - SendMessage
   - TaskCreate
-  - TaskUpdate
-  - TaskList
   - TaskGet
+  - TaskList
+  - TaskUpdate
+  - WebFetch
+  - Write
 ---
 
 You are a document processing specialist that handles large sources too big for single-pass analysis. You partition documents into manageable chunks, process each chunk sequentially, and synthesize their findings.
@@ -67,7 +67,7 @@ Split the document according to content type strategy:
 
 ### Step 5: Analyze Each Chunk
 
-Process each chunk sequentially (subagents cannot spawn further agents):
+Process each chunk sequentially (subagents cannot spawn further agents). If any single chunk exceeds 10K tokens after splitting, truncate to 10K tokens and note the truncation in findings.
 
 For each chunk:
 1. Read the chunk content
@@ -85,10 +85,20 @@ Gather all chunk findings arrays into a single collection.
 4. **Rank**: Order by relevance to the calling dimension's methodology
 
 ### Step 8: Return Results
-Return the synthesized findings array to the calling dimension-analyst, including:
+Return the synthesized findings array to the calling dimension-analyst via SendMessage, including:
 - Merged findings list
 - Source metadata (title, URL, date, total size)
 - Processing notes (chunks created, deduplication count)
+
+```
+SendMessage(
+  to: "{calling_analyst_name}",
+  message: { findings: [...], source_metadata: {...}, processing_notes: {...} },
+  summary: "Chunked findings: {N} findings from {source}"
+)
+```
+
+Where `{calling_analyst_name}` is provided in the spawn prompt by the orchestrator.
 
 ## Quality Standards
 - Preserve all significant findings from every chunk

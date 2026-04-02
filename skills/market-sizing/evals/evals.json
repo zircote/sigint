@@ -29,7 +29,7 @@
         "description": "Output includes dollar values for all three tiers (TAM > SAM > SOM)",
         "deterministic_checks": [
           {
-            "type": "output_matches",
+            "type": "regex_match",
             "pattern": "\\$[0-9]+\\.?[0-9]*[BMK]"
           }
         ]
@@ -145,7 +145,7 @@
         "description": "Output includes CAGR percentage for at least one market tier",
         "deterministic_checks": [
           {
-            "type": "output_matches",
+            "type": "regex_match",
             "pattern": "CAGR"
           }
         ]
@@ -267,7 +267,7 @@
         "description": "Output calculates a capture rate (percentage of value the solution can charge)",
         "deterministic_checks": [
           {
-            "type": "output_matches",
+            "type": "regex_match",
             "pattern": "[0-9]+%"
           }
         ]
@@ -339,7 +339,7 @@
         "description": "Output includes negative or near-zero growth rates reflecting market contraction",
         "deterministic_checks": [
           {
-            "type": "output_matches",
+            "type": "regex_match",
             "pattern": "-[0-9]+\\.?[0-9]*%"
           }
         ]

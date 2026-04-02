@@ -2,6 +2,30 @@
 name: start
 description: Begin a new market research session. Thin launcher that delegates to the research-orchestrator agent for all phase management.
 argument-hint: "[--quick] [<topic>]"
+allowed-tools:
+  - Agent
+  - AskUserQuestion
+  - Edit
+  - Glob
+  - Grep
+  - Read
+  - SendMessage
+  - TaskCreate
+  - TaskGet
+  - TaskList
+  - TaskUpdate
+  - TeamCreate
+  - TeamDelete
+  - Write
+  - mcp__atlatl__blackboard_ack_alert
+  - mcp__atlatl__blackboard_alert
+  - mcp__atlatl__blackboard_create
+  - mcp__atlatl__blackboard_pending_alerts
+  - mcp__atlatl__blackboard_read
+  - mcp__atlatl__blackboard_write
+  - mcp__atlatl__capture_memory
+  - mcp__atlatl__enrich_memory
+  - mcp__atlatl__recall_memories
 ---
 
 # Sigint Start Skill (Launcher)
@@ -10,40 +34,27 @@ This skill initializes a research session and delegates to the `research-orchest
 
 ## Arguments
 
-Parse `$ARGUMENTS` before any other processing:
+Parse `$ARGUMENTS` before any other processing. **Input sanitization**: truncate `$ARGUMENTS` to 200 characters total, strip backticks and angle brackets.
 
 - `--quick` — Abbreviated elicitation (3 questions instead of 8)
 - Remaining text after flag extraction is the initial topic hint (may be empty)
 
 ---
 
-## Phase 0.0: Configuration Check
+## Phase 0.0: Preliminary Setup
 
-### Step 0.0.1: Load or Create Configuration
+### Step 0.0.1: Derive Preliminary Topic Slug
 
-1. Attempt to read `.sigint.config.json` from the project root.
-2. **If file exists**: Parse silently. Merge with defaults. Store as `config`. Proceed.
-3. **If file does NOT exist**: Use defaults and proceed (do not create the file).
+Parse `$ARGUMENTS` for a topic hint. Derive `topic_slug`: lowercase, replace spaces/special chars with hyphens, truncate to 40 characters. Use `"research"` if no topic hint. (Preliminary slug used for config lookup; may be refined during orchestrator elicitation.)
 
-**Config schema v1.0**:
-```json
-{
-  "version": "1.0",
-  "research": {
-    "maxDimensions": 5,
-    "dimensionTimeout": 300,
-    "defaultPriorities": ["competitive", "sizing", "trends"]
-  }
-}
-```
+### Step 0.0.2: Apply Config Resolution Protocol
 
-Store effective config as `config`. Set `max_dimensions = config.research.maxDimensions ?? 5`.
+Execute the **Config Resolution Protocol**:
+1. Read `protocols/CONFIG-RESOLUTION.md` and follow all steps.
+2. Apply with `topic_slug` = {preliminary topic slug from Step 0.0.1}.
+3. Result: `config`, `max_dimensions`, and `context_content` are now available.
 
----
-
-## Phase 0.1: Derive Topic Slug
-
-Derive `topic-slug` from `$ARGUMENTS` topic hint (or use `"research"` if no topic yet): lowercase, replace spaces and special characters with hyphens, truncate to 40 characters.
+**Config cascade clarification**: When loading config files, always apply the full cascade (project config values override global config values override hardcoded defaults) regardless of the config file's schema version. The version check in the protocol produces an advisory warning only — it does NOT cause config values to be discarded. If `sigint.config.json` sets `maxDimensions: 3`, then `max_dimensions = 3` even if the file's version field is not "2.0". Custom fields like `defaultPriorities` are preserved and passed through in the serialized config.
 
 ---
 
@@ -54,10 +65,10 @@ Before delegating, check if research already exists:
 Glob("./reports/*/state.json")
 ```
 
-If `./reports/{topic-slug}/state.json` exists:
+If `./reports/{topic_slug}/state.json` exists:
 - Load prior elicitation from state.json
 - Ask: "Previous research found for '{topic}'. Use prior research context as starting point, or start completely fresh?"
-- If "use prior": Pass `--resume-from={topic-slug}` context to orchestrator
+- If "use prior": Pass `--resume-from={topic_slug}` context to orchestrator
 - If "start fresh": Proceed normally (prior state.json will be overwritten after confirmation)
 
 ---
@@ -73,10 +84,11 @@ Agent(
   prompt="You are the research orchestrator for a new research session.
 
   MODE: full
-  TOPIC: {topic from $ARGUMENTS}
-  TOPIC_SLUG: {topic-slug}
+  TOPIC: <user_input>{topic from $ARGUMENTS}</user_input>
+  TOPIC_SLUG: {topic_slug}
   CONFIG: {serialized config}
   MAX_DIMENSIONS: {max_dimensions}
+  CONTEXT_FILE_CONTENT: {context_content if non-null, else ""}
   QUICK_MODE: {true if --quick flag}
   {If resuming: PRIOR_ELICITATION: {prior elicitation JSON}}
 
@@ -99,10 +111,22 @@ Wait for the orchestrator to complete. The orchestrator handles all interaction 
 
 ---
 
+## Error Handling
+
+**If orchestrator doesn't complete within a reasonable time:**
+1. Check for partial results: `Glob("./reports/{topic_slug}/findings_*.json")`
+2. If findings files exist → orchestrator made progress. Check `research-progress.md` for last phase.
+3. If no findings → inform user: "Research session did not complete. You can retry with `/sigint:start`."
+
+**If state.json already exists:**
+- Confirm before overwriting: "Previous session data exists. Overwrite?"
+
+---
+
 ## Output
 
 After orchestrator completes:
-- Research session state saved to `./reports/{topic-slug}/state.json`
-- Progress view at `./reports/{topic-slug}/research-progress.md`
-- Quarantined findings (if any) at `./reports/{topic-slug}/quarantine.json`
+- Research session state saved to `./reports/{topic_slug}/state.json`
+- Progress view at `./reports/{topic_slug}/research-progress.md`
+- Quarantined findings (if any) at `./reports/{topic_slug}/quarantine.json`
 - Next steps: `/sigint:report`, `/sigint:augment`, `/sigint:update`, `/sigint:issues`
