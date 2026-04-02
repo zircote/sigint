@@ -1,15 +1,19 @@
 ---
-description: Resume a previous research session from Atlatl or files
-version: 0.1.0
-argument-hint: [<topic>] [--list]
-allowed-tools: Read, Write, Grep, Glob
+description: Resume a previous research session from progress file and Atlatl
+version: 0.5.0
+argument-hint: "[<topic>] [--list]"
+allowed-tools: Read, Write, Grep, Glob, mcp__atlatl__recall_memories, mcp__atlatl__inject_context
 ---
 
-Resume a previous sigint research session.
+Resume a previous sigint research session following the harness initialization protocol.
 
 **Arguments:**
 - `$1` - Topic name to resume (optional if only one active session)
 - `--list` - List all available research sessions
+
+**Harness Initialization Protocol:**
+
+The resume command follows the Anthropic long-running agent harness pattern: read progress files first to understand prior work state before doing anything else.
 
 **Process:**
 
@@ -18,12 +22,13 @@ Resume a previous sigint research session.
    Recall Atlatl memories: `recall_memories(query="sigint research sessions", tags=["sigint-research"])`
    Display table:
    ```
-   | Topic | Status | Last Updated | Phase | Findings |
-   |-------|--------|--------------|-------|----------|
+   | Topic | Status | Last Updated | Phase | Findings | Lineage Entries |
+   |-------|--------|--------------|-------|----------|-----------------|
    ```
 
 2. **If topic specified:**
-   Load `./reports/[topic]/state.json`.
+   Load `./reports/[topic]/research-progress.md` **FIRST** (harness init protocol).
+   Then load `./reports/[topic]/state.json` for structured data.
    Recall related Atlatl memories: `recall_memories(query="sigint {topic}", tags=["sigint-research"])`
 
 3. **If no topic specified:**
@@ -31,44 +36,59 @@ Resume a previous sigint research session.
    If multiple, prompt user to specify.
    If none, suggest starting new research.
 
-4. **Restore research context:**
-   - Load all findings and sources
-   - Recall Atlatl memories for this topic: `recall_memories(query="sigint {topic}", tags=["sigint-research"])`
-   - Identify current research phase
-   - List pending tasks
+4. **Read progress file first (harness init protocol):**
+   ```
+   Read ./reports/{topic-slug}/research-progress.md
+   ```
+   This is the human/agent-readable log of all phase transitions, codex review results,
+   and session events. It provides the cross-session continuity that state.json alone cannot.
 
-5. **Display session summary:**
+   If `research-progress.md` does not exist (legacy session), fall back to state.json only
+   and note: "Legacy session — no progress file. Consider running `/sigint:update` to generate one."
+
+5. **Restore research context:**
+   From state.json:
+   - Load all findings and sources
+   - Read `lineage[]` to understand session history
+   - Identify current research phase
+   - Check for quarantined findings in `./reports/{topic-slug}/quarantine.json`
+   
+   From research-progress.md:
+   - Identify last completed phase
+   - Note any codex review gate results
+   - Check for flagged issues or gaps
+
+6. **Display session summary:**
    ```
    Research Session: [topic]
-   Status: [active/paused]
+   Status: [active/paused/complete]
    Phase: [discovery/analysis/synthesis]
    Started: [date]
    Last Updated: [date]
 
-   Findings: [count]
-   Sources: [count]
+   Lineage: [N] research actions
+   Latest: [action] on [date] — [dimensions], [finding_count] findings
 
-   Current Focus:
-   - [last augmented area]
+   Findings: [count] ([quarantined] quarantined)
+   Sources: [count]
+   Dimensions: [list with status]
+
+   Codex Review Status:
+   - Post-findings: [pass/fail/not-run]
+   - Post-merge: [pass/fail/not-run]
 
    Pending Tasks:
-   - [from todo list if any]
+   - [from progress file if any]
    ```
 
-6. **Suggest next steps:**
-   Based on current phase and findings:
-   - Discovery → suggest areas to augment
-   - Analysis → suggest running trend modeling
-   - Synthesis → suggest generating report
+7. **Suggest next steps:**
+   Based on current phase, lineage, and findings:
+   - If research is recent and complete → suggest `/sigint:report` or `/sigint:issues`
+   - If research is stale (>30 days) → suggest `/sigint:update`
+   - If dimensions are missing → suggest `/sigint:augment <dimension>`
+   - If quarantined findings exist → suggest reviewing `quarantine.json`
 
 **Output:**
-- Session summary and context
-- Research state restored
-- Suggested next actions
-
-**Example usage:**
-```
-/sigint:resume
-/sigint:resume "AI code assistants"
-/sigint:resume --list
-```
+- Session summary with lineage history
+- Research state restored with progress context
+- Suggested next actions based on current state

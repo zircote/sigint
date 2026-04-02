@@ -78,8 +78,8 @@
   },
   {
     "id": "orchestrator-all-dimensions",
-    "description": "Orchestrator handles all 7 priorities with batching to respect the max 5 concurrent limit",
-    "prompt": "Run a comprehensive research session on the telemedicine market covering all dimensions: competitive, sizing, trends, customer, tech, financial, and regulatory. Use the research-orchestrator agent.",
+    "description": "Orchestrator handles all 8 dimensions with batching to respect the max 5 concurrent limit",
+    "prompt": "Run a comprehensive research session on the telemedicine market covering all dimensions: competitive, sizing, trends, customer, tech, financial, regulatory, and trend_modeling. Use the research-orchestrator agent.",
     "expectations": [
       {
         "description": "Multiple dimension analysts are referenced for the full set",

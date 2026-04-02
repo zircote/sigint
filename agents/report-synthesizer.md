@@ -377,8 +377,35 @@ After documentation review, run the human-voice plugin to ensure report language
 10. **Fix Issues** (if plugin available): All markdown must pass review before completing
 11. **Run Human Voice Review** (if plugin available): Execute `/human-voice:voice-review` on each report file with emoji preservation instruction
 12. **Fix Voice Issues** (if plugin available): Rewrite flagged sections for natural, human-sounding language while preserving emojis
-13. **Capture Summary**: `capture_memory(namespace="_semantic/knowledge", tags=["sigint-research", "report"], title="Report generated: {topic}", ...)` then `enrich_memory(id)`
-14. **Signal Completion** (required when spawned as a swarm teammate with `team_name`):
+13. **Post-Report Codex Review Gate (BLOCKING):**
+    Self-review the report against the findings data before delivering:
+    
+    **Step 13a: Load findings for cross-reference**
+    Read `./reports/{topic-slug}/state.json` to get the authoritative findings array.
+    
+    **Step 13b: Verify claim traceability**
+    For each factual assertion in the report:
+    - Check: does it trace to a specific finding ID in state.json?
+    - Check: does the finding have provenance (sources with URLs)?
+    - Flag untraced claims
+    
+    **Step 13c: Verify no hallucinated statistics**
+    For each number/statistic in the report:
+    - Check: does it appear in a finding's summary, evidence, or provenance snippet?
+    - Flag numbers not traceable to findings data
+    
+    **Step 13d: Check balanced representation**
+    - Compare section coverage against `elicitation.priorities` ranking
+    - Flag if any priority dimension is missing or under-represented
+    
+    **Step 13e: Remediate or warn**
+    - If flagged issues found: revise the report to fix traceable issues (max 1 revision pass)
+    - If issues remain after revision: append a "Provenance Warnings" section listing unresolved claims
+    - If no issues: proceed
+    
+    **Fallback:** If spawned with a `team_name` and a team lead is available, send flagged issues via SendMessage for awareness. Do not wait for a response — the self-review is authoritative.
+14. **Capture Summary**: `capture_memory(namespace="_semantic/knowledge", tags=["sigint-research", "report"], title="Report generated: {topic}", ...)` then `enrich_memory(id)`
+15. **Signal Completion** (required when spawned as a swarm teammate with `team_name`):
     ```
     TaskUpdate(taskId, status: "completed")
     SendMessage(
