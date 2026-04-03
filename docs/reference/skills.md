@@ -1,12 +1,16 @@
 ---
 diataxis_type: reference
 title: Skills Reference
-description: Overview of all 9 research methodology skills
+description: Overview of all 15 skills -- 9 methodology skills and 6 operational skills
 ---
 
 # Skills Reference
 
-Each skill is a passive methodology guide loaded by dimension-analysts during research. Skills define frameworks, output structures, and quality standards.
+Sigint has two categories of skills: methodology skills loaded by dimension-analysts during research, and operational skills that orchestrate agents for pipeline commands.
+
+## Methodology Skills
+
+Each methodology skill is a passive guide loaded by dimension-analysts during research. Skills define frameworks, output structures, and quality standards.
 
 | Skill | Directory | Methodology | Key Frameworks |
 |-------|-----------|-------------|----------------|
@@ -19,6 +23,19 @@ Each skill is a passive methodology guide loaded by dimension-analysts during re
 | Regulatory Review | `skills/regulatory-review/` | Compliance, legal considerations | GDPR, HIPAA, SOC2, industry-specific frameworks |
 | Report Writing | `skills/report-writing/` | Executive report best practices | Minto Pyramid, audience tailoring, visualization selection |
 | Trend Modeling | `skills/trend-modeling/` | Three-valued logic scenario modeling | Variable relationships, transitional scenarios, terminal states |
+
+## Operational Skills
+
+Operational skills are thin launchers that delegate to specialized agents via swarm orchestration patterns (TeamCreate, TaskCreate, Agent, SendMessage, TeamDelete).
+
+| Skill | Directory | Command | Delegates To | Description |
+|-------|-----------|---------|-------------|-------------|
+| Start | `skills/start/` | `/sigint:start` | research-orchestrator (full mode) | Begin a new research session with elicitation and parallel dimension analysis |
+| Update | `skills/update/` | `/sigint:update` | research-orchestrator (update mode) | Refresh existing research with delta detection and finding reconciliation |
+| Augment | `skills/augment/` | `/sigint:augment` | research-orchestrator (augment mode) | Deep-dive into a single dimension using swarm pattern |
+| Migrate | `skills/migrate/` | `/sigint:migrate` | Direct execution | Convert legacy config to `sigint.config.json` v2.0 with dry-run support |
+| Issues | `skills/issues/` | `/sigint:issues` | issue-architect | Create GitHub issues from research findings as atomic deliverables |
+| Report | `skills/report/` | `/sigint:report` | report-synthesizer | Generate comprehensive report from current findings |
 
 ## Skill structure
 
@@ -33,9 +50,11 @@ skills/<name>/
 └── examples/             # Sample outputs
 ```
 
+Operational skills have a simpler structure (typically just `SKILL.md`) since their logic is in the delegated agent.
+
 ## Orchestration hints
 
-Every SKILL.md includes an `## Orchestration Hints` section that tells dimension-analysts:
+Every methodology SKILL.md includes an `## Orchestration Hints` section that tells dimension-analysts:
 - **Blackboard key** for writing findings
 - **Cross-reference dimensions** to validate against
 - **Alert triggers** for significant findings
@@ -44,5 +63,6 @@ Every SKILL.md includes an `## Orchestration Hints` section that tells dimension
 
 ## See also
 
-- [Agents Reference](agents.md) — dimension-analyst uses these skills
-- [Architecture](../explanation/architecture.md) — how skills fit into the swarm
+- [Agents Reference](agents.md) -- dimension-analyst uses methodology skills
+- [Commands Reference](commands.md) -- commands invoke operational skills
+- [Architecture](../explanation/architecture.md) -- how skills fit into the swarm

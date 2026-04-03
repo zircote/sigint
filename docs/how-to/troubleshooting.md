@@ -139,17 +139,18 @@ Should show: `start.md`, `augment.md`, `report.md`, etc.
 
 **Symptom:** Issues created in wrong repo
 
-**Solution:** Configure default repo in `sigint.local.md`:
+**Solution:** Configure default repo in `sigint.config.json`:
 
-```yaml
----
-default_repo: owner/repo
----
+```json
+{
+  "version": "2.0",
+  "defaults": {
+    "default_repo": "owner/repo"
+  }
+}
 ```
 
-Configuration locations (project overrides global):
-- **Global**: `~/.claude/sigint.local.md`
-- **Project**: `./.claude/sigint.local.md`
+Or set per-topic in the `topics` block. See [Configure Plugin](configure-plugin.md) for details.
 
 Or specify at runtime:
 ```
@@ -219,6 +220,59 @@ Or specify at runtime:
 1. Check `/sigint:status` for which analysts are pending
 2. Re-run with `/sigint:augment {dimension}` for the stuck dimension
 3. Narrow scope in elicitation to reduce research load
+
+## Schema Validation Failures
+
+### Validation Error After JSON Write
+
+**Symptom:** Agent reports "SCHEMA VIOLATION" or validation failure during research
+
+**Cause:** A JSON file written by an agent does not match its expected schema in `schemas/`.
+
+**Solutions:**
+
+1. Check the specific schema that failed:
+   ```bash
+   jq -f schemas/<schema>.jq ./reports/<topic>/file.json
+   ```
+   This prints `false` for failing checks.
+
+2. Pinpoint the failing field:
+   ```bash
+   jq 'has("required_key")' ./reports/<topic>/file.json
+   jq '.field | type' ./reports/<topic>/file.json
+   ```
+
+3. If the agent's retry-and-correct exhausted its 2 attempts, check for a `.invalid` sidecar file alongside the JSON file. This preserves the invalid data for debugging.
+
+4. Re-run the failed step. Schema validation failures block the pipeline but do not corrupt existing data.
+
+### "jq: command not found"
+
+**Symptom:** Bash commands fail with jq not found
+
+**Cause:** `jq` is not installed
+
+**Solution:** Install jq:
+```bash
+brew install jq      # macOS
+apt-get install jq   # Debian/Ubuntu
+```
+
+All sigint JSON operations require `jq`. Without it, research pipelines will fail at any JSON write step.
+
+### Schema Mismatch After Plugin Update
+
+**Symptom:** Existing JSON files from a previous sigint version fail validation
+
+**Cause:** Schema validators may have been updated with new required fields
+
+**Solutions:**
+1. Re-run research to regenerate files with the current schema
+2. Manually add missing fields using jq:
+   ```bash
+   jq '.missing_field = "default"' file.json > tmp.$$ && mv tmp.$$ file.json
+   ```
 
 ## Performance Issues
 

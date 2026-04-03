@@ -7,6 +7,39 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- **Topic lifecycle tracking**: Research sessions now register in `sigint.config.json` topics throughout the lifecycle — `/sigint:start` registers with `in_progress`, orchestrator sets `complete` on finish, `/sigint:augment` and `/sigint:update` update dimensions and timestamps
+- **Session index**: `/sigint:status` and `/sigint:resume --list` now use `sigint.config.json` topics as primary session index instead of only globbing report directories
+- **Schema validation**: `sigint-config.jq` updated to validate both minimal (context-only) and lifecycle-managed topic entries with status, dimensions, created/updated timestamps, findings count, and optional Atlatl memory ID
+
+## [0.5.0] - 2026-04-02
+
+### Added
+- **Harness pattern**: Research-orchestrator follows the Anthropic long-running agent harness pattern with `research-progress.md` for cross-session continuity
+- **Codex review gates**: 4 blocking gates at pipeline boundaries (post-findings, post-merge, post-report, post-issues) with quarantine mechanism for failures
+- **Provenance enforcement**: Every finding must carry a provenance record (claim, sources with URLs, derivation, confidence basis)
+- **Delta detection protocol**: Update mode classifies findings as NEW, UPDATED, CONFIRMED, POTENTIALLY_REMOVED, or TREND_REVERSAL with generated delta reports
+- **Structured Data Protocol** (`protocols/STRUCTURED-DATA.md`): All JSON operations use `jq` via Bash with mandatory schema validation after every write
+- **12 jq schema validators** in `schemas/` directory: state, findings, elicitation, methodology-plan, reflection, quarantine, merged-findings, report-metadata, issues, team-status, conflicts, sigint-config
+- **Config Resolution Protocol** (`protocols/CONFIG-RESOLUTION.md`): Defines config cascade for `sigint.config.json` v2.0 with project > global > hardcoded resolution
+- **Migrate skill** (`skills/migrate/SKILL.md`): Converts legacy `sigint.local.md` or `.sigint.config.json` v1.0 to `sigint.config.json` v2.0 with per-topic support, dry-run preview, and idempotent execution
+- **`trend_modeling` dimension**: 8th research dimension using three-valued logic scenario modeling (note: uses underscore, not hyphen)
+- **6 operational skills**: start, update, augment, migrate, issues, report — thin launchers that delegate to specialized agents via swarm orchestration
+
+### Changed
+- **All JSON file operations now use `jq` via Bash** — `Edit` tool removed from all agents and skills per `/refactor:xq` structured data reliability patterns
+- **Configuration format**: Migrated from `sigint.local.md` YAML to `sigint.config.json` v2.0 JSON with per-topic overrides
+- **Schema validation is mandatory**: Write-then-validate pattern required after every JSON mutation with retry-and-correct (max 2 retries)
+- **Dual-write is default**: Blackboard + file persistence for all findings (not just a Cowork fallback)
+- **Research-orchestrator** upgraded to v0.5.0 with codex gates, provenance, delta detection, and harness pattern
+- **Dimension-analyst** now includes `Bash` in tools list for Structured Data Protocol compliance
+- **Report-synthesizer** now includes `Bash` in tools list for Structured Data Protocol compliance
+- **Resume command** follows harness initialization protocol (read progress files before acting)
+
+### Removed
+- **`Edit` tool** from all agents — replaced by `Bash` + `jq` for JSON operations
+- **`sigint.local.md` as primary config** — replaced by `sigint.config.json` v2.0 (legacy format supported via `/sigint:migrate`)
+
 ## [0.4.0] - 2026-03-20
 
 ### Added
@@ -144,7 +177,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Research methodology citations (arXiv:2601.10768)
 - MIT license
 
-[Unreleased]: https://github.com/zircote/sigint/compare/v0.4.0...HEAD
+[Unreleased]: https://github.com/zircote/sigint/compare/v0.5.0...HEAD
+[0.5.0]: https://github.com/zircote/sigint/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/zircote/sigint/compare/v0.3.7...v0.4.0
 [0.3.7]: https://github.com/zircote/sigint/compare/v0.3.0...v0.3.7
 [0.3.0]: https://github.com/zircote/sigint/compare/v0.2.1...v0.3.0

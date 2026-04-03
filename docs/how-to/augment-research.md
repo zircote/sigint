@@ -27,6 +27,7 @@ This spawns a single dimension-analyst focused on one research methodology.
 | `technology assessment` | tech-assessment | Tech evaluation, build vs buy, feasibility |
 | `financial analysis` | financial-analysis | Revenue models, unit economics |
 | `regulatory review` | regulatory-review | Compliance, legal considerations |
+| `trend modeling` | trend-modeling | Three-valued logic scenario modeling, transitional graphs |
 
 ## Specify methodology explicitly
 

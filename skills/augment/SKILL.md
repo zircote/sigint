@@ -240,7 +240,24 @@ jq --argjson new_findings "$NEW_FINDINGS_JSON" \
 jq -e -f schemas/state.jq "./reports/$TOPIC_SLUG/state.json" > /dev/null
 ```
 
-### Step 3.3: Persist to Atlatl
+### Step 3.3: Update topic in config
+
+Update `sigint.config.json` to reflect the augmented dimension using jq (per Structured Data Protocol):
+```bash
+FINDING_COUNT=$(jq '.findings | length' "./reports/$TOPIC_SLUG/state.json")
+jq --arg slug "$TOPIC_SLUG" \
+   --arg dim "$DIMENSION" \
+   --arg date "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+   --argjson count "$FINDING_COUNT" \
+  '.topics[$slug].dimensions = ((.topics[$slug].dimensions // []) + [$dim] | unique) |
+   .topics[$slug].updated = $date |
+   .topics[$slug].findings_count = $count |
+   .topics[$slug].status = "in_progress"' \
+  ./sigint.config.json > tmp.$$ && mv tmp.$$ ./sigint.config.json
+jq -e -f schemas/sigint-config.jq ./sigint.config.json > /dev/null
+```
+
+### Step 3.4: Persist to Atlatl
 
 ```
 capture_memory(
@@ -254,7 +271,7 @@ capture_memory(
 enrich_memory(id)
 ```
 
-### Step 3.4: Present findings to user
+### Step 3.5: Present findings to user
 
 Present a summary including:
 - Number of new findings (`finding_count`)

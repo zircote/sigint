@@ -1,3 +1,9 @@
+---
+diataxis_type: how-to
+title: Deploy Sigint to Cowork
+description: How to install and configure sigint in Cowork environments
+---
+
 # Deploy Sigint to Cowork
 
 Sigint is compatible with both Claude Code and Cowork. This guide covers deploying and using sigint in Cowork environments.

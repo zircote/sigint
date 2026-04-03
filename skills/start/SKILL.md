@@ -73,6 +73,31 @@ If `./reports/{topic_slug}/state.json` exists:
 
 ---
 
+## Phase 0.1: Register Topic in Config
+
+Register the research topic in `sigint.config.json` so that `/sigint:status`, `/sigint:resume`, and other commands can discover sessions from the config index.
+
+Using jq (per Structured Data Protocol):
+```bash
+jq --arg slug "$TOPIC_SLUG" \
+   --arg date "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+   --arg reports_dir "./reports/$TOPIC_SLUG" \
+  '.topics[$slug] = (.topics[$slug] // {}) + {
+     status: "in_progress",
+     dimensions: [],
+     created: ((.topics[$slug].created // null) // $date),
+     updated: $date,
+     reports_dir: $reports_dir,
+     findings_count: 0
+   }' \
+  ./sigint.config.json > tmp.$$ && mv tmp.$$ ./sigint.config.json
+jq -e -f schemas/sigint-config.jq ./sigint.config.json > /dev/null
+```
+
+This preserves any existing topic entry (merge mode) while setting the lifecycle fields. The `created` field is preserved if the topic was previously registered (e.g., from a prior session or `/sigint:migrate`).
+
+---
+
 ## Phase 0.2: Delegate to Research Orchestrator
 
 Spawn the research-orchestrator agent with full mode:

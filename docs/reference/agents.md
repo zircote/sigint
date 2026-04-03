@@ -21,9 +21,9 @@ Orchestrator agent for sigint research sessions. Owns all phase management: team
 | **Model** | inherit |
 | **Spawned by** | `/sigint:start`, `/sigint:update`, `/sigint:augment` |
 
-**Tools:** Read, Write, Edit, Grep, Glob, Agent, TeamCreate, TeamDelete, SendMessage, TaskCreate, TaskUpdate, TaskList, TaskGet, AskUserQuestion
+**Tools:** Agent, AskUserQuestion, Bash, Glob, Grep, Read, SendMessage, TaskCreate, TaskGet, TaskList, TaskUpdate, TeamCreate, TeamDelete, Write
 
-**Atlatl tools:** blackboard_create, blackboard_write, blackboard_read, blackboard_alert, blackboard_pending_alerts, blackboard_ack_alert, recall_memories, capture_memory, enrich_memory
+**Atlatl tools:** blackboard_ack_alert, blackboard_alert, blackboard_create, blackboard_pending_alerts, blackboard_read, blackboard_write, capture_memory, enrich_memory, recall_memories
 
 **Modes**: `full` (start), `update` (update), `augment` (augment)
 
@@ -48,9 +48,9 @@ Focused research on a single market dimension, parameterized by skill.
 | **Model** | inherit |
 | **Spawned by** | research-orchestrator, `/sigint:augment` |
 
-**Tools:** Read, Write, Grep, Glob, WebSearch, WebFetch, Skill, SendMessage, TaskCreate, TaskUpdate, TaskList, TaskGet
+**Tools:** Bash, Glob, Grep, Read, SendMessage, Skill, TaskCreate, TaskGet, TaskList, TaskUpdate, WebFetch, WebSearch, Write
 
-**Atlatl tools:** blackboard_write, blackboard_read, blackboard_alert, recall_memories, capture_memory, enrich_memory
+**Atlatl tools:** blackboard_alert, blackboard_read, blackboard_write, capture_memory, enrich_memory, recall_memories
 
 **Dimension-to-skill mapping:**
 
@@ -104,7 +104,9 @@ Transforms research findings into executive-ready documents with visualizations.
 | **Model** | inherit |
 | **Spawned by** | `/sigint:report` |
 
-**Tools:** Read, Write, Grep, Glob, WebFetch, Skill
+**Tools:** Bash, Glob, Grep, Read, SendMessage, Skill, TaskGet, TaskList, TaskUpdate, WebFetch, Write
+
+**Atlatl tools:** blackboard_read, capture_memory, enrich_memory, recall_memories
 
 **Report sections:** Executive Summary, Market Overview, Market Sizing (TAM/SAM/SOM), Competitive Landscape, Trend Analysis, SWOT Analysis, Recommendations, Risk Assessment, Appendix
 
@@ -123,7 +125,11 @@ Converts research findings into sprint-sized GitHub issues.
 | **Model** | inherit |
 | **Spawned by** | `/sigint:issues` |
 
-**Tools:** Read, Write, Bash, Grep, Glob, ToolSearch
+**Tools:** Bash, Glob, Grep, Read, SendMessage, TaskGet, TaskList, TaskUpdate, ToolSearch, Write
+
+**Atlatl tools:** capture_memory, enrich_memory, recall_memories
+
+**GitHub tools:** issue_read, issue_write
 
 **Issue categories:** Feature requests, Enhancements, Research tasks, Action items
 

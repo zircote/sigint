@@ -13,7 +13,9 @@ Display the current sigint research session status and progress.
 **Process:**
 
 1. **Find active research session:**
-   Scan `./reports/*/state.json` for sessions with status "active".
+   Read `sigint.config.json` topics as the primary session index (comprehension-only — Read is acceptable per Structured Data Protocol). List all topics with their `status`, `dimensions`, `updated`, and `findings_count`.
+   
+   Fall back to scanning `./reports/*/state.json` only if `sigint.config.json` has no topic entries (legacy sessions predating topic registration).
 
 2. **Load session state** (comprehension-only — Read is acceptable per Structured Data Protocol):
    Read state.json and parse:

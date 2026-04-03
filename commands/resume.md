@@ -18,12 +18,15 @@ The resume command follows the Anthropic long-running agent harness pattern: rea
 **Process:**
 
 1. **If `--list` specified:**
-   Scan `./reports/*/state.json` for all research sessions.
+   Read `sigint.config.json` topics as the primary session index (comprehension-only — Read is acceptable per Structured Data Protocol). For each topic entry with lifecycle fields (`status`, `dimensions`, `created`, `updated`, `findings_count`), display directly from config.
+   
+   Fall back to scanning `./reports/*/state.json` for sessions not registered in the config (legacy sessions predating topic registration).
+   
    Recall Atlatl memories: `recall_memories(query="sigint research sessions", tags=["sigint-research"])`
    Display table:
    ```
-   | Topic | Status | Last Updated | Phase | Findings | Lineage Entries |
-   |-------|--------|--------------|-------|----------|-----------------|
+   | Topic | Status | Last Updated | Dimensions | Findings | Atlatl Memory |
+   |-------|--------|--------------|------------|----------|---------------|
    ```
 
 2. **If topic specified:**

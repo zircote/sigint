@@ -90,6 +90,40 @@ Priority order for which dimensions to update:
 
 ---
 
+## Phase 0.4: Update Topic Status in Config
+
+Mark the topic as `in_progress` and update the timestamp using jq (per Structured Data Protocol):
+```bash
+jq --arg slug "$TOPIC_SLUG" \
+   --arg date "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+  '.topics[$slug].status = "in_progress" |
+   .topics[$slug].updated = $date' \
+  ./sigint.config.json > tmp.$$ && mv tmp.$$ ./sigint.config.json
+jq -e -f schemas/sigint-config.jq ./sigint.config.json > /dev/null
+```
+
+If the topic has no config entry yet (legacy session predating topic registration), bootstrap it:
+```bash
+if ! jq -e --arg slug "$TOPIC_SLUG" '.topics[$slug] | has("status")' ./sigint.config.json > /dev/null 2>&1; then
+  jq --arg slug "$TOPIC_SLUG" \
+     --arg date "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+     --arg reports_dir "./reports/$TOPIC_SLUG" \
+     --argjson dims "$DIMENSIONS_JSON" \
+    '.topics[$slug] = {
+       status: "in_progress",
+       dimensions: $dims,
+       created: $date,
+       updated: $date,
+       reports_dir: $reports_dir,
+       findings_count: 0
+     }' \
+    ./sigint.config.json > tmp.$$ && mv tmp.$$ ./sigint.config.json
+  jq -e -f schemas/sigint-config.jq ./sigint.config.json > /dev/null
+fi
+```
+
+---
+
 ## Phase 1: Delegate to Research Orchestrator
 
 Spawn the research-orchestrator in update mode:

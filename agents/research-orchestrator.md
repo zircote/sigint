@@ -523,6 +523,34 @@ Update progress file.
 
 ## Phase 4: Cleanup
 
+### Step 4.1: Update Topic in Config
+
+Update the topic entry in `sigint.config.json` with completion status and findings count using jq (per Structured Data Protocol):
+```bash
+FINDING_COUNT=$(jq '.findings | length' "./reports/$SLUG/state.json")
+DIMENSIONS_JSON=$(jq -c '[.findings[].dimension // empty] | unique' "./reports/$SLUG/state.json")
+jq --arg slug "$SLUG" \
+   --arg date "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+   --argjson count "$FINDING_COUNT" \
+   --argjson dims "$DIMENSIONS_JSON" \
+  '.topics[$slug].status = "complete" |
+   .topics[$slug].updated = $date |
+   .topics[$slug].findings_count = $count |
+   .topics[$slug].dimensions = $dims' \
+  ./sigint.config.json > tmp.$$ && mv tmp.$$ ./sigint.config.json
+jq -e -f schemas/sigint-config.jq ./sigint.config.json > /dev/null
+```
+
+If an Atlatl memory was captured for this session, also store the memory ID:
+```bash
+jq --arg slug "$SLUG" --arg mid "$ATLATL_MEMORY_ID" \
+  '.topics[$slug].atlatl_memory_id = $mid' \
+  ./sigint.config.json > tmp.$$ && mv tmp.$$ ./sigint.config.json
+jq -e -f schemas/sigint-config.jq ./sigint.config.json > /dev/null
+```
+
+### Step 4.2: Shutdown Team
+
 1. Send shutdown requests to all dimension-analyst teammates.
 2. TeamDelete the research team.
 3. Present summary to user with finding counts, top insights, gaps, and next steps.
