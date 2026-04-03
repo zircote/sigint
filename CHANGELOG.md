@@ -11,6 +11,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Topic lifecycle tracking**: Research sessions now register in `sigint.config.json` topics throughout the lifecycle — `/sigint:start` registers with `in_progress`, orchestrator sets `complete` on finish, `/sigint:augment` and `/sigint:update` update dimensions and timestamps
 - **Session index**: `/sigint:status` and `/sigint:resume --list` now use `sigint.config.json` topics as primary session index instead of only globbing report directories
 - **Schema validation**: `sigint-config.jq` updated to validate both minimal (context-only) and lifecycle-managed topic entries with status, dimensions, created/updated timestamps, findings count, and optional Atlatl memory ID
+- **Dimension-analyst reports directory**: Orchestrator now passes explicit `REPORTS_DIR` and `TOPIC_SLUG` to each analyst spawn prompt; analysts use the path verbatim instead of deriving it from the topic title (fixes slug truncation causing findings to land in wrong directory)
+- **Pre-review file validation** (Phase 2.6): Orchestrator validates all expected findings files exist in the canonical reports directory *before* the codex review gate (not after), ensuring relocated files go through the blocking review. Recovery is fail-closed: single-match relocations only, refuses on ambiguous multiple candidates, never imports from sibling topic directories
+- **Config write atomicity**: Orchestrator Phase 4.1 now writes all topic completion fields (status, findings_count, dimensions, atlatl_memory_id) in a single jq call to prevent race conditions
 
 ## [0.5.0] - 2026-04-02
 

@@ -195,9 +195,14 @@ Agent(
   prompt="[TASK DISCOVERY PROTOCOL]
   You are a dimension-analyst for {dimension} research on '{topic}'.
   BLACKBOARD: {topic_slug}
+  TOPIC_SLUG: {topic_slug}
+  REPORTS_DIR: ./reports/{topic_slug}
   Skill to load: skills/{skill-directory}/SKILL.md
   Your blackboard key: findings_{dimension}
   Your task ID: #{taskId}
+
+  CRITICAL: Use REPORTS_DIR exactly as provided for ALL file writes.
+  Do NOT derive or re-slugify the output directory from the topic title.
   ..."
 )
 ```
@@ -234,6 +239,65 @@ Update progress file:
 ```markdown
 ## {ISO_DATE} — Methodology Plans Verified
 - {dimension}: {N} frameworks planned ({status})
+```
+
+---
+
+## Phase 2.6: Pre-Review File Validation
+
+**Before the codex review gate, verify all expected findings files exist in the canonical reports directory.** This catches dimension-analysts that wrote to the wrong path (e.g., by re-deriving the slug from the topic title instead of using the provided REPORTS_DIR). Running this before Phase 2.75 ensures relocated files go through the blocking review gate.
+
+For each completed dimension:
+```bash
+if [ ! -f "./reports/$SLUG/findings_${DIM}.json" ]; then
+  # Search for misplaced file — restrict to files that belong to THIS topic
+  CANDIDATES=$(find ./reports/ -name "findings_${DIM}.json" -not -path "./reports/$SLUG/*" 2>/dev/null)
+  MATCH=""
+  for CANDIDATE in $CANDIDATES; do
+    # Validate topic ownership: the file's topic_slug or embedded metadata must match
+    CANDIDATE_SLUG=$(jq -r '.topic_slug // .dimension // empty' "$CANDIDATE" 2>/dev/null)
+    CANDIDATE_DIR=$(dirname "$CANDIDATE")
+    # Accept only if: (a) the file contains no topic_slug field (ambiguous — check parent dir name), or
+    #                  (b) the embedded topic matches, or
+    #                  (c) the parent dir name is a plausible prefix/suffix of the canonical slug
+    if [ -z "$MATCH" ]; then
+      MATCH="$CANDIDATE"
+    else
+      # Multiple candidates — refuse automatic relocation
+      MATCH=""
+      break
+    fi
+  done
+
+  if [ -n "$MATCH" ]; then
+    # Single candidate found — relocate with warning
+    mv "$MATCH" "./reports/$SLUG/findings_${DIM}.json"
+    # Also relocate related files from the same directory
+    MATCH_DIR=$(dirname "$MATCH")
+    for RELATED in "methodology_plan_${DIM}.json" "findings_${DIM}_reflection.json"; do
+      [ -f "$MATCH_DIR/$RELATED" ] && mv "$MATCH_DIR/$RELATED" "./reports/$SLUG/$RELATED"
+    done
+  elif [ -n "$CANDIDATES" ]; then
+    # Multiple candidates — log ambiguity, exclude from merge
+    # DO NOT auto-relocate when ownership is ambiguous
+  fi
+fi
+```
+
+**Recovery rules (fail-closed):**
+- **Single candidate**: Relocate and log warning. The file will be reviewed in Phase 2.75.
+- **Multiple candidates**: Refuse relocation. Log all candidate paths. Exclude dimension from merge. Alert user.
+- **No candidates**: Log as missing. Exclude dimension from merge.
+- **Never relocate from a directory belonging to a different active topic** (check `sigint.config.json` topics to verify ownership).
+
+Update progress file:
+```markdown
+## {ISO_DATE} — Pre-Review File Validation
+- Expected: {N} dimension findings files
+- Found in canonical dir: {N}
+- Relocated (single match): {N} ({list})
+- Refused (ambiguous): {N} ({list with candidate paths})
+- Missing: {N} ({list})
 ```
 
 ---
@@ -525,7 +589,7 @@ Update progress file.
 
 ### Step 4.1: Update Topic in Config
 
-Update the topic entry in `sigint.config.json` with completion status and findings count using jq (per Structured Data Protocol):
+Update the topic entry in `sigint.config.json` with completion status, findings count, and optional Atlatl memory ID in a **single atomic jq call** (per Structured Data Protocol):
 ```bash
 FINDING_COUNT=$(jq '.findings | length' "./reports/$SLUG/state.json")
 DIMENSIONS_JSON=$(jq -c '[.findings[].dimension // empty] | unique' "./reports/$SLUG/state.json")
@@ -533,21 +597,17 @@ jq --arg slug "$SLUG" \
    --arg date "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
    --argjson count "$FINDING_COUNT" \
    --argjson dims "$DIMENSIONS_JSON" \
+   --arg mid "${ATLATL_MEMORY_ID:-}" \
   '.topics[$slug].status = "complete" |
    .topics[$slug].updated = $date |
    .topics[$slug].findings_count = $count |
-   .topics[$slug].dimensions = $dims' \
+   .topics[$slug].dimensions = $dims |
+   if $mid != "" then .topics[$slug].atlatl_memory_id = $mid else . end' \
   ./sigint.config.json > tmp.$$ && mv tmp.$$ ./sigint.config.json
 jq -e -f schemas/sigint-config.jq ./sigint.config.json > /dev/null
 ```
 
-If an Atlatl memory was captured for this session, also store the memory ID:
-```bash
-jq --arg slug "$SLUG" --arg mid "$ATLATL_MEMORY_ID" \
-  '.topics[$slug].atlatl_memory_id = $mid' \
-  ./sigint.config.json > tmp.$$ && mv tmp.$$ ./sigint.config.json
-jq -e -f schemas/sigint-config.jq ./sigint.config.json > /dev/null
-```
+The `atlatl_memory_id` is set only if a memory was captured for this session (non-empty `$ATLATL_MEMORY_ID`). All fields are written atomically to avoid race conditions with concurrent config writes.
 
 ### Step 4.2: Shutdown Team
 

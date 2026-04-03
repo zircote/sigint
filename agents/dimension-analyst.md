@@ -48,6 +48,8 @@ tools:
 
 You are a specialized market research analyst focused on a single research dimension. You load a skill methodology, conduct web research using WebSearch and WebFetch, and write structured findings to a shared blackboard for team coordination.
 
+**REPORTS_DIR (standing instruction)**: Your spawn prompt provides `REPORTS_DIR` and `TOPIC_SLUG`. Use `REPORTS_DIR` **exactly as provided** for ALL file writes. Do NOT derive, re-slugify, or truncate the output directory from the topic title. All file paths in this agent definition use `$REPORTS_DIR` — substitute with the value from your spawn prompt.
+
 **Structured Data Protocol**: All JSON file operations (creation, mutation, extraction) MUST follow `protocols/STRUCTURED-DATA.md`. Use `jq` via Bash for all JSON file I/O. **Every write or mutation MUST be followed by schema validation** using the corresponding `schemas/*.jq` file — if validation fails, diagnose, correct with jq, and re-validate (max 2 retries) before proceeding. See the Retry-and-Correct protocol in `protocols/STRUCTURED-DATA.md`. Blackboard MCP calls are exempt. `Read` is acceptable for comprehension-only reads.
 
 ## MANDATORY: Conduct Real Web Research
@@ -86,8 +88,8 @@ blackboard_write(scope="{scope}", key="methodology_plan_{dimension}", value={met
 
 File write (per Structured Data Protocol):
 ```bash
-echo "$METHODOLOGY_PLAN_JSON" | jq '.' > "./reports/$TOPIC_SLUG/methodology_plan_${DIMENSION}.json"
-jq -e -f schemas/methodology-plan.jq "./reports/$TOPIC_SLUG/methodology_plan_${DIMENSION}.json" > /dev/null
+echo "$METHODOLOGY_PLAN_JSON" | jq '.' > "$REPORTS_DIR/methodology_plan_${DIMENSION}.json"
+jq -e -f schemas/methodology-plan.jq "$REPORTS_DIR/methodology_plan_${DIMENSION}.json" > /dev/null
 ```
 
 > **Cowork fallback:** If blackboard tools are unavailable, the file write above is the sole persistence path.
@@ -186,8 +188,8 @@ blackboard_write(scope="{scope}", key="findings_{dimension}", value={findings ob
 
 **Dual-write (default):** Always ALSO write findings to file using jq (per Structured Data Protocol):
 ```bash
-echo "$FINDINGS_JSON" | jq '.' > "./reports/$TOPIC_SLUG/findings_${DIMENSION}.json"
-jq -e -f schemas/findings.jq "./reports/$TOPIC_SLUG/findings_${DIMENSION}.json" > /dev/null
+echo "$FINDINGS_JSON" | jq '.' > "$REPORTS_DIR/findings_${DIMENSION}.json"
+jq -e -f schemas/findings.jq "$REPORTS_DIR/findings_${DIMENSION}.json" > /dev/null
 ```
 This is the default behavior — blackboard has a 24h TTL but files persist. If blackboard is unavailable, the file write is the only write.
 
@@ -229,8 +231,8 @@ If gaps were detected in R.1 or R.2:
      --argjson resolved "$GAPS_RESOLVED_JSON" \
      --argjson remaining "$GAPS_REMAINING_JSON" \
      '{iteration: $iteration, methodology_gaps_found: $methodology_gaps, evidence_gaps_found: $evidence_gaps, additional_searches: $searches, gaps_resolved: $resolved, gaps_remaining: $remaining}' \
-     > "./reports/$TOPIC_SLUG/findings_${DIMENSION}_reflection.json"
-   jq -e -f schemas/reflection.jq "./reports/$TOPIC_SLUG/findings_${DIMENSION}_reflection.json" > /dev/null
+     > "$REPORTS_DIR/findings_${DIMENSION}_reflection.json"
+   jq -e -f schemas/reflection.jq "$REPORTS_DIR/findings_${DIMENSION}_reflection.json" > /dev/null
    ```
 
 #### Step R.4: Confidence Calibration
@@ -251,8 +253,8 @@ blackboard_write(scope="{scope}", key="findings_{dimension}", value={updated fin
 ```
 Also write to file using jq (per Structured Data Protocol):
 ```bash
-echo "$UPDATED_FINDINGS_JSON" | jq '.' > "./reports/$TOPIC_SLUG/findings_${DIMENSION}.json"
-jq -e -f schemas/findings.jq "./reports/$TOPIC_SLUG/findings_${DIMENSION}.json" > /dev/null
+echo "$UPDATED_FINDINGS_JSON" | jq '.' > "$REPORTS_DIR/findings_${DIMENSION}.json"
+jq -e -f schemas/findings.jq "$REPORTS_DIR/findings_${DIMENSION}.json" > /dev/null
 ```
 
 ### Step 12: Check for Cross-Dimension Conflicts
@@ -261,7 +263,7 @@ Read other dimensions' findings from blackboard:
 blackboard_read(scope="{scope}", key="findings_{other_dimension}")
 ```
 
-**Dual-read:** Also check `./reports/{topic_slug}/findings_{other_dimension}.json` if blackboard read returns empty or fails. (Read is acceptable here — comprehension-only, per Structured Data Protocol.)
+**Dual-read:** Also check `{REPORTS_DIR}/findings_{other_dimension}.json` if blackboard read returns empty or fails. (Read is acceptable here — comprehension-only, per Structured Data Protocol.)
 
 If contradictions found:
 ```
@@ -292,7 +294,7 @@ blackboard_alert(scope="{scope}",channel="conflict_detected", message={
        dimension: "{dimension}",
        topic_slug: "{topic_slug}",
        findings_key: "findings_{dimension}",
-       findings_path: "./reports/{topic_slug}/findings_{dimension}.json",
+       findings_path: "{REPORTS_DIR}/findings_{dimension}.json",
        finding_count: N,
        confidence_avg: "high|medium|low"
      },

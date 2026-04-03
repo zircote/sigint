@@ -142,6 +142,8 @@ Agent(
   prompt: "You are a dimension-analyst for {dimension} research on '<user_input>{topic}</user_input>'.
 
   BLACKBOARD: {topic_slug}
+  TOPIC_SLUG: {topic_slug}
+  REPORTS_DIR: ./reports/{topic_slug}
   Read key: elicitation (or fall back to ./reports/{topic_slug}/state.json)
   Skill to load: skills/{skill_dir}/SKILL.md
   Your task ID: {task_id}
@@ -149,12 +151,15 @@ Agent(
   Focus area: <user_input>{area}</user_input>
   Prior context from memories: {summary of recalled memories, if any}
 
+  CRITICAL: Use REPORTS_DIR exactly as provided for ALL file writes.
+  Do NOT derive or re-slugify the output directory from the topic title.
+
   IMPORTANT: Use WebSearch and WebFetch for real web research. Minimum 5 searches.
   Do NOT fabricate findings. Every finding must be backed by a retrieved source.
 
   Write findings to:
     - Blackboard: blackboard_write(scope='{topic_slug}', key='findings_{dimension}', value={structured JSON})
-    - File: ./reports/{topic_slug}/{dimension}-findings.md
+    - File: {REPORTS_DIR}/findings_{dimension}.json
 
   {TASK DISCOVERY PROTOCOL from Phase 0.2}
 
@@ -166,7 +171,7 @@ Agent(
            dimension: '{dimension}',
            topic_slug: '{topic_slug}',
            findings_key: 'findings_{dimension}',
-           findings_path: './reports/{topic_slug}/{dimension}-findings.md',
+           findings_path: '{REPORTS_DIR}/findings_{dimension}.json',
            finding_count: N,
            confidence_avg: 'high|medium|low',
            gaps: ['areas needing more research']
