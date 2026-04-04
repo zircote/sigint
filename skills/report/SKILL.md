@@ -33,10 +33,15 @@ Parse `$ARGUMENTS` to extract:
 - `audience` → default `all`
 - `sections` → default `all`
 
-**Determine topic slug:**
+**Determine topic slug and reports directory:**
 - Read `./reports/` directory to find the most recent report folder (or read `state.json` from the most recent session)
 - Extract `topic_slug` from state.json's `topic_slug` field
 - If no reports directory exists, inform the user: "No research session found. Run `/sigint:start <topic>` first."
+- **Resolve `reports_dir` from config** (REQUIRED — do not hardcode paths):
+  ```bash
+  REPORTS_DIR=$(jq -r --arg slug "$TOPIC_SLUG" '.topics[$slug].reports_dir // "./reports/\($slug)"' sigint.config.json 2>/dev/null || echo "./reports/$TOPIC_SLUG")
+  ```
+  This reads the topic's configured `reports_dir` from `sigint.config.json`, falling back to `./reports/{topic_slug}` only if the config field is absent. All subsequent path references MUST use `{reports_dir}` instead of `./reports/{topic_slug}/`.
 
 **Initialize swarm:**
 
@@ -87,9 +92,9 @@ Agent(
     - format: {format}
     - audience: {audience}
     - sections: {sections}
-    - state_file: ./reports/{topic_slug}/state.json
+    - state_file: {reports_dir}/state.json
     - blackboard scope: {topic_slug} (read findings_* keys for dimension data)
-    - output_dir: ./reports/{topic_slug}/
+    - output_dir: {reports_dir}/
     - date: Replace YYYY-MM-DD in file names with today's date in ISO format (e.g., 2026-04-02)
 
     TASK: #{reportTaskId} — Generate report: {format} / {audience}
@@ -98,7 +103,7 @@ Agent(
     SendMessage(
       to: "team-lead",
       message: {
-        files: ["./reports/{topic_slug}/YYYY-MM-DD-report.md", ...],  # Replace YYYY-MM-DD with today's date in ISO format
+        files: ["{reports_dir}/YYYY-MM-DD-report.md", ...],  # Replace YYYY-MM-DD with today's date in ISO format
         formats_generated: ["{format}"],
         summary: "one-line summary of the key finding"
       },

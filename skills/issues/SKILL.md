@@ -59,6 +59,12 @@ Scan `./reports/*/state.json` for sessions with `status: "active"`. If multiple 
 
 If no active session found, error: "No active research session. Run `/sigint:start <topic>` first."
 
+**Resolve `reports_dir` from config** (REQUIRED — do not hardcode paths):
+```bash
+REPORTS_DIR=$(jq -r --arg slug "$TOPIC_SLUG" '.topics[$slug].reports_dir // "./reports/\($slug)"' sigint.config.json 2>/dev/null || echo "./reports/$TOPIC_SLUG")
+```
+All subsequent path references MUST use `{reports_dir}` instead of `./reports/{topic_slug}/`.
+
 ### Step 0.3: Resolve Target Repository
 
 Priority order:
@@ -107,7 +113,7 @@ TaskCreate({
     repo: {repo}
     dry_run: {dry_run}
     labels: {labels}
-    state_file: ./reports/{topic_slug}/state.json
+    state_file: {reports_dir}/state.json
     When complete:
       1. TaskUpdate(this task, status: 'completed')
       2. SendMessage(to: 'team-lead', message: {structured result}, summary: 'Issues created: N')",
@@ -144,7 +150,7 @@ ARGUMENTS:
 - repo: <user_input>{repo}</user_input>
 - dry_run: {dry_run}
 - labels: <user_input>{labels}</user_input>
-- state_file: ./reports/{topic_slug}/state.json
+- state_file: {reports_dir}/state.json
 
 COMPLETION MESSAGE FORMAT:
 SendMessage(to: 'team-lead', message: {
@@ -161,7 +167,7 @@ SendMessage(to: 'team-lead', message: {
     {'number': 123, 'title': '...', 'url': '...', 'priority': 'P0|P1|P2|P3', 'labels': [...]},
     ...
   ],
-  'manifest': './reports/{topic_slug}/YYYY-MM-DD-issues.json',
+  'manifest': '{reports_dir}/YYYY-MM-DD-issues.json',
   'summary': 'one-line summary'
 }, summary: 'Issues created: N total')
 "
