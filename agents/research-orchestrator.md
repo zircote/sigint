@@ -81,13 +81,13 @@ blackboard_create(scope="{topic_slug}", ttl=86400)
 ```
 Store as `blackboard_scope = "{topic_slug}"`.
 
-**Dual-write default:** For EVERY blackboard_write in this agent, ALSO write the same data to `./reports/{topic_slug}/{key}.json`. This is the default behavior, not just a Cowork fallback. Blackboard has a 24h TTL; files persist indefinitely.
+**File-first default:** For EVERY data write in this agent, write to file FIRST with schema validation, THEN write to blackboard. File writes are mandatory and gating; blackboard writes are optional coordination aids with 24h TTL.
 
-> **Blackboard failure fallback:** If `blackboard_create` fails (Atlatl MCP unavailable), set `blackboard_scope = null` and use file-based coordination only. All subsequent blackboard operations become file reads/writes to `./reports/{topic_slug}/{key}.json`.
+> **Blackboard failure fallback:** If `blackboard_create` fails (Atlatl MCP unavailable), set `blackboard_scope = null`. All data is already persisted via file writes — blackboard ops are simply skipped.
 
 **Blackboard null-guard (standing instruction):** Before every `blackboard_write(...)` or `blackboard_read(...)` call in this agent:
-- If `blackboard_scope` is null: substitute with file I/O to `./reports/{topic_slug}/{key}.json`
-- If `blackboard_write` fails at runtime: fall back to file write and log warning to `research-progress.md`
+- If `blackboard_scope` is null: skip the blackboard op (file is already written/readable)
+- If `blackboard_write` fails at runtime: log warning to `research-progress.md` (file is already written)
 
 ### Step 0.3: Create Phase Tasks
 
@@ -151,14 +151,17 @@ After elicitation:
    jq -e -f schemas/state.jq "./reports/$TOPIC_SLUG/state.json" > /dev/null
    ```
 
-2. Dual-write elicitation to blackboard + file:
-   ```
-   blackboard_write(scope="{topic_slug}", key="elicitation", value={elicitation})
-   ```
-   File write (per Structured Data Protocol):
+2. Write elicitation — file first, then blackboard:
+
+   **File write (mandatory):**
    ```bash
    echo "$ELICITATION_JSON" | jq '.' > "./reports/$TOPIC_SLUG/elicitation.json"
    jq -e -f schemas/elicitation.jq "./reports/$TOPIC_SLUG/elicitation.json" > /dev/null
+   ```
+
+   **Blackboard write (optional, for live coordination):**
+   ```
+   blackboard_write(scope="{topic_slug}", key="elicitation", value={elicitation})
    ```
 
 3. Capture to Atlatl memory.
@@ -231,7 +234,7 @@ For each dimension:
 
 ## Phase 2.5: Methodology Verification Gate
 
-Check `blackboard_read(scope="{topic_slug}", key="methodology_plan_{dimension}")` for each analyst. If not present after 3 checks (5 seconds apart), proceed without it and log a warning.
+For each analyst, check `./reports/{topic_slug}/methodology_plan_{dimension}.json` exists. If not found, fall back to `blackboard_read(scope="{topic_slug}", key="methodology_plan_{dimension}")` and **write recovered data to file immediately**. If not present after 3 checks (5 seconds apart), proceed without it and log a warning.
 
 Surface methodology table to user. If any analyst misses the window, log warning but do not block.
 
@@ -287,7 +290,8 @@ fi
 **Recovery rules (fail-closed):**
 - **Single candidate**: Relocate and log warning. The file will be reviewed in Phase 2.75.
 - **Multiple candidates**: Refuse relocation. Log all candidate paths. Exclude dimension from merge. Alert user.
-- **No candidates**: Log as missing. Exclude dimension from merge.
+- **No candidates, blackboard has data**: Read from `blackboard_read(scope="{topic_slug}", key="findings_{dim}")` and **write recovered data to file** using jq + schema validation. Log as "recovered from blackboard".
+- **No candidates, no blackboard data**: Log as missing. Exclude dimension from merge.
 - **Never relocate from a directory belonging to a different active topic** (check `sigint.config.json` topics to verify ownership).
 
 Update progress file:
@@ -392,7 +396,7 @@ Wait for all dimension-analysts to complete (or timeout after `dimensionTimeout`
 
 ### Step 3.1: Read All Findings
 
-For each dimension, read `findings_{dimension}` from blackboard and file.
+For each dimension, read from `./reports/{topic_slug}/findings_{dimension}.json` (primary). If file is missing, fall back to `blackboard_read(scope="{topic_slug}", key="findings_{dimension}")` and **immediately write recovered data to file** with schema validation.
 
 ### Step 3.2: Check Cross-Dimension Conflicts
 
@@ -478,15 +482,17 @@ Where `$LINEAGE_ENTRY_JSON` contains:
 }
 ```
 
-### Step 3.5: Write Merged Findings to Blackboard
+### Step 3.5: Write Merged Findings
 
-```
-blackboard_write(scope="{topic_slug}", key="merged_findings", value={...})
-```
-File write (per Structured Data Protocol):
+**File write (mandatory):**
 ```bash
 echo "$MERGED_FINDINGS_JSON" | jq '.' > "./reports/$SLUG/merged_findings.json"
 jq -e -f schemas/merged-findings.jq "./reports/$SLUG/merged_findings.json" > /dev/null
+```
+
+**Blackboard write (optional, for live coordination):**
+```
+blackboard_write(scope="{topic_slug}", key="merged_findings", value={...})
 ```
 
 ### Step 3.6: Capture to Atlatl
@@ -765,8 +771,8 @@ Dimension-analysts populate `provenance` during research. Codex review gates ver
 
 ## Blackboard Key Inventory
 
-| Key | Written By | Read By | Dual-Write File |
-|-----|-----------|---------|-----------------|
+| Key | Written By | Read By | Primary File (mandatory) |
+|-----|-----------|---------|--------------------------|
 | `elicitation` | orchestrator | all analysts | `elicitation.json` |
 | `team_status` | orchestrator | `/sigint:status` | `team_status.json` |
 | `methodology_plan_{dim}` | each analyst | orchestrator | `methodology_plan_{dim}.json` |

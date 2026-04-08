@@ -141,25 +141,25 @@ sigint.config.json                 → schemas/sigint-config.jq
 
 ---
 
-## Dual-Write Pattern
+## File-First Write Pattern
 
-Sigint uses dual-write: blackboard MCP + file persistence.
+File writes are the authoritative persistence path. Blackboard writes are optional coordination aids with 24h TTL. Always write to file first, validate, then optionally write to blackboard.
 
 ```bash
-# Step 1: Blackboard (exempt — MCP handles serialization)
-blackboard_write(scope="{topic_slug}", key="{key}", value={object})
-
-# Step 2: File (MUST use jq)
+# Step 1: File write (MANDATORY — must use jq)
 echo "$JSON_DATA" | jq '.' > "./reports/{topic_slug}/{key}.json"
 
-# Step 3: MANDATORY schema validation
+# Step 2: MANDATORY schema validation — STOP CHECK before proceeding
 jq -e -f "schemas/${SCHEMA}.jq" "./reports/{topic_slug}/{key}.json" > /dev/null || {
   echo "SCHEMA VIOLATION: {key}.json failed validation"
   exit 1
 }
+
+# Step 3: Blackboard (optional — MCP handles serialization, exempt from jq requirement)
+blackboard_write(scope="{topic_slug}", key="{key}", value={object})
 ```
 
-If blackboard is unavailable, the file write is the sole persistence path — jq and validation are even more critical.
+If blackboard is unavailable, no action needed — the file is already written and validated.
 
 ---
 

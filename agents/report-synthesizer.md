@@ -372,13 +372,13 @@ After documentation review, run the human-voice plugin to ensure report language
 > **Note:** Atlatl is the persistent memory system. Research findings are stored with namespace `_semantic/knowledge` and tag `sigint-research` for cross-session continuity.
 
 1. **Load Research State**: Read all findings from state.json
-2. **Read Blackboard Findings**: If a blackboard exists for this research session, read each dimension's findings explicitly:
+2. **Read Dimension Findings**: For each dimension, read from file (primary):
     ```
     For each dimension in [competitive, sizing, trends, customer, tech, financial, regulatory, trend_modeling]:
-      blackboard_read(scope="{topic_slug}", key="findings_{dimension}")
+      Read ./reports/{topic_slug}/findings_{dimension}.json
     ```
-    If blackboard read returns empty for a dimension, fall back to `./reports/{topic_slug}/findings_{dimension}.json`.
-    Merge blackboard findings with state.json findings for complete coverage.
+    If file is missing for a dimension, fall back to `blackboard_read(scope="{topic_slug}", key="findings_{dimension}")`.
+    Merge all available findings with state.json for complete coverage.
 3. **Recall Atlatl Memories**: `recall_memories(query="sigint {topic}", tags=["sigint-research"])`
 4. **Organize Content**: Map findings to report sections
 5. **Generate Narrative**: Write flowing prose connecting findings

@@ -104,7 +104,15 @@ task_id = TaskCreate({
 })
 ```
 
-Write elicitation to blackboard if a blackboard exists for this topic:
+Ensure elicitation file exists for the analyst to read:
+```bash
+if [ ! -f "./reports/$TOPIC_SLUG/elicitation.json" ]; then
+  jq '.elicitation' "./reports/$TOPIC_SLUG/state.json" > "./reports/$TOPIC_SLUG/elicitation.json"
+  jq -e -f schemas/elicitation.jq "./reports/$TOPIC_SLUG/elicitation.json" > /dev/null
+fi
+```
+
+Optionally write to blackboard for live coordination:
 ```
 blackboard_write(scope="{topic_slug}", key="elicitation", value={elicitation object from state.json})
 ```
@@ -158,8 +166,8 @@ Agent(
   Do NOT fabricate findings. Every finding must be backed by a retrieved source.
 
   Write findings to:
-    - Blackboard: blackboard_write(scope='{topic_slug}', key='findings_{dimension}', value={structured JSON})
-    - File: {REPORTS_DIR}/findings_{dimension}.json
+    - File (mandatory): {REPORTS_DIR}/findings_{dimension}.json (with schema validation — STOP CHECK before proceeding)
+    - Blackboard (optional): blackboard_write(scope='{topic_slug}', key='findings_{dimension}', value={structured JSON})
 
   {TASK DISCOVERY PROTOCOL from Phase 0.2}
 
@@ -198,7 +206,7 @@ Wait for `SendMessage` from `dimension-analyst-{dimension}`.
 
 When message arrives:
 1. Extract `findings_path` and `finding_count` from message.
-2. Read `blackboard_read(scope="{topic_slug}", key="findings_{dimension}")` for structured findings.
+2. Read findings from file: `./reports/{topic_slug}/findings_{dimension}.json` (primary). Fall back to `blackboard_read(scope="{topic_slug}", key="findings_{dimension}")` only if file is missing.
 
 ---
 
@@ -312,9 +320,10 @@ TeamDelete("{team_name}")
 ## Error Handling
 
 **If analyst doesn't complete within a reasonable time:**
-1. Check blackboard: `blackboard_read(scope="{topic_slug}", key="findings_{dimension}")`
-2. If findings exist on blackboard → analyst wrote but didn't message → treat as complete, proceed to Phase 3
-3. If no findings → inform user: "Augment analysis did not complete. The analyst may have encountered an error. You can retry with /sigint:augment."
+1. Check for findings file: `./reports/{topic_slug}/findings_{dimension}.json`
+2. If file exists → analyst wrote but didn't message → treat as complete, proceed to Phase 3
+3. If file missing, check blackboard: `blackboard_read(scope="{topic_slug}", key="findings_{dimension}")`. If found, **write recovered data to file** and proceed.
+4. If no findings anywhere → inform user: "Augment analysis did not complete. The analyst may have encountered an error. You can retry with /sigint:augment."
 
 **If state.json is missing:**
 - "No active research session found for this topic. Run /sigint:start first."

@@ -1,7 +1,7 @@
 [
   {
     "id": "analyst-competitive-happy-path",
-    "description": "Dimension analyst correctly loads the competitive-analysis skill and writes findings to the correct blackboard key",
+    "description": "Dimension analyst correctly loads the competitive-analysis skill and writes findings to file and blackboard",
     "prompt": "You are a dimension-analyst for competitive research on 'AI code review tools'. Blackboard task_id: ai-code-review. Skill to load: skills/competitive-analysis/SKILL.md. Your blackboard key: findings_competitive. Analyze the competitive landscape.",
     "expectations": [
       {
@@ -14,9 +14,10 @@
         ]
       },
       {
-        "description": "Findings are written to the correct blackboard key",
+        "description": "Findings are written to file (mandatory) and blackboard key",
         "deterministic_checks": [
-          { "type": "output_contains", "value": "findings_competitive" }
+          { "type": "output_contains", "value": "findings_competitive" },
+          { "type": "output_contains_any", "values": ["findings_competitive.json", "jq", "REPORTS_DIR"] }
         ]
       },
       {
@@ -203,16 +204,16 @@
     ]
   },
   {
-    "id": "analyst-blackboard-elicitation-read",
-    "description": "Analyst reads elicitation context from the blackboard to shape its research approach",
+    "id": "analyst-elicitation-read",
+    "description": "Analyst reads elicitation context from file (primary) or blackboard (fallback) to shape its research approach",
     "prompt": "You are a dimension-analyst for competitive research on 'cloud-native observability'. Blackboard task_id: cloud-observability. Read the elicitation from the blackboard first to understand the research scope and priorities before conducting research.",
     "expectations": [
       {
-        "description": "Blackboard read is used to load the elicitation context",
+        "description": "Elicitation context is loaded from file or blackboard",
         "deterministic_checks": [
           {
             "type": "output_contains_any",
-            "values": ["blackboard_read", "elicitation"]
+            "values": ["elicitation.json", "state.json", "elicitation", "blackboard_read"]
           }
         ]
       },
@@ -283,7 +284,7 @@
     "prompt": "You are a dimension-analyst for competitive research on 'cloud storage providers'. Blackboard scope: cloud-storage. Skill to load: skills/competitive-analysis/SKILL.md. Your blackboard key: findings_competitive. Before researching, you must write a methodology plan to the blackboard.",
     "expectations": [
       {
-        "description": "Methodology plan is written to blackboard before any WebSearch",
+        "description": "Methodology plan is written to file before any WebSearch",
         "deterministic_checks": [
           { "type": "output_contains", "value": "methodology_plan_competitive" }
         ]
@@ -304,7 +305,7 @@
         ]
       },
       {
-        "description": "blackboard_write for methodology_plan occurs before any WebSearch invocation in execution order"
+        "description": "methodology_plan file is written before any WebSearch invocation in execution order"
       }
     ]
   },
@@ -314,7 +315,7 @@
     "prompt": "You are a dimension-analyst for sizing research on 'enterprise data lakehouse platforms'. Blackboard scope: data-lakehouse. Skill to load: skills/market-sizing/SKILL.md. Your blackboard key: findings_sizing. Before researching, you must write a methodology plan to the blackboard.",
     "expectations": [
       {
-        "description": "Methodology plan is written to blackboard before any WebSearch",
+        "description": "Methodology plan is written to file before any WebSearch",
         "deterministic_checks": [
           { "type": "output_contains", "value": "methodology_plan_sizing" }
         ]
@@ -329,7 +330,7 @@
         ]
       },
       {
-        "description": "blackboard_write for methodology_plan occurs before any WebSearch invocation in execution order"
+        "description": "methodology_plan file is written before any WebSearch invocation in execution order"
       }
     ]
   },
@@ -339,7 +340,7 @@
     "prompt": "You are a dimension-analyst for trends research on 'digital twin technology in manufacturing'. Blackboard scope: digital-twin-mfg. Skill to load: skills/trend-analysis/SKILL.md. Your blackboard key: findings_trends. Before researching, you must write a methodology plan to the blackboard.",
     "expectations": [
       {
-        "description": "Methodology plan is written to blackboard before any WebSearch",
+        "description": "Methodology plan is written to file before any WebSearch",
         "deterministic_checks": [
           { "type": "output_contains", "value": "methodology_plan_trends" }
         ]
@@ -363,7 +364,7 @@
         ]
       },
       {
-        "description": "blackboard_write for methodology_plan occurs before any WebSearch invocation in execution order"
+        "description": "methodology_plan file is written before any WebSearch invocation in execution order"
       }
     ]
   },
@@ -373,7 +374,7 @@
     "prompt": "You are a dimension-analyst for customer research on 'B2B fintech payment solutions'. Blackboard scope: b2b-fintech. Skill to load: skills/customer-research/SKILL.md. Your blackboard key: findings_customer. Before researching, you must write a methodology plan to the blackboard.",
     "expectations": [
       {
-        "description": "Methodology plan is written to blackboard before any WebSearch",
+        "description": "Methodology plan is written to file before any WebSearch",
         "deterministic_checks": [
           { "type": "output_contains", "value": "methodology_plan_customer" }
         ]
@@ -400,7 +401,7 @@
         ]
       },
       {
-        "description": "blackboard_write for methodology_plan occurs before any WebSearch invocation in execution order"
+        "description": "methodology_plan file is written before any WebSearch invocation in execution order"
       }
     ]
   },
@@ -410,7 +411,7 @@
     "prompt": "You are a dimension-analyst for tech research on 'federated learning platforms'. Blackboard scope: federated-learning. Skill to load: skills/tech-assessment/SKILL.md. Your blackboard key: findings_tech. Before researching, you must write a methodology plan to the blackboard.",
     "expectations": [
       {
-        "description": "Methodology plan is written to blackboard before any WebSearch",
+        "description": "Methodology plan is written to file before any WebSearch",
         "deterministic_checks": [
           { "type": "output_contains", "value": "methodology_plan_tech" }
         ]
@@ -440,7 +441,7 @@
         ]
       },
       {
-        "description": "blackboard_write for methodology_plan occurs before any WebSearch invocation in execution order"
+        "description": "methodology_plan file is written before any WebSearch invocation in execution order"
       }
     ]
   },
@@ -450,7 +451,7 @@
     "prompt": "You are a dimension-analyst for financial research on 'vertical SaaS for construction management'. Blackboard scope: construction-saas. Skill to load: skills/financial-analysis/SKILL.md. Your blackboard key: findings_financial. Before researching, you must write a methodology plan to the blackboard.",
     "expectations": [
       {
-        "description": "Methodology plan is written to blackboard before any WebSearch",
+        "description": "Methodology plan is written to file before any WebSearch",
         "deterministic_checks": [
           { "type": "output_contains", "value": "methodology_plan_financial" }
         ]
@@ -474,7 +475,7 @@
         ]
       },
       {
-        "description": "blackboard_write for methodology_plan occurs before any WebSearch invocation in execution order"
+        "description": "methodology_plan file is written before any WebSearch invocation in execution order"
       }
     ]
   },
@@ -484,7 +485,7 @@
     "prompt": "You are a dimension-analyst for regulatory research on 'cross-border cryptocurrency exchanges'. Blackboard scope: crypto-exchanges. Skill to load: skills/regulatory-review/SKILL.md. Your blackboard key: findings_regulatory. Before researching, you must write a methodology plan to the blackboard.",
     "expectations": [
       {
-        "description": "Methodology plan is written to blackboard before any WebSearch",
+        "description": "Methodology plan is written to file before any WebSearch",
         "deterministic_checks": [
           { "type": "output_contains", "value": "methodology_plan_regulatory" }
         ]
@@ -508,7 +509,7 @@
         ]
       },
       {
-        "description": "blackboard_write for methodology_plan occurs before any WebSearch invocation in execution order"
+        "description": "methodology_plan file is written before any WebSearch invocation in execution order"
       }
     ]
   },
@@ -904,21 +905,21 @@
   },
   {
     "id": "analyst-methodology-plan-before-research",
-    "description": "Analyst always writes methodology_plan to blackboard before any WebSearch regardless of dimension",
+    "description": "Analyst always writes methodology_plan to file before any WebSearch regardless of dimension",
     "prompt": "You are a dimension-analyst for competitive research on 'edge AI inference chips'. Blackboard scope: edge-ai-chips. Skill to load: skills/competitive-analysis/SKILL.md. Your blackboard key: findings_competitive. Conduct your research following proper methodology gating.",
     "expectations": [
       {
-        "description": "Methodology plan is written to blackboard",
+        "description": "Methodology plan is written to file",
         "deterministic_checks": [
           { "type": "output_contains", "value": "methodology_plan" }
         ]
       },
       {
-        "description": "blackboard_write for methodology_plan occurs before any WebSearch in logical execution order",
+        "description": "Methodology plan file write occurs before any WebSearch in logical execution order",
         "deterministic_checks": [
           {
             "type": "output_contains_any",
-            "values": ["blackboard_write", "blackboard write"]
+            "values": ["methodology_plan", "jq", "REPORTS_DIR"]
           }
         ]
       },
@@ -929,7 +930,7 @@
         ]
       },
       {
-        "description": "The methodology plan is written to the blackboard as the first research action, before any WebSearch or WebFetch calls"
+        "description": "The methodology plan is written to file as the first research action, before any WebSearch or WebFetch calls"
       }
     ]
   }

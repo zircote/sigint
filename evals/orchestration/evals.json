@@ -458,7 +458,7 @@
   },
   {
     "id": "methodology-plan-collection",
-    "description": "Orchestrator collects methodology plans from analysts via blackboard reads to verify planning occurred",
+    "description": "Orchestrator collects methodology plans from analysts via file reads (primary) or blackboard reads (fallback) to verify planning occurred",
     "prompt": "Research AI-powered legal tech. Run competitive and sizing dimensions. Show methodology plans.",
     "expectations": [
       {
@@ -474,16 +474,16 @@
         ]
       },
       {
-        "description": "Blackboard read is used to collect methodology plans",
+        "description": "File read or blackboard read is used to collect methodology plans",
         "deterministic_checks": [
           {
             "type": "output_contains_any",
-            "values": ["blackboard_read", "blackboard read"]
+            "values": ["methodology_plan_competitive.json", "methodology_plan_sizing.json", "blackboard_read", "methodology_plan"]
           }
         ]
       },
       {
-        "description": "Orchestrator reads methodology_plan keys from the blackboard for each spawned analyst dimension to verify that planning occurred before research"
+        "description": "Orchestrator reads methodology_plan files (primary) or blackboard keys (fallback) for each spawned analyst dimension to verify that planning occurred before research"
       }
     ]
   },
