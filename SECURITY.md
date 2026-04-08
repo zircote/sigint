@@ -64,5 +64,5 @@ When using sigint:
 
 - Review generated reports before sharing externally
 - Don't store sensitive data in research topics
-- Use project-specific `./.claude/sigint.local.md` for configuration (overrides global `~/.claude/sigint.local.md`)
+- Use project-specific `./sigint.config.json` for configuration (overrides global `~/.claude/sigint.config.json`)
 - Keep `gh` CLI credentials secure

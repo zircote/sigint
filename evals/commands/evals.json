@@ -2096,9 +2096,9 @@
     ]
   },
   {
-    "id": "init-detects-legacy-local-md",
-    "description": "Legacy sigint.local.md detected: init warns and suggests /sigint:migrate instead of overwriting",
-    "prompt": "/sigint:init (assuming .claude/sigint.local.md already exists in working context)",
+    "id": "init-detects-legacy-config-v1",
+    "description": "Legacy .sigint.config.json v1.0 detected: init warns and suggests /sigint:migrate instead of overwriting",
+    "prompt": "/sigint:init (assuming .sigint.config.json v1.0 already exists in working context)",
     "expectations": [
       {
         "description": "Output mentions sigint:migrate as the recommended next step",

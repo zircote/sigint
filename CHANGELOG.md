@@ -69,12 +69,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.3.7] - 2026-01-23
 
 ### Fixed
-- Init command now creates project `sigint.local.md` with default template if missing
+- Init command now creates project config with default template if missing _(originally `sigint.local.md`, superseded by `sigint.config.json` v2.0 in 0.5.0)_
 
 ## [0.3.0] - 2026-01-23
 
 ### Added
-- Cascading configuration support: global defaults (`~/.claude/sigint.local.md`) with project overrides (`./.claude/sigint.local.md`)
+- Cascading configuration support: global defaults with project overrides _(originally `sigint.local.md`, superseded by `sigint.config.json` v2.0 in 0.5.0)_
 - Marketplace installation option (`/plugins add sigint`)
 - **README.md generation for report folders**:
   - Master index (`./reports/README.md`) listing all research topics with status and summaries

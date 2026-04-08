@@ -62,12 +62,8 @@ Manually initialize the Atlatl memory context for sigint research.
    jq -e -f schemas/sigint-config.jq ./sigint.config.json > /dev/null
    ```
 
-   **Legacy config detection**: After config resolution, check for:
-   - `./.claude/sigint.local.md`
-   - `~/.claude/sigint.local.md`
-   - `./.sigint.config.json` (v1.0)
-
-   If any are found, display:
+   **Legacy config detection**: After config resolution, check for `./.sigint.config.json` (v1.0).
+   If found, display:
    ```
    Legacy config detected: {found file(s)}
    Run /sigint:migrate to convert to sigint.config.json v2.0 and preserve all settings.

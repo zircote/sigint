@@ -127,58 +127,40 @@ Reports include:
 
 ## Configuration
 
-Configuration uses a cascading system where project settings override global defaults.
+Configuration uses `sigint.config.json` (schema v2.0) with project settings overriding global defaults.
 
 ### Configuration Locations
 
 | Location | Scope | Purpose |
 |----------|-------|---------|
-| `~/.claude/sigint.local.md` | Global | User-wide defaults for all projects |
-| `./.claude/sigint.local.md` | Project | Project-specific overrides |
+| `./sigint.config.json` | Project | Project-specific configuration |
+| `~/.claude/sigint.config.json` | Global | User-wide defaults for all projects |
 
 **Resolution order**: Project > Global > Built-in defaults
 
 ### Configuration File Format
 
-Create `sigint.local.md` in either location:
+Create `sigint.config.json` at the project root (generated automatically by `/sigint:init`):
 
-```yaml
----
-default_repo: owner/repo
-report_format: markdown
-audiences:
-  - executives
-  - product-managers
-auto_atlatl: true
----
-
-Additional research context or preferences...
+```json
+{
+  "version": "2.0",
+  "defaults": {
+    "default_repo": "owner/repo",
+    "report_format": "markdown",
+    "audiences": ["executives", "product-managers"],
+    "auto_atlatl": true
+  },
+  "research": {
+    "maxDimensions": 5,
+    "dimensionTimeout": 300,
+    "defaultPriorities": ["competitive", "sizing", "trends"]
+  },
+  "topics": {}
+}
 ```
 
-### Example Setup
-
-```bash
-# Global defaults (applies to all projects)
-mkdir -p ~/.claude
-cat > ~/.claude/sigint.local.md << 'EOF'
----
-report_format: markdown
-audiences:
-  - executives
----
-EOF
-
-# Project-specific override
-mkdir -p .claude
-cat > .claude/sigint.local.md << 'EOF'
----
-default_repo: myorg/myrepo
-audiences:
-  - developers
-  - product-managers
----
-EOF
-```
+> **Migrating from legacy config?** If you have a `sigint.local.md` or `.sigint.config.json` v1.0, run `/sigint:migrate` to convert.
 
 ## Dependencies
 
