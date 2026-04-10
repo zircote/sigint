@@ -1,6 +1,6 @@
 ---
 name: research-orchestrator
-version: 0.5.0
+version: 0.5.1
 description: |
   Orchestrator agent for sigint research sessions. Owns all phase management: team lifecycle,
   dimension-analyst spawning, methodology verification, codex review gates, finding merge,
@@ -176,6 +176,87 @@ After elicitation:
 
 ---
 
+## Phase 1.5: Smart Dimension Selection (Full Mode Only)
+
+Skip this phase in `update` and `augment` modes — those modes use pre-determined dimensions. In `full` mode, run after elicitation completes.
+
+**Skip condition**: If `--dimensions` flag was passed in the spawn prompt (from `/sigint:start --dimensions ...`), use those dimensions directly and skip to Phase 2 with a progress note: "Dimension selection bypassed — using caller-specified dimensions: {list}".
+
+### Step 1.5.1: Assess Dimension Relevance
+
+For each of the 8 standard dimensions, evaluate relevance based on:
+- The elicited `topic`, `decision_context`, `scope`, and `priorities`
+- Cap pre-selected dimensions at `max_dimensions` (from config, default 5)
+
+Default relevance preference order for general business topics: competitive → sizing → trends → customer → regulatory → financial → tech → trend_modeling
+
+For technology topics: tech → competitive → trends → sizing → regulatory → customer → financial → trend_modeling
+
+Adjust based on elicitation priorities — dimensions that appear in `elicitation.priorities` should be included regardless of defaults.
+
+### Step 1.5.2: Present Dimension Selection UI
+
+```
+Research dimensions for "{topic}":
+
+Use ✅ for included, ❌ for excluded:
+
+✅ competitive    — [1-line rationale]
+✅ sizing         — [1-line rationale]
+✅ trends         — [1-line rationale]
+❌ customer       — [1-line rationale explaining why excluded]
+✅ regulatory     — [1-line rationale]
+❌ tech           — [1-line rationale]
+❌ financial      — [1-line rationale]
+❌ trend_modeling — Requires trend data; run after trends dimension
+
+Max dimensions: {max_dimensions} (from config)
+
+Type dimension names to add, or type 'confirm' to proceed with this selection.
+```
+
+Use `AskUserQuestion` to present this and capture the response.
+
+### Step 1.5.3: Apply User Input
+
+Parse the user's response:
+- `confirm` or blank → use pre-selected dimensions as-is
+- Dimension names to add → append to selected list (if not already included)
+- `remove <dim>` → remove from selected list
+- Custom names (not in standard 8) → add the custom name as a string to the dimensions list AND record it separately in `elicitation.custom_dimensions` array (so downstream consumers know which dimensions lack SKILL.md). The analyst for custom dimensions is spawned with `SKILL_OVERRIDE: null`.
+
+Final selected list must not exceed `max_dimensions`.
+
+### Step 1.5.4: Persist Final Dimension Selection
+
+Update elicitation with confirmed dimensions using jq (per Structured Data Protocol). `elicitation.dimensions` is always an array of strings (to pass schema validation). Custom dimension metadata is stored separately in `elicitation.custom_dimensions`:
+```bash
+jq --argjson dims "$SELECTED_DIMS_JSON" \
+  --argjson custom "$CUSTOM_DIMS_JSON" \
+  '.elicitation.dimensions = $dims | .elicitation.custom_dimensions = $custom' \
+  "./reports/$TOPIC_SLUG/state.json" > tmp.$$ && mv tmp.$$ "./reports/$TOPIC_SLUG/state.json"
+jq -e -f schemas/state.jq "./reports/$TOPIC_SLUG/state.json" > /dev/null
+```
+Where `$SELECTED_DIMS_JSON` is `["competitive", "sizing", ...]` (string array) and `$CUSTOM_DIMS_JSON` is `["custom_dim_name", ...]` (string array of non-standard dimension names, empty `[]` if none).
+
+Also update `elicitation.json` and blackboard:
+```bash
+jq '.elicitation' "./reports/$TOPIC_SLUG/state.json" > "./reports/$TOPIC_SLUG/elicitation.json"
+```
+```
+blackboard_write(scope="{topic_slug}", key="elicitation", value={updated elicitation})
+```
+
+Update progress file:
+```markdown
+## {ISO_DATE} — Dimension Selection Complete
+- Selected: {N} dimensions: {list}
+- User confirmed: yes|modified
+- Custom dimensions: {list or "none"}
+```
+
+---
+
 ## Phase 2: Spawn Dimension-Analysts
 
 ### Step 2.1: Create Tasks
@@ -206,7 +287,22 @@ Agent(
 
   CRITICAL: Use REPORTS_DIR exactly as provided for ALL file writes.
   Do NOT derive or re-slugify the output directory from the topic title.
-  ..."
+
+  {If dimension is in elicitation.custom_dimensions:
+    SKILL_OVERRIDE: null
+    This is a custom dimension — no SKILL.md exists. Follow your custom dimension protocol (skip Steps 2-4, use generic methodology, enforce provenance).
+  Else:
+    Follow your MANDATORY Methodology Gating Protocol (Steps 1-6) from your agent definition:
+      - Step 1: Read elicitation from $REPORTS_DIR/state.json (or elicitation.json)
+      - Step 2: Load skills/{skill-directory}/SKILL.md — REQUIRED before any research
+      - Step 3: Extract Required Frameworks table from the skill
+      - Step 4: Write methodology_plan_{dimension}.json before proceeding
+      - Step 5: Conduct web research following the skill methodology
+      - Step 6: Self-reflect, write findings, signal completion
+
+    Do NOT proceed with research until Step 4 (methodology plan written) succeeds.
+    Do NOT substitute your own methodology for the skill's Required Frameworks.
+  }"
 )
 ```
 
@@ -379,12 +475,70 @@ Update progress file:
 
 5. **If gate = pass:** Proceed with findings as-is.
 
+### Step 2.75.2: Methodology Hard-Fail and Retry
+
+After receiving the codex review JSON response:
+
+**Hard-fail check:**
+If `methodology_gaps` is non-empty:
+1. Read `$REPORTS_DIR/methodology_plan_{dimension}.json` to get the list of `required: "yes"` frameworks
+2. Cross-reference: which methodology gaps are required frameworks (not conditional)?
+3. If any **required** framework is in `methodology_gaps`: override `gate` to `"fail"` — this is a hard methodology failure regardless of other criteria
+
+**Retry logic (max 2 retries per dimension):**
+
+Track retries with a local counter `methodology_retry_count` initialized to 0 per dimension.
+
+```
+WHILE gate == "fail" due to methodology gaps AND methodology_retry_count < 2:
+  methodology_retry_count += 1
+
+  1. Build gap list: required frameworks missing from findings
+  2. Spawn gap-fill analyst:
+     Agent(
+       subagent_type="sigint:dimension-analyst",
+       team_name="sigint-{topic_slug}-research",
+       name="dimension-analyst-{dimension}-retry{methodology_retry_count}",
+       prompt="Gap-fill retry #{methodology_retry_count} for {dimension} analysis on '{topic}'.
+
+       BLACKBOARD: {topic_slug}
+       TOPIC_SLUG: {topic_slug}
+       REPORTS_DIR: ./reports/{topic_slug}
+       Skill to load: skills/{skill-directory}/SKILL.md
+
+       PRIORITY: Address these missing required frameworks:
+       {numbered list of missing required framework names from methodology_gaps}
+
+       Step 1: Read existing findings from $REPORTS_DIR/findings_{dimension}.json
+       Step 2: Load skills/{skill-directory}/SKILL.md and find the section for each missing framework
+       Step 3: Run targeted WebSearch for each missing framework (minimum 3 searches per gap)
+       Step 4: Add new findings that cover the missing frameworks
+       Step 5: Write the COMPLETE updated findings back to $REPORTS_DIR/findings_{dimension}.json
+       Step 6: Validate with schema, signal completion via SendMessage to team-lead
+
+       Follow your MANDATORY Methodology Gating Protocol."
+     )
+  3. Wait for retry analyst SendMessage
+  4. Re-run codex review (same criteria) on updated findings
+  5. Parse new gate response → update gate variable
+
+IF gate still "fail" after 2 retries:
+  - Accept current findings (do not block merge)
+  - Append unresolved gap note to findings file using jq:
+    jq --argjson gaps "$METHODOLOGY_GAPS_JSON" \
+      '.methodology_gaps_unresolved = $gaps' \
+      "$REPORTS_DIR/findings_{dimension}.json" > tmp.$$ && mv tmp.$$ "$REPORTS_DIR/findings_{dimension}.json"
+  - Log in progress file: "Methodology gaps unresolved after 2 retries: {list}"
+```
+
 Update progress file:
 ```markdown
 ## {ISO_DATE} — Post-Findings Review: {dimension}
 - Findings reviewed: {N}
 - Quarantined: {N} ({reasons})
 - Sources verified: {N}/{total} alive
+- Methodology gaps: {N} ({list or "none"})
+- Methodology retries: {N}
 - Gate: {pass|fail}
 ```
 

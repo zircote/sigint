@@ -1,7 +1,7 @@
 ---
 name: report
 description: Generate a comprehensive market research report from current findings. Orchestrates report-synthesizer using full swarm pattern with TeamCreate, TaskCreate, SendMessage, and TeamDelete.
-argument-hint: "[--format <type>] [--audience <type>] [--sections <list>]"
+argument-hint: "[--format markdown|html|both] [--audience executives|pm|investors|dev|all] [--sections executive-summary,market-overview,market-sizing,competitive,trends,swot,recommendations,risk,appendix|all]"
 allowed-tools: Agent, AskUserQuestion, Glob, Grep, Read, SendMessage, TaskCreate, TaskGet, TaskList, TaskUpdate, TeamCreate, TeamDelete, Write
 ---
 

@@ -1,0 +1,23 @@
+{
+  "eval_id": "audience-executive",
+  "skill": "report",
+  "description": "Verify --audience executives transform reorders sections and generates executive-summary.md",
+  "input": "--audience executives",
+  "context": {
+    "findings_present": ["competitive", "sizing", "trends", "regulatory"]
+  },
+  "expected": {
+    "section_order_starts_with": ["executive-summary", "recommendations", "risk"],
+    "standalone_executive_summary_generated": true,
+    "technical_jargon_replaced": true,
+    "strategic_implication_labels_present": true,
+    "methodology_notes_in_appendix": true
+  },
+  "grading_criteria": [
+    "Section order places executive-summary, recommendations, risk first",
+    "Standalone YYYY-MM-DD-executive-summary.md is generated",
+    "TAM is replaced with 'total market opportunity' in executive output",
+    "Strategic Implication labels prefix key findings",
+    "Methodology notes are moved to appendix"
+  ]
+}

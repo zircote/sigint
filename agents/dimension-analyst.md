@@ -1,6 +1,6 @@
 ---
 name: dimension-analyst
-version: 0.4.0
+version: 0.4.1
 description: |
   Use this agent for focused research on a single market dimension (competitive, sizing, trends, customer, tech, financial, regulatory). Parameterized by dimension — loads the relevant skill as methodology guide and writes findings to a shared blackboard. Examples:
 
@@ -72,6 +72,8 @@ blackboard_read(scope="{scope}", key="elicitation")
 
 ### Step 2: Load Skill Methodology — REQUIRED
 Read `skills/{skill-directory}/SKILL.md` for your dimension's research methodology. This is **not optional** — you must load your skill before proceeding.
+
+**Custom dimensions** (when spawn prompt includes `SKILL_OVERRIDE: null`): No SKILL.md exists for this dimension. Skip Steps 2–4. Write a schema-conformant methodology plan that uses a generic framework entry: `{"dimension": "{custom}", "frameworks": [{"name": "Generic web research", "required": "yes", "condition_met": true}], "expected_sections": [], "reference_files": [], "skill_override": null, "note": "Custom dimension — generic methodology applied"}`. Proceed directly to Step 5 with general web research. Provenance requirements still apply — every finding must have web sources.
 
 ### Step 3: Extract Required Frameworks
 Extract the "## Required Frameworks" table from the loaded skill. Build a methodology plan object:

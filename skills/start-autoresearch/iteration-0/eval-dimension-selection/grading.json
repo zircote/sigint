@@ -1,0 +1,26 @@
+{
+  "eval_id": "dimension-selection",
+  "skill": "start",
+  "description": "Verify Phase 1.5 presents dimension selection UI and respects user confirmation",
+  "input": "Research the market for enterprise Kubernetes security tooling",
+  "context": {
+    "max_dimensions": 5,
+    "elicitation_complete": true,
+    "topic": "enterprise kubernetes security tooling",
+    "topic_slug": "enterprise-kubernetes-security-tooling"
+  },
+  "expected": {
+    "dimension_selection_presented": true,
+    "dimensions_shown": ["competitive", "sizing", "trends", "tech", "regulatory", "customer", "financial", "trend_modeling"],
+    "rationale_per_dimension": true,
+    "selected_count_lte_max": true,
+    "user_confirm_requested": true
+  },
+  "grading_criteria": [
+    "Phase 1.5 dimension selection UI is presented after elicitation",
+    "All 8 standard dimensions are shown with include/exclude rationale",
+    "Selected count does not exceed max_dimensions (5)",
+    "AskUserQuestion is used to capture user confirmation",
+    "State.json elicitation.dimensions is updated with confirmed selection"
+  ]
+}
