@@ -155,15 +155,19 @@ FOR section IN SECTIONS:
      c. IF Mermaid condition met: generate diagram using template from "## Visualization Templates"
      d. IF Mermaid condition not met: omit diagram (do not add placeholder)
   3. IF no findings available:
+     Derive augment command from section→dimension mapping:
+       market-sizing → sizing, competitive → competitive, trends → trends,
+       swot → (list missing dimensions), risk → (list missing dimensions),
+       market-overview → sizing OR competitive
      Generate placeholder:
      ---
      ## {Section Display Name}
 
      *This dimension was not researched in the current session.*
 
-     To add {section name} analysis, run:
+     To add this analysis, run:
      ```
-     /sigint:augment {primary_dimension}
+     /sigint:augment {mapped_dimension}
      ```
      ---
      (Never generate fabricated content to fill a section)
@@ -200,6 +204,8 @@ quadrantChart
     quadrant-3 Low Priority (Accept)
     quadrant-4 Likely (Plan For)
     {risk_1}: [{probability_0_to_1}, {impact_0_to_1}]
+    {risk_2}: [{probability_0_to_1}, {impact_0_to_1}]
+    ... (one line per risk finding)
 ```
 
 ## Report Structure
@@ -361,11 +367,11 @@ Parse `audience` from spawn prompt parameters (default: `all`).
 
 | Audience | Section Order Override | Omit from output |
 |----------|----------------------|-----------------|
-| `executives` | exec-summary → recommendations → risk → market-overview → competitive (summary only) → appendix | market-sizing arithmetic detail, full methodology notes |
-| `pm` | exec-summary → competitive → trends → customer → recommendations → risk | financial formulas, regulatory legal detail |
-| `investors` | exec-summary → market-sizing → competitive → financial → risk → recommendations | tech implementation detail |
-| `dev` | exec-summary → tech → competitive → recommendations → trends | market-sizing arithmetic, financial unit economics |
-| `all` | Standard order (exec-summary → market-overview → market-sizing → competitive → trends → swot → recommendations → risk → appendix) | nothing |
+| `executives` | executive-summary → recommendations → risk → market-overview → competitive (summary only) → appendix | market-sizing arithmetic detail, full methodology notes |
+| `pm` | executive-summary → competitive → trends → market-overview → recommendations → risk | financial formulas, regulatory legal detail |
+| `investors` | executive-summary → market-sizing → competitive → trends → risk → recommendations | tech implementation detail |
+| `dev` | executive-summary → competitive → trends → recommendations → risk | market-sizing arithmetic |
+| `all` | Standard order (executive-summary → market-overview → market-sizing → competitive → trends → swot → recommendations → risk → appendix) | nothing |
 
 ### Content Transforms by Audience
 

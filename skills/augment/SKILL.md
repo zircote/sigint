@@ -80,11 +80,12 @@ Map `area` to dimension and skill directory:
 | technology, tech, feasibility, stack, build vs buy | tech | tech-assessment |
 | revenue, economics, pricing, unit economics, SaaS | financial | financial-analysis |
 | compliance, regulatory, legal, privacy, GDPR | regulatory | regulatory-review |
+| scenario, causal model, three-valued logic, trade-offs | trend_modeling | trend-modeling |
 
 If `--dimension` flag was provided, use that dimension directly.
 
 If the area doesn't map clearly, use `AskUserQuestion`:
-> "Which research methodology best fits '{area}'? Options: competitive / sizing / trends / customer / tech / financial / regulatory"
+> "Which research methodology best fits '{area}'? Options: competitive / sizing / trends / customer / tech / financial / regulatory / trend_modeling"
 
 Store resolved values as `dimension` and `skill_dir`.
 

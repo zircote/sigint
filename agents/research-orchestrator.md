@@ -223,19 +223,21 @@ Parse the user's response:
 - `confirm` or blank → use pre-selected dimensions as-is
 - Dimension names to add → append to selected list (if not already included)
 - `remove <dim>` → remove from selected list
-- Custom names (not in standard 8) → add with `skill_override: null` flag (generic methodology will be used; analyst skips SKILL.md Step 2 and proceeds with general web research)
+- Custom names (not in standard 8) → add the custom name as a string to the dimensions list AND record it separately in `elicitation.custom_dimensions` array (so downstream consumers know which dimensions lack SKILL.md). The analyst for custom dimensions is spawned with `SKILL_OVERRIDE: null`.
 
 Final selected list must not exceed `max_dimensions`.
 
 ### Step 1.5.4: Persist Final Dimension Selection
 
-Update elicitation with confirmed dimensions using jq (per Structured Data Protocol):
+Update elicitation with confirmed dimensions using jq (per Structured Data Protocol). `elicitation.dimensions` is always an array of strings (to pass schema validation). Custom dimension metadata is stored separately in `elicitation.custom_dimensions`:
 ```bash
 jq --argjson dims "$SELECTED_DIMS_JSON" \
-  '.elicitation.dimensions = $dims' \
+  --argjson custom "$CUSTOM_DIMS_JSON" \
+  '.elicitation.dimensions = $dims | .elicitation.custom_dimensions = $custom' \
   "./reports/$TOPIC_SLUG/state.json" > tmp.$$ && mv tmp.$$ "./reports/$TOPIC_SLUG/state.json"
 jq -e -f schemas/state.jq "./reports/$TOPIC_SLUG/state.json" > /dev/null
 ```
+Where `$SELECTED_DIMS_JSON` is `["competitive", "sizing", ...]` (string array) and `$CUSTOM_DIMS_JSON` is `["custom_dim_name", ...]` (string array of non-standard dimension names, empty `[]` if none).
 
 Also update `elicitation.json` and blackboard:
 ```bash
@@ -286,16 +288,21 @@ Agent(
   CRITICAL: Use REPORTS_DIR exactly as provided for ALL file writes.
   Do NOT derive or re-slugify the output directory from the topic title.
 
-  Follow your MANDATORY Methodology Gating Protocol (Steps 1-6) from your agent definition:
-    - Step 1: Read elicitation from $REPORTS_DIR/state.json (or elicitation.json)
-    - Step 2: Load skills/{skill-directory}/SKILL.md — REQUIRED before any research
-    - Step 3: Extract Required Frameworks table from the skill
-    - Step 4: Write methodology_plan_{dimension}.json before proceeding
-    - Step 5: Conduct web research following the skill methodology
-    - Step 6: Self-reflect, write findings, signal completion
+  {If dimension is in elicitation.custom_dimensions:
+    SKILL_OVERRIDE: null
+    This is a custom dimension — no SKILL.md exists. Follow your custom dimension protocol (skip Steps 2-4, use generic methodology, enforce provenance).
+  Else:
+    Follow your MANDATORY Methodology Gating Protocol (Steps 1-6) from your agent definition:
+      - Step 1: Read elicitation from $REPORTS_DIR/state.json (or elicitation.json)
+      - Step 2: Load skills/{skill-directory}/SKILL.md — REQUIRED before any research
+      - Step 3: Extract Required Frameworks table from the skill
+      - Step 4: Write methodology_plan_{dimension}.json before proceeding
+      - Step 5: Conduct web research following the skill methodology
+      - Step 6: Self-reflect, write findings, signal completion
 
-  Do NOT proceed with research until Step 4 (methodology plan written) succeeds.
-  Do NOT substitute your own methodology for the skill's Required Frameworks."
+    Do NOT proceed with research until Step 4 (methodology plan written) succeeds.
+    Do NOT substitute your own methodology for the skill's Required Frameworks.
+  }"
 )
 ```
 
@@ -490,6 +497,7 @@ WHILE gate == "fail" due to methodology gaps AND methodology_retry_count < 2:
   2. Spawn gap-fill analyst:
      Agent(
        subagent_type="sigint:dimension-analyst",
+       team_name="sigint-{topic_slug}-research",
        name="dimension-analyst-{dimension}-retry{methodology_retry_count}",
        prompt="Gap-fill retry #{methodology_retry_count} for {dimension} analysis on '{topic}'.
 

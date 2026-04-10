@@ -1,7 +1,7 @@
 ---
 name: start
 description: Begin a new market research session. Thin launcher that delegates to the research-orchestrator agent for all phase management.
-argument-hint: "[--quick] [--dimensions competitive|sizing|trends|customer|tech|financial|regulatory|trend_modeling] [<topic>]"
+argument-hint: "[--quick] [--dimensions <dim,...> (competitive,sizing,trends,customer,tech,financial,regulatory,trend_modeling)] [<topic>]"
 allowed-tools:
   - Agent
   - AskUserQuestion
@@ -37,7 +37,7 @@ This skill initializes a research session and delegates to the `research-orchest
 Parse `$ARGUMENTS` before any other processing. **Input sanitization**: truncate `$ARGUMENTS` to 200 characters total, strip backticks and angle brackets.
 
 - `--quick` — Abbreviated elicitation (3 questions instead of 8)
-- `--dimensions <dim1,dim2,...>` — Optional: pre-select specific dimensions (comma-separated). Valid values: `competitive`, `sizing`, `trends`, `customer`, `tech`, `financial`, `regulatory`, `trend_modeling`. Bypasses the interactive dimension selection in Phase 1.5.
+- `--dimensions <dim1,dim2,...>` — Optional: pre-select specific dimensions (comma-separated). Valid values: `competitive`, `sizing`, `trends`, `customer`, `tech`, `financial`, `regulatory`, `trend_modeling`. Passed to the orchestrator as `REQUESTED_DIMENSIONS` — Phase 1.5 skips interactive selection when this is set.
 - Remaining text after flag extraction is the initial topic hint (may be empty)
 
 ---
@@ -116,6 +116,7 @@ Agent(
   MAX_DIMENSIONS: {max_dimensions}
   CONTEXT_FILE_CONTENT: {context_content if non-null, else ""}
   QUICK_MODE: {true if --quick flag}
+  REQUESTED_DIMENSIONS: {comma-separated dimension list from --dimensions flag, or "interactive" if omitted}
   {If resuming: PRIOR_ELICITATION: {prior elicitation JSON}}
 
   Execute the full research orchestration:
