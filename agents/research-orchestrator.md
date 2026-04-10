@@ -1,6 +1,6 @@
 ---
 name: research-orchestrator
-version: 0.5.0
+version: 0.5.1
 description: |
   Orchestrator agent for sigint research sessions. Owns all phase management: team lifecycle,
   dimension-analyst spawning, methodology verification, codex review gates, finding merge,

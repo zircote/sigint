@@ -1,6 +1,6 @@
 ---
 name: dimension-analyst
-version: 0.4.0
+version: 0.4.1
 description: |
   Use this agent for focused research on a single market dimension (competitive, sizing, trends, customer, tech, financial, regulatory). Parameterized by dimension — loads the relevant skill as methodology guide and writes findings to a shared blackboard. Examples:
 

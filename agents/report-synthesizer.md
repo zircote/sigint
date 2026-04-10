@@ -1,6 +1,6 @@
 ---
 name: report-synthesizer
-version: 0.1.0
+version: 0.1.1
 description: |
   Use this agent when generating formal research reports from collected findings. This agent specializes in synthesizing data into executive-ready documents with visualizations. Examples:
 
