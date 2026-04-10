@@ -1,0 +1,26 @@
+{
+  "eval_id": "positioning-map",
+  "skill": "report",
+  "description": "Verify competitive positioning map is generated when 2+ competitors with 2+ attributes",
+  "input": "Generate competitive section with 3 competitors",
+  "context": {
+    "findings_present": ["competitive"],
+    "competitors": [
+      {"name": "Competitor A", "feature_score": 0.8, "price_score": 0.9},
+      {"name": "Competitor B", "feature_score": 0.6, "price_score": 0.4},
+      {"name": "Competitor C", "feature_score": 0.4, "price_score": 0.3}
+    ]
+  },
+  "expected": {
+    "positioning_map_generated": true,
+    "diagram_type": "quadrantChart",
+    "all_competitors_plotted": true,
+    "axes_labeled": true
+  },
+  "grading_criteria": [
+    "Competitive positioning quadrantChart is generated with 2+ competitors",
+    "All 3 competitors appear as data points",
+    "Axes are labeled (feature set vs price)",
+    "Diagram is omitted when fewer than 2 competitors have comparable attributes"
+  ]
+}

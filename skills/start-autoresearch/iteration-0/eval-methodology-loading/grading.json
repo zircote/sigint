@@ -1,0 +1,22 @@
+{
+  "eval_id": "methodology-loading",
+  "skill": "start",
+  "description": "Verify dimension-analysts load SKILL.md methodology before conducting research",
+  "input": "Research competitive landscape of AI observability platforms",
+  "context": {
+    "dimension": "competitive",
+    "skill_dir": "competitive-analysis"
+  },
+  "expected": {
+    "skill_md_loaded": true,
+    "methodology_plan_written": true,
+    "required_frameworks_extracted": ["Porter's 5 Forces", "Competitor Matrix", "Positioning Map", "Trend Indicators"],
+    "research_starts_after_plan": true
+  },
+  "grading_criteria": [
+    "Analyst reads skills/competitive-analysis/SKILL.md before starting research",
+    "methodology_plan_competitive.json is written before any WebSearch calls",
+    "methodology_plan includes all 4 required frameworks from the skill",
+    "Analyst proceeds to research only after Step 4 STOP CHECK passes"
+  ]
+}

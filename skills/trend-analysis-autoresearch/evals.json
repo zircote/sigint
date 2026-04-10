@@ -1,0 +1,17 @@
+{
+  "skill_name": "trend-analysis-autoresearch",
+  "evals": [
+    {
+      "id": "mermaid-scenario",
+      "name": "eval-mermaid-scenario",
+      "description": "Verify report generates trend scenario state diagram when INC/DEC/CONST signals present",
+      "path": "iteration-0/eval-mermaid-scenario"
+    },
+    {
+      "id": "trend-tables",
+      "name": "eval-trend-tables",
+      "description": "Verify trends section generates macro and micro trend tables from findings",
+      "path": "iteration-0/eval-trend-tables"
+    }
+  ]
+}

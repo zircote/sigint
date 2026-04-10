@@ -1,0 +1,23 @@
+{
+  "eval_id": "methodology-gate",
+  "skill": "start",
+  "description": "Verify Phase 2.75 hard-fails on missing required frameworks and retries with gap targeting",
+  "input": "Research market sizing for edge computing platforms",
+  "context": {
+    "dimension": "sizing",
+    "methodology_gaps": ["TAM/SAM/SOM Hierarchy", "Scenario Modeling"],
+    "retry_count": 0
+  },
+  "expected": {
+    "gate_overridden_to_fail": true,
+    "retry_spawned": true,
+    "retry_prompt_contains_gap_list": true,
+    "max_retries_respected": 2
+  },
+  "grading_criteria": [
+    "Codex review gate overrides to fail when required frameworks are missing",
+    "Retry analyst is spawned with specific gap list in prompt",
+    "Retry analyst focuses research on missing TAM/SAM/SOM and Scenario Modeling frameworks",
+    "After 2 failed retries, findings proceed with methodology_gaps_unresolved field set"
+  ]
+}

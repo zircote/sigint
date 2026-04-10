@@ -73,6 +73,8 @@ blackboard_read(scope="{scope}", key="elicitation")
 ### Step 2: Load Skill Methodology — REQUIRED
 Read `skills/{skill-directory}/SKILL.md` for your dimension's research methodology. This is **not optional** — you must load your skill before proceeding.
 
+**Custom dimensions** (when spawn prompt includes `SKILL_OVERRIDE: null`): No SKILL.md exists for this dimension. Skip Steps 2–4. Write a minimal methodology plan with `{"dimension": "{custom}", "frameworks": [], "skill_override": null, "note": "Custom dimension — generic methodology applied"}`. Proceed directly to Step 5 with general web research. Provenance requirements still apply — every finding must have web sources.
+
 ### Step 3: Extract Required Frameworks
 Extract the "## Required Frameworks" table from the loaded skill. Build a methodology plan object:
 ```json

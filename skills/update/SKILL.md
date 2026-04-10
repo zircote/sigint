@@ -1,7 +1,7 @@
 ---
 name: update
 description: Refresh existing research with latest data using swarm orchestration and delta detection. Delegates to the research-orchestrator agent in update mode.
-argument-hint: "[--topic <slug>] [--area <area>] [--since <date>] [--no-delta] [--dimensions <dim1,dim2,...>]"
+argument-hint: "[--topic <slug>] [--area <area>] [--since <date>] [--no-delta] [--dimensions competitive|sizing|trends|customer|tech|financial|regulatory|trend_modeling]"
 allowed-tools:
   - Agent
   - AskUserQuestion

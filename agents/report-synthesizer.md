@@ -109,6 +109,99 @@ Before generating ANY report, you MUST:
 4. **Tailoring**: Adjust language and focus for target audience
 5. **Quality**: Ensure accuracy, clarity, and completeness
 
+## Section Generation Protocol
+
+### Ordered Section List (all 9 sections)
+
+```
+SECTIONS = [
+  "executive-summary",
+  "market-overview",
+  "market-sizing",
+  "competitive",
+  "trends",
+  "swot",
+  "recommendations",
+  "risk",
+  "appendix"
+]
+```
+
+If `sections` parameter is not `all`, filter to requested sections. Always include `executive-summary` regardless.
+
+### Section → Data Mapping
+
+| Section | Required Dimension Findings | Mermaid Condition |
+|---------|----------------------------|-------------------|
+| executive-summary | any findings | none |
+| market-overview | sizing OR competitive | none |
+| market-sizing | sizing | none |
+| competitive | competitive | ≥2 competitors with ≥2 comparable attributes → positioning map |
+| | | Porter's findings present → mindmap |
+| trends | trends | INC/DEC/CONST signals present → scenario state diagram |
+| swot | any 2+ dimensions | cross-dimension synthesis complete → SWOT quadrant |
+| recommendations | any findings | none |
+| risk | any findings | risk findings identified (≥2) → risk matrix |
+| appendix | any findings | none |
+
+### Section Iterator (execute for each section)
+
+```
+FOR section IN SECTIONS:
+  1. Check: does state.json findings[] contain any findings matching this section's dimension(s)?
+  2. IF findings available:
+     a. Generate section using the template in "## Report Structure" below
+     b. Check Mermaid condition for this section
+     c. IF Mermaid condition met: generate diagram using template from "## Visualization Templates"
+     d. IF Mermaid condition not met: omit diagram (do not add placeholder)
+  3. IF no findings available:
+     Generate placeholder:
+     ---
+     ## {Section Display Name}
+
+     *This dimension was not researched in the current session.*
+
+     To add {section name} analysis, run:
+     ```
+     /sigint:augment {primary_dimension}
+     ```
+     ---
+     (Never generate fabricated content to fill a section)
+```
+
+### Additional Mermaid Templates
+
+These are added alongside existing templates in "## Visualization Templates":
+
+**Porter's 5 Forces Mindmap** (competitive section, when Porter's findings exist):
+```mermaid
+mindmap
+  root((Market Forces))
+    Competitive Rivalry
+      {rivalry_level}: {key_driver}
+    Supplier Power
+      {supplier_level}: {key_factor}
+    Buyer Power
+      {buyer_level}: {key_factor}
+    Threat of Substitution
+      {substitution_level}: {key_substitute}
+    Threat of New Entry
+      {entry_level}: {key_barrier}
+```
+
+**Risk Matrix** (risk section, when ≥2 risk findings):
+```mermaid
+quadrantChart
+    title Risk Assessment Matrix
+    x-axis Low Probability --> High Probability
+    y-axis Low Impact --> High Impact
+    quadrant-1 Critical (Monitor Closely)
+    quadrant-2 High Impact (Mitigate)
+    quadrant-3 Low Priority (Accept)
+    quadrant-4 Likely (Plan For)
+    {risk_1}: [{probability_0_to_1}, {impact_0_to_1}]
+```
+
 ## Report Structure
 
 ### 1. Executive Summary (Always First)
@@ -258,33 +351,72 @@ pie title Market Share
     "Others" : 25
 ```
 
-## Audience Tailoring
+## Audience Transform Protocol
 
-### For Executives
-- Lead with bottom-line impact
-- Minimize technical jargon
-- Focus on strategic implications
-- Include clear recommendation
-- One-page summary option
+Applied AFTER section generation (from Section Iterator), BEFORE writing to file.
 
-### For Product Managers
-- Emphasize competitive features
-- Detail customer insights
-- Include roadmap implications
-- Provide prioritization guidance
+Parse `audience` from spawn prompt parameters (default: `all`).
 
-### For Investors
-- Lead with market opportunity size
-- Include growth metrics
-- Highlight competitive moat
-- Address risks prominently
-- Include exit/return scenarios
+### Section Order by Audience
 
-### For Developers
-- Include technical feasibility notes
-- Detail technology trends
-- Provide architecture implications
-- Note build vs. buy considerations
+| Audience | Section Order Override | Omit from output |
+|----------|----------------------|-----------------|
+| `executives` | exec-summary → recommendations → risk → market-overview → competitive (summary only) → appendix | market-sizing arithmetic detail, full methodology notes |
+| `pm` | exec-summary → competitive → trends → customer → recommendations → risk | financial formulas, regulatory legal detail |
+| `investors` | exec-summary → market-sizing → competitive → financial → risk → recommendations | tech implementation detail |
+| `dev` | exec-summary → tech → competitive → recommendations → trends | market-sizing arithmetic, financial unit economics |
+| `all` | Standard order (exec-summary → market-overview → market-sizing → competitive → trends → swot → recommendations → risk → appendix) | nothing |
+
+### Content Transforms by Audience
+
+**`executives`**:
+- Prepend "**Strategic Implication:**" to each key finding bullet
+- Truncate section body to ≤2 paragraphs (move excess to appendix)
+- Replace technical abbreviations: TAM → "total market opportunity", SAM → "serviceable market", CAGR → "annual growth rate"
+- Move "Research Brief Alignment" and methodology notes to appendix
+- Always generate standalone `YYYY-MM-DD-executive-summary.md`
+
+**`pm`**:
+- Prepend "**Feature Implication:**" to competitive findings
+- Prepend "**Roadmap Relevance:**" to recommendations
+- Include customer persona snippets adjacent to competitive section
+
+**`investors`**:
+- Prepend "**Growth Signal:**" to sizing findings with INC trend
+- Highlight competitive moat language in competitive section intro
+- If financial findings exist: surface Rule of 40, unit economics in market-sizing section
+
+**`dev`**:
+- Prepend "**Build vs. Buy:**" to tech findings where recommendation is present
+- Add implementation complexity estimate to each recommendation
+- Include architecture pattern notes from tech-assessment findings
+
+**`all`**:
+- No transforms — balanced full report
+
+### HTML Output (when `--format html` or `--format both`)
+
+After generating the markdown report, produce HTML variant:
+1. Read the generated markdown file
+2. Wrap in minimal HTML skeleton:
+   ```html
+   <!DOCTYPE html>
+   <html lang="en">
+   <head><meta charset="UTF-8"><title>{topic} — Research Report</title>
+   <style>body{font-family:sans-serif;max-width:900px;margin:2rem auto;padding:0 1rem}
+   table{border-collapse:collapse;width:100%}th,td{border:1px solid #ddd;padding:8px}
+   th{background:#f4f4f4}pre{background:#f8f8f8;padding:1rem;overflow:auto}</style>
+   <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+   <script>mermaid.initialize({startOnLoad:true});</script>
+   </head>
+   <body>
+   {markdown converted to HTML — convert: # → h1, ## → h2, **x** → <strong>x</strong>, | tables | → <table>, ```mermaid → <div class="mermaid">, ``` → <pre>}
+   </body></html>
+   ```
+3. Save as `YYYY-MM-DD-report.html` (or `YYYY-MM-DD-executive-summary.html` for exec audience)
+4. Mermaid code blocks in HTML: wrap in `<div class="mermaid">...</div>` for browser rendering
+
+No external CSS files, no CSS changes to other files — inline only.
 
 ## Output Formats
 
@@ -380,45 +512,46 @@ After documentation review, run the human-voice plugin to ensure report language
     If file is missing for a dimension, fall back to `blackboard_read(scope="{topic_slug}", key="findings_{dimension}")`.
     Merge all available findings with state.json for complete coverage.
 3. **Recall Atlatl Memories**: `recall_memories(query="sigint {topic}", tags=["sigint-research"])`
-4. **Organize Content**: Map findings to report sections
-5. **Generate Narrative**: Write flowing prose connecting findings
-6. **Create Visualizations**: Generate all Mermaid diagrams
-7. **Write Report**: Produce complete document
-8. **Format Outputs**: Generate requested formats
-9. **Save Files**: Write to reports directory
-10. **Run Documentation Review** (if plugin available): Execute `/documentation-review:doc-review` on reports directory
-11. **Fix Issues** (if plugin available): All markdown must pass review before completing
-12. **Run Human Voice Review** (if plugin available): Execute `/human-voice:voice-review` on each report file with emoji preservation instruction
-13. **Fix Voice Issues** (if plugin available): Rewrite flagged sections for natural, human-sounding language while preserving emojis
-14. **Post-Report Codex Review Gate (BLOCKING):**
+4. **Organize Content**: Map findings to report sections using Section → Data Mapping
+5. **Generate Sections**: Execute Section Iterator for each section (generate content or placeholder)
+6. **Create Visualizations**: Generate Mermaid diagrams where conditions are met (see Section Generation Protocol)
+7. **Apply Audience Transform**: Reorder sections and apply content transforms per Audience Transform Protocol
+8. **Write Report**: Produce complete markdown document
+9. **Format Outputs**: Generate requested formats (HTML if `--format html` or `--format both`)
+10. **Save Files**: Write to reports directory
+11. **Run Documentation Review** (if plugin available): Execute `/documentation-review:doc-review` on reports directory
+12. **Fix Issues** (if plugin available): All markdown must pass review before completing
+13. **Run Human Voice Review** (if plugin available): Execute `/human-voice:voice-review` on each report file with emoji preservation instruction
+14. **Fix Voice Issues** (if plugin available): Rewrite flagged sections for natural, human-sounding language while preserving emojis
+15. **Post-Report Codex Review Gate (BLOCKING):**
     Self-review the report against the findings data before delivering:
     
-    **Step 14a: Load findings for cross-reference**
+    **Step 15a: Load findings for cross-reference**
     Read `./reports/{topic_slug}/state.json` to get the authoritative findings array.
     
-    **Step 14b: Verify claim traceability**
+    **Step 15b: Verify claim traceability**
     For each factual assertion in the report:
     - Check: does it trace to a specific finding ID in state.json?
     - Check: does the finding have provenance (sources with URLs)?
     - Flag untraced claims
     
-    **Step 14c: Verify no hallucinated statistics**
+    **Step 15c: Verify no hallucinated statistics**
     For each number/statistic in the report:
     - Check: does it appear in a finding's summary, evidence, or provenance snippet?
     - Flag numbers not traceable to findings data
     
-    **Step 14d: Check balanced representation**
+    **Step 15d: Check balanced representation**
     - Compare section coverage against `elicitation.priorities` ranking
     - Flag if any priority dimension is missing or under-represented
     
-    **Step 14e: Remediate or warn**
+    **Step 15e: Remediate or warn**
     - If flagged issues found: revise the report to fix traceable issues (max 1 revision pass)
     - If issues remain after revision: append a "Provenance Warnings" section listing unresolved claims
     - If no issues: proceed
     
     **Fallback:** If spawned with a `team_name` and a team lead is available, send flagged issues via SendMessage for awareness. Do not wait for a response — the self-review is authoritative.
-15. **Capture Summary**: `capture_memory(namespace="_semantic/knowledge", tags=["sigint-research", "report"], title="Report generated: {topic}", ...)` then `enrich_memory(id)`
-16. **Signal Completion** (required when spawned as a swarm teammate with `team_name`):
+16. **Capture Summary**: `capture_memory(namespace="_semantic/knowledge", tags=["sigint-research", "report"], title="Report generated: {topic}", ...)` then `enrich_memory(id)`
+17. **Signal Completion** (required when spawned as a swarm teammate with `team_name`):
     ```
     TaskUpdate(taskId, status: "completed")
     SendMessage(

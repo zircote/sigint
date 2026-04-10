@@ -1,0 +1,22 @@
+{
+  "eval_id": "trend-tables",
+  "skill": "trend-analysis",
+  "description": "Verify trends section generates macro and micro trend tables from findings",
+  "input": "Generate trends section from trend findings",
+  "context": {
+    "findings_present": ["trends"],
+    "macro_trends": ["AI regulation", "Cloud cost pressure"],
+    "micro_trends": ["Edge inference", "Model compression"]
+  },
+  "expected": {
+    "macro_trends_table": true,
+    "micro_trends_table": true,
+    "trend_indicators_present": true
+  },
+  "grading_criteria": [
+    "Macro Trends table is generated with findings from trends dimension",
+    "Micro Trends table is generated separately from macro",
+    "INC/DEC/CONST indicators are present on each trend",
+    "Not-assessed placeholder is NOT generated when trend findings exist"
+  ]
+}

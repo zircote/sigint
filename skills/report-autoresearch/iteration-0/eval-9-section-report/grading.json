@@ -1,0 +1,23 @@
+{
+  "eval_id": "9-section-report",
+  "skill": "report",
+  "description": "Verify report generates all 9 sections with not-assessed placeholders for missing dimensions",
+  "input": "Generate report with competitive and sizing findings only",
+  "context": {
+    "findings_present": ["competitive", "sizing"],
+    "findings_absent": ["trends", "customer", "tech", "financial", "regulatory"]
+  },
+  "expected": {
+    "sections_generated": 9,
+    "sections_with_data": ["executive-summary", "market-overview", "market-sizing", "competitive"],
+    "sections_with_placeholder": ["trends", "swot", "recommendations", "risk", "appendix"],
+    "placeholder_contains_augment_suggestion": true
+  },
+  "grading_criteria": [
+    "All 9 sections are present in the generated report",
+    "Sections with findings contain real content",
+    "Sections without findings contain 'not assessed' placeholder and /sigint:augment suggestion",
+    "Executive summary is always generated regardless of dimension coverage",
+    "SWOT is generated (partial) from available competitive and sizing data"
+  ]
+}

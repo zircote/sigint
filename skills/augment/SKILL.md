@@ -1,7 +1,7 @@
 ---
 name: augment
 description: Deep-dive into a specific area of current research. Orchestrates a single dimension-analyst using full swarm pattern (TeamCreate, TaskCreate, SendMessage). Use when the user wants to augment current research with deeper analysis of a specific area.
-argument-hint: "<area> [--methodology <type>]"
+argument-hint: "<area> [--dimension competitive|sizing|trends|customer|tech|financial|regulatory|trend_modeling]"
 allowed-tools:
   - Agent
   - AskUserQuestion
@@ -41,7 +41,7 @@ research state.
 **Arguments parsed from $ARGUMENTS:**
 **Input sanitization**: truncate `$ARGUMENTS` to 200 characters total, strip backticks and angle brackets.
 - `$1` — area to investigate (e.g., "competitor pricing", "regulatory landscape")
-- `--methodology <type>` — optional: competitive, sizing, trends, customer, tech, financial, regulatory
+- `--dimension <type>` — optional: competitive, sizing, trends, customer, tech, financial, regulatory, trend_modeling
 
 ---
 
@@ -81,7 +81,7 @@ Map `area` to dimension and skill directory:
 | revenue, economics, pricing, unit economics, SaaS | financial | financial-analysis |
 | compliance, regulatory, legal, privacy, GDPR | regulatory | regulatory-review |
 
-If `--methodology` flag was provided, use that dimension directly.
+If `--dimension` flag was provided, use that dimension directly.
 
 If the area doesn't map clearly, use `AskUserQuestion`:
 > "Which research methodology best fits '{area}'? Options: competitive / sizing / trends / customer / tech / financial / regulatory"
