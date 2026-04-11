@@ -309,6 +309,49 @@
         "Results are displayed as a preview with category breakdown and issue titles/priorities",
         "TeamDelete is called for cleanup even though this was a dry run"
       ]
+    },
+    {
+      "id": 9,
+      "prompt": "--repo testorg/testrepo create issues from my edge case research",
+      "expected_output": "The SKILL.md file contains NO references to Atlatl, blackboard, mcp__atlatl, recall_memories, capture_memory, inject_context, or blackboard scope annotations. The allowed-tools list contains only standard orchestration tools (Agent, Bash, Glob, Grep, Read, Write, SendMessage, TaskCreate, TaskGet, TaskList, TaskUpdate, TeamCreate, TeamDelete, AskUserQuestion).",
+      "files": [
+        {
+          "path": "reports/edge-case-testing/state.json",
+          "content": "{\n  \"topic\": \"Edge Case Testing\",\n  \"topic_slug\": \"edge-case-testing\",\n  \"started\": \"2026-04-10\",\n  \"status\": \"active\",\n  \"phase\": \"discovery\",\n  \"elicitation\": {\n    \"scope\": \"Edge case testing for issue creation\",\n    \"decision_context\": \"QA validation\",\n    \"priorities\": [\"Regression testing\"]\n  }\n}"
+        }
+      ],
+      "deterministic_checks": [
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "testorg/testrepo",
+          "description": "--repo argument is parsed and used"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "TeamCreate.*sigint-edge-case-testing-issues",
+          "description": "Team name correctly uses the topic slug"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "issue-architect",
+          "description": "issue-architect agent is spawned"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "TeamDelete",
+          "description": "Cleanup phase executes TeamDelete"
+        }
+      ],
+      "expectations": [
+        "The skill execution contains no references to Atlatl, blackboard, or memory tools",
+        "The allowed-tools in the skill frontmatter do not include any mcp__atlatl tools",
+        "The repo format validation accepts testorg/testrepo as a valid owner/repo pattern",
+        "The full swarm lifecycle completes: TeamCreate → TaskCreate → Agent → SendMessage → TeamDelete"
+      ]
     }
   ]
 }

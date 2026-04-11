@@ -16,7 +16,6 @@ has("topics")   and (.topics   | type == "object") and
 (.defaults |
   has("report_format") and (.report_format | type == "string" and IN("markdown", "html", "both")) and
   has("audiences")     and (.audiences     | type == "array" and length > 0 and all(type == "string")) and
-  has("auto_atlatl")   and (.auto_atlatl   | type == "boolean")
 ) and
 
 (.research |
@@ -39,7 +38,6 @@ has("topics")   and (.topics   | type == "object") and
       # Optional fields validated when present
       (if has("updated")          then (.updated          | type == "string")             else true end) and
       (if has("findings_count")   then (.findings_count   | type == "number" and . >= 0)  else true end) and
-      (if has("atlatl_memory_id") then (.atlatl_memory_id | type == "string")             else true end) and
       (if has("context_file")     then (.context_file     | type == "string")             else true end)
     )
   )

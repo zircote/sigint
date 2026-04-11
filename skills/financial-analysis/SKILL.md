@@ -255,7 +255,6 @@ For detailed templates, see:
 
 Dimension-specific confidence criteria below REFINE (not replace) these universal definitions.
 
-- **Blackboard key**: `findings_financial`
 - **Cross-reference dimensions**: sizing (market size validates revenue potential), competitive (competitor revenue and pricing)
 - **Alert triggers**:
   - Unit economics infeasibility (LTV:CAC < 1)

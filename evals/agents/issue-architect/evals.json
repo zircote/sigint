@@ -7,7 +7,10 @@
       {
         "description": "Issues include acceptance criteria",
         "deterministic_checks": [
-          { "type": "output_contains", "value": "acceptance criteria" }
+          {
+            "type": "output_contains",
+            "value": "acceptance criteria"
+          }
         ]
       },
       {
@@ -15,52 +18,24 @@
         "deterministic_checks": [
           {
             "type": "output_contains_any",
-            "values": ["sprint", "sprint-sized"]
+            "values": [
+              "sprint",
+              "sprint-sized"
+            ]
           }
         ]
       },
       {
         "description": "Deprecated v0.3 patterns are not used",
         "deterministic_checks": [
-          { "type": "output_not_contains", "value": "Subcog" }
+          {
+            "type": "output_not_contains",
+            "value": "Subcog"
+          }
         ]
       },
       {
         "description": "Each issue is atomic, completable in 1-2 weeks, with specific measurable acceptance criteria and clear business context"
-      }
-    ]
-  },
-  {
-    "id": "issues-atlatl-integration",
-    "description": "Issue architect uses Atlatl memory for recall and capture of issue context",
-    "prompt": "Convert our AI code review market research into GitHub issues. Check Atlatl for any prior issue sets we created for this topic. Use the issue-architect agent.",
-    "expectations": [
-      {
-        "description": "Atlatl memory tools are referenced for recall or capture",
-        "deterministic_checks": [
-          {
-            "type": "output_contains_any",
-            "values": ["capture_memory", "Atlatl", "recall_memories"]
-          }
-        ]
-      },
-      {
-        "description": "Correct namespace or tag for sigint research is used",
-        "deterministic_checks": [
-          {
-            "type": "output_contains_any",
-            "values": ["_semantic/knowledge", "sigint-research"]
-          }
-        ]
-      },
-      {
-        "description": "Deprecated patterns are not used",
-        "deterministic_checks": [
-          { "type": "output_not_contains", "value": "Subcog" }
-        ]
-      },
-      {
-        "description": "Prior research findings are recalled from Atlatl to inform issue creation, and new issues are captured back for future reference"
       }
     ]
   },
@@ -74,7 +49,11 @@
         "deterministic_checks": [
           {
             "type": "output_contains_any",
-            "values": ["elicitation", "decision_context", "priorities"]
+            "values": [
+              "elicitation",
+              "decision_context",
+              "priorities"
+            ]
           }
         ]
       },
@@ -91,7 +70,13 @@
       {
         "description": "Preview or dry-run mode is acknowledged",
         "deterministic_checks": [
-          { "type": "output_contains_any", "values": ["preview", "dry"] }
+          {
+            "type": "output_contains_any",
+            "values": [
+              "preview",
+              "dry"
+            ]
+          }
         ]
       },
       {
@@ -109,7 +94,11 @@
         "deterministic_checks": [
           {
             "type": "output_contains_any",
-            "values": ["enhancement", "research", "action-item"]
+            "values": [
+              "enhancement",
+              "research",
+              "action-item"
+            ]
           }
         ]
       },
@@ -128,7 +117,12 @@
         "deterministic_checks": [
           {
             "type": "output_contains_any",
-            "values": ["dependency", "dependencies", "blocks", "blocked by"]
+            "values": [
+              "dependency",
+              "dependencies",
+              "blocks",
+              "blocked by"
+            ]
           }
         ]
       },

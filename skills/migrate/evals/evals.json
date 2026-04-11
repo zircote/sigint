@@ -29,13 +29,32 @@
           "file": "transcript.md",
           "pattern": "\\.bak|backup",
           "description": "A backup is created before migration"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "zircote/sigint",
+          "description": "The default_repo value is preserved in migration"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "executives",
+          "description": "The audiences value is preserved in migration"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "Migration complete|migration complete",
+          "description": "The completion message is shown"
         }
       ],
       "expectations": [
         "The skill detects .claude/sigint.local.md as a legacy config source",
-        "Settings are parsed from the legacy markdown format",
-        "A .bak backup is created before overwriting",
-        "The new sigint.config.json has version 2.0 with migrated settings"
+        "Settings are parsed from the legacy markdown format (## headings)",
+        "A .bak backup is created BEFORE writing new files",
+        "The new sigint.config.json has version 2.0 with migrated settings",
+        "The default_repo, report_format, and audiences values are preserved"
       ]
     },
     {
@@ -49,11 +68,18 @@
           "file": "transcript.md",
           "pattern": "[Nn]othing to migrate|[Nn]o legacy|not found",
           "description": "The skill reports no legacy config found"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "/sigint:init",
+          "description": "The skill suggests running /sigint:init for fresh config"
         }
       ],
       "expectations": [
         "The skill checks for legacy config files and finds none",
         "A clear message indicates nothing to migrate",
+        "The skill suggests /sigint:init as the next step",
         "No files are written or modified"
       ]
     },
@@ -73,13 +99,142 @@
           "file": "transcript.md",
           "pattern": "dry.run|preview|would",
           "description": "The output indicates dry-run mode (preview only)"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "DRY RUN|[Nn]o files modified",
+          "description": "The dry-run exit message is shown"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "2\\.0|v2",
+          "description": "The preview references v2.0 format"
         }
       ],
       "expectations": [
         "The --dry-run flag is parsed and respected",
         "Legacy config is detected and parsed",
         "The would-be output is shown but no files are written",
-        "The preview shows the v2.0 JSON structure"
+        "The preview shows the v2.0 JSON structure",
+        "The DRY RUN exit message is displayed"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "migrate config",
+      "expected_output": "When sigint.config.json v2.0 already exists and a legacy source is present, the skill asks the user whether to merge, overwrite, or cancel.",
+      "files": [
+        {
+          "path": "sigint.config.json",
+          "content": "{\n  \"version\": \"2.0\",\n  \"defaults\": {\n    \"default_repo\": \"zircote/sigint\",\n    \"report_format\": \"markdown\",\n    \"audiences\": [\"technical\"]\n  },\n  \"research\": {},\n  \"topics\": {}\n}"
+        },
+        {
+          "path": ".sigint.config.json",
+          "content": "{\n  \"version\": \"1.0\",\n  \"report_format\": \"html\",\n  \"default_repo\": \"zircote/sigint\"\n}"
+        }
+      ],
+      "deterministic_checks": [
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "already exists|v2\\.0 already",
+          "description": "The skill detects existing v2.0 config"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "[Mm]erge|[Oo]verwrite|[Cc]ancel",
+          "description": "The skill offers merge/overwrite/cancel options"
+        }
+      ],
+      "expectations": [
+        "The skill detects sigint.config.json v2.0 already exists",
+        "The skill detects .sigint.config.json v1.0 as a legacy source",
+        "AskUserQuestion is called with Merge/Overwrite/Cancel options",
+        "The skill handles the user's choice appropriately"
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "migrate config",
+      "expected_output": "When .sigint.config.json exists but contains malformed JSON, the skill warns about the invalid file and continues with defaults.",
+      "files": [
+        {
+          "path": ".sigint.config.json",
+          "content": "{ invalid json here }"
+        }
+      ],
+      "deterministic_checks": [
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "[Ww]arning|WARNING|invalid|malformed|not valid JSON",
+          "description": "The skill warns about malformed JSON"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "default|skip",
+          "description": "The skill falls back to defaults or skips the file"
+        }
+      ],
+      "expectations": [
+        "The skill detects .sigint.config.json but fails to parse it",
+        "A warning about invalid JSON is emitted",
+        "The skill continues gracefully with defaults rather than crashing",
+        "Migration still produces a valid v2.0 config if other sources exist, or exits cleanly if none"
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "migrate my sigint config",
+      "expected_output": "Skill handles YAML frontmatter format in sigint.local.md, extracting settings from frontmatter and preserving markdown body as CONTEXT.md content.",
+      "files": [
+        {
+          "path": ".claude/sigint.local.md",
+          "content": "---\ndefault_repo: zircote/sigint\nreport_format: html\naudiences:\n  - technical\n  - executives\n  - investors\n---\n\n# My Research Context\n\nThis project focuses on competitive intelligence in the cloud infrastructure market."
+        }
+      ],
+      "deterministic_checks": [
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "sigint\\.local\\.md",
+          "description": "The legacy sigint.local.md is detected"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "frontmatter|Format A|YAML",
+          "description": "YAML frontmatter format is recognized"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "investors",
+          "description": "The investors audience is extracted from YAML array"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "html",
+          "description": "The html report_format is preserved"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "\\.bak|backup",
+          "description": "Backup is created"
+        }
+      ],
+      "expectations": [
+        "YAML frontmatter is detected and parsed (Format A)",
+        "All three audiences are extracted from the YAML array",
+        "report_format: html is preserved",
+        "Markdown body is stored for CONTEXT.md generation",
+        "Migration completes successfully with v2.0 config"
       ]
     }
   ]

@@ -382,7 +382,6 @@ For detailed frameworks, see:
 
 Dimension-specific confidence criteria below REFINE (not replace) these universal definitions.
 
-- **Blackboard key**: `findings_regulatory`
 - **Cross-reference dimensions**: trends (regulatory trends and policy direction), competitive (compliance status of competitors)
 - **Alert triggers**:
   - New regulation with <12 months to compliance deadline

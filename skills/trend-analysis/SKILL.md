@@ -202,7 +202,6 @@ For detailed methodologies, see:
 
 Dimension-specific confidence criteria below REFINE (not replace) these universal definitions.
 
-- **Blackboard key**: `findings_trends` (trend-modeling uses separate key `findings_trend_modeling`)
 - **Cross-reference dimensions**: tech (adoption curves, technology maturity), regulatory (regulatory shifts impacting trends)
 - **Alert triggers**:
   - Trend reversal detected (INC→DEC or DEC→INC)

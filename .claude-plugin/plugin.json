@@ -1,6 +1,6 @@
 {
   "name": "sigint",
-  "version": "0.5.1",
+  "version": "0.6.0",
   "description": "Signal Intelligence - Comprehensive market research toolkit with report generation, GitHub issue creation, and trend-based analysis using three-valued logic",
   "license": "MIT",
   "author": {
@@ -21,7 +21,7 @@
     "web_fetch": true,
     "file_read": true,
     "file_write": true,
-    "mcp_servers": ["atlatl", "github"]
+    "mcp_servers": ["github"]
   },
   "prerequisites": {
     "jq": {
@@ -30,10 +30,6 @@
     }
   },
   "optional_dependencies": {
-    "atlatl": {
-      "description": "Atlatl MCP server for blackboard coordination and persistent memory. Falls back to file-based state when unavailable.",
-      "required": false
-    },
     "github": {
       "description": "GitHub MCP server for issue creation. Required only for /sigint:issues command.",
       "required": false

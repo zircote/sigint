@@ -349,7 +349,6 @@ For detailed frameworks, see:
 
 Dimension-specific confidence criteria below REFINE (not replace) these universal definitions.
 
-- **Blackboard key**: `findings_tech`
 - **Cross-reference dimensions**: trends (technology adoption curves), competitive (competitor tech stacks and capabilities)
 - **Alert triggers**:
   - Disruptive technology at TRL 7+ (system prototype demonstrated)

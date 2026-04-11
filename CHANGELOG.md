@@ -5,15 +5,28 @@ All notable changes to the Sigint Market Intelligence Plugin will be documented 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [0.6.0] - 2026-04-11
+
+### Removed
+- **Atlatl MCP dependency**: Removed all Atlatl blackboard, memory capture, memory recall, and memory enrichment references across 55 files (491 occurrences). JSON file persistence is now the sole data model.
+- **Blackboard coordination**: Replaced ephemeral blackboard key-value store with file-based state in `reports/{topic_slug}/`. Inter-agent coordination uses TaskUpdate and SendMessage exclusively.
+- **`auto_atlatl` configuration field**: Removed from schema validation, config examples, migration logic, and documentation.
+- **`atlatl_memory_id` topic field**: Removed from schema validation and lifecycle tracking.
+- **62 Atlatl-specific eval test cases**: Removed from 7 eval files; all remaining evals validated.
+
+### Improved
+- **skills/augment**: Added `--methodology` as documented alias for `--dimension` argument
+- **skills/report**: Input validation, format-specific output, timeout handling, graceful cleanup, state.json validation
+- **skills/issues**: Input validation (`--repo` format), cowork fallback, categorized error responses, Atlatl regression guard eval
+- **skills/migrate**: Backup-before-write ordering, dual-format parsing (YAML + markdown sections), malformed JSON handling, schema validation fallback
 
 ### Fixed
 - **Topic lifecycle tracking**: Research sessions now register in `sigint.config.json` topics throughout the lifecycle — `/sigint:start` registers with `in_progress`, orchestrator sets `complete` on finish, `/sigint:augment` and `/sigint:update` update dimensions and timestamps
 - **Session index**: `/sigint:status` and `/sigint:resume --list` now use `sigint.config.json` topics as primary session index instead of only globbing report directories
-- **Schema validation**: `sigint-config.jq` updated to validate both minimal (context-only) and lifecycle-managed topic entries with status, dimensions, created/updated timestamps, findings count, and optional Atlatl memory ID
+- **Schema validation**: `sigint-config.jq` updated to validate both minimal (context-only) and lifecycle-managed topic entries with status, dimensions, created/updated timestamps, and findings count
 - **Dimension-analyst reports directory**: Orchestrator now passes explicit `REPORTS_DIR` and `TOPIC_SLUG` to each analyst spawn prompt; analysts use the path verbatim instead of deriving it from the topic title (fixes slug truncation causing findings to land in wrong directory)
 - **Pre-review file validation** (Phase 2.6): Orchestrator validates all expected findings files exist in the canonical reports directory *before* the codex review gate (not after), ensuring relocated files go through the blocking review. Recovery is fail-closed: single-match relocations only, refuses on ambiguous multiple candidates, never imports from sibling topic directories
-- **Config write atomicity**: Orchestrator Phase 4.1 now writes all topic completion fields (status, findings_count, dimensions, atlatl_memory_id) in a single jq call to prevent race conditions
+- **Config write atomicity**: Orchestrator Phase 4.1 now writes all topic completion fields (status, findings_count, dimensions) in a single jq call to prevent race conditions
 
 ## [0.5.0] - 2026-04-02
 
@@ -33,7 +46,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **All JSON file operations now use `jq` via Bash** — `Edit` tool removed from all agents and skills per `/refactor:xq` structured data reliability patterns
 - **Configuration format**: Migrated from `sigint.local.md` YAML to `sigint.config.json` v2.0 JSON with per-topic overrides
 - **Schema validation is mandatory**: Write-then-validate pattern required after every JSON mutation with retry-and-correct (max 2 retries)
-- **Dual-write is default**: Blackboard + file persistence for all findings (not just a Cowork fallback)
+- **File persistence is default**: All findings written to validated JSON files
 - **Research-orchestrator** upgraded to v0.5.0 with codex gates, provenance, delta detection, and harness pattern
 - **Dimension-analyst** now includes `Bash` in tools list for Structured Data Protocol compliance
 - **Report-synthesizer** now includes `Bash` in tools list for Structured Data Protocol compliance
@@ -49,21 +62,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Swarm-orchestrated parallel research**: New research-orchestrator agent coordinates multiple dimension-analysts running concurrently
 - **Dimension-analyst agent**: Generic research analyst parameterized by dimension (competitive, sizing, trends, customer, tech, financial, regulatory)
 - **Source-chunker agent**: RLM processor for large documents — partitions, spawns chunk analysts, synthesizes findings
-- **Atlatl blackboard coordination**: Ephemeral session blackboard for inter-agent communication during research
+- **Task-based coordination**: Task system for inter-agent communication during research
 - **Orchestration hints** in all 9 skill SKILL.md files for team-based research participation
-- **Live team status** in `/sigint:status` showing dimension-analyst progress via blackboard
+- **Live team status** in `/sigint:status` showing dimension-analyst progress
 
 ### Changed
 - **Replaced monolithic market-researcher** with research-orchestrator + dimension-analyst swarm (3→5 agents)
-- **Migrated from Subcog to Atlatl** memory system across all commands and agents
 - **Replaced TodoWrite with TaskCreate/TaskUpdate** in all commands
 - **Replaced Task/subagent_type delegation with Agent tool** in all commands
-- **Report-synthesizer** now reads blackboard findings in addition to state.json
-- **Issue-architect** now uses Atlatl instead of Subcog for memory persistence
+- **Report-synthesizer** now reads dimension findings files in addition to state.json
 
 ### Removed
 - **market-researcher agent** (decomposed into research-orchestrator + dimension-analyst)
-- **Subcog integration** (replaced by Atlatl MCP tools)
+- **Subcog integration** (replaced by file-based state)
 - **TodoWrite usage** (replaced by TaskCreate/TaskUpdate)
 
 ## [0.3.7] - 2026-01-23

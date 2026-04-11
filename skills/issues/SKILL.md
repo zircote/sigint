@@ -17,16 +17,6 @@ allowed-tools:
   - TeamCreate
   - TeamDelete
   - Write
-  - mcp__atlatl__blackboard_ack_alert
-  - mcp__atlatl__blackboard_alert
-  - mcp__atlatl__blackboard_create
-  - mcp__atlatl__blackboard_list
-  - mcp__atlatl__blackboard_pending_alerts
-  - mcp__atlatl__blackboard_read
-  - mcp__atlatl__blackboard_write
-  - mcp__atlatl__capture_memory
-  - mcp__atlatl__enrich_memory
-  - mcp__atlatl__recall_memories
 ---
 
 # Sigint Issues Skill (Swarm Orchestration)
@@ -44,17 +34,17 @@ You MUST use the full swarm pattern: `TeamCreate → TaskCreate → Agent(team_n
 ### Step 0.1: Parse Arguments
 
 Extract from `$ARGUMENTS`. **Input sanitization**: truncate `$ARGUMENTS` to 200 characters total, strip backticks and angle brackets.
-- `--repo <owner/repo>` → `repo` (default: detect from git remote or state.json config)
+- `--repo <owner/repo>` → `repo` (default: detect from git remote or state.json config). **Validate format**: must match `[a-zA-Z0-9._-]+/[a-zA-Z0-9._-]+`. Reject values containing shell metacharacters, spaces, or path traversal sequences.
 - `--dry-run` → `dry_run = true` (preview only, do not create issues)
-- `--labels <list>` → `labels` (comma-separated, default: empty)
+- `--labels <list>` → `labels` (comma-separated, default: empty). Each label must be a non-empty string; strip whitespace around commas.
 
 Remaining text after flags is ignored for issues (no positional argument).
 
 ### Step 0.2: Find Active Research Session
 
-Scan `./reports/*/state.json` for sessions with `status: "active"`. If multiple exist, load the most recently updated. Extract:
+Scan `./reports/*/state.json` for sessions with `status: "active"`. If multiple exist, load the most recently updated (compare `started` or file mtime). Extract:
 - `topic` — human-readable topic name
-- `topic_slug` — directory name (used as blackboard scope)
+- `topic_slug` — directory name
 - `elicitation` — full elicitation object for issue prioritization
 
 If no active session found, error: "No active research session. Run `/sigint:start <topic>` first."
@@ -73,7 +63,7 @@ Priority order:
 3. Config Resolution Protocol: Apply the **Config Resolution Protocol** (read `protocols/CONFIG-RESOLUTION.md`) with `topic_slug` from the active session. Use resolved `config.default_repo` if non-null.
 4. Auto-detect from git remote: run `git remote get-url origin` (if inside a git repo), parse the GitHub URL to infer `<owner>/<repo>`, and if git is unavailable or the remote is not GitHub, fall back to `gh repo view --json nameWithOwner -q .nameWithOwner`
 
-> **Cowork note:** In Cowork environments, `gh` CLI may not be available. If needed, use ToolSearch to discover an MCP tool that can resolve the current repo/context, or fall back to asking the user for the `<owner>/<repo>` value.
+> **Cowork note:** In Cowork environments, `gh` CLI may not be available. If `git remote` and `gh repo view` both fail, use ToolSearch to discover a GitHub MCP tool (e.g., `mcp__github__*`) that can resolve the current repo context, or fall back to asking the user for the `<owner>/<repo>` value via `AskUserQuestion`.
 
 If `dry_run = true`, repository resolution is informational only — no issues will be created.
 
@@ -230,9 +220,13 @@ If the result contains issue URLs, list the top 5 with links.
 ### Step 2.3: Handle Failure
 
 If the issue-architect sends an error message (or does not respond within a reasonable session):
-- Report what went wrong
-- Suggest next steps (check `--repo` arg, verify GitHub auth with `gh auth status`, retry)
-- Skip to Phase 3 cleanup
+- Report what went wrong with the specific error details
+- Suggest next steps based on the error:
+  - **Auth failure**: "Verify GitHub auth with `gh auth status`"
+  - **Repo not found**: "Check `--repo` argument — ensure the repository exists and you have write access"
+  - **Rate limited**: "GitHub API rate limit hit — wait and retry, or use `--dry-run` to preview without API calls"
+  - **Generic failure**: "Retry with `/sigint:issues --repo {repo}`"
+- Skip to Phase 3 cleanup (TeamDelete MUST still run even on failure)
 
 ---
 

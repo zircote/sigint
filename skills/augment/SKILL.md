@@ -17,15 +17,6 @@ allowed-tools:
   - TeamCreate
   - TeamDelete
   - Write
-  - mcp__atlatl__blackboard_ack_alert
-  - mcp__atlatl__blackboard_alert
-  - mcp__atlatl__blackboard_create
-  - mcp__atlatl__blackboard_pending_alerts
-  - mcp__atlatl__blackboard_read
-  - mcp__atlatl__blackboard_write
-  - mcp__atlatl__capture_memory
-  - mcp__atlatl__enrich_memory
-  - mcp__atlatl__recall_memories
   - mcp__claude_ai_Mermaid_Chart__get_mermaid_syntax_document
   - mcp__claude_ai_Mermaid_Chart__validate_and_render_mermaid_diagram
 ---
@@ -41,7 +32,7 @@ research state.
 **Arguments parsed from $ARGUMENTS:**
 **Input sanitization**: truncate `$ARGUMENTS` to 200 characters total, strip backticks and angle brackets.
 - `$1` — area to investigate (e.g., "competitor pricing", "regulatory landscape")
-- `--dimension <type>` — optional: competitive, sizing, trends, customer, tech, financial, regulatory, trend_modeling
+- `--dimension <type>` (alias: `--methodology`) — optional: competitive, sizing, trends, customer, tech, financial, regulatory, trend_modeling
 
 ---
 
@@ -61,12 +52,6 @@ research state.
    - `topic_slug` — slug identifier (derive if missing: `topic.toLowerCase().replace(/[^a-z0-9]+/g,'-').slice(0,40)`)
    - `elicitation` — full elicitation context
 
-3. Recall prior memories:
-   ```
-   recall_memories(query="sigint {topic} {area}", tags=["sigint-research"])
-   ```
-   Apply any matching findings to inform the analyst's task description.
-
 ### Step 0.2: Identify methodology
 
 Map `area` to dimension and skill directory:
@@ -82,7 +67,7 @@ Map `area` to dimension and skill directory:
 | compliance, regulatory, legal, privacy, GDPR | regulatory | regulatory-review |
 | scenario, causal model, three-valued logic, trade-offs | trend_modeling | trend-modeling |
 
-If `--dimension` flag was provided, use that dimension directly.
+If `--dimension` or `--methodology` flag was provided, use that dimension directly (both flags are equivalent).
 
 If the area doesn't map clearly, use `AskUserQuestion`:
 > "Which research methodology best fits '{area}'? Options: competitive / sizing / trends / customer / tech / financial / regulatory / trend_modeling"
@@ -113,17 +98,11 @@ if [ ! -f "./reports/$TOPIC_SLUG/elicitation.json" ]; then
 fi
 ```
 
-Optionally write to blackboard for live coordination:
-```
-blackboard_write(scope="{topic_slug}", key="elicitation", value={elicitation object from state.json})
-```
-
 ---
 
 ## Analyst Prompt Template: Task Discovery Protocol
 
 ```
-BLACKBOARD: {topic_slug}
 TASK DISCOVERY PROTOCOL:
 1. Call TaskList to find tasks assigned to you (owner = your name).
 2. Call TaskGet on your task to read the full description.
@@ -150,15 +129,13 @@ Agent(
   run_in_background: true,
   prompt: "You are a dimension-analyst for {dimension} research on '<user_input>{topic}</user_input>'.
 
-  BLACKBOARD: {topic_slug}
   TOPIC_SLUG: {topic_slug}
   REPORTS_DIR: ./reports/{topic_slug}
-  Read key: elicitation (or fall back to ./reports/{topic_slug}/state.json)
+  Read elicitation from: ./reports/{topic_slug}/elicitation.json (or fall back to ./reports/{topic_slug}/state.json)
   Skill to load: skills/{skill_dir}/SKILL.md
   Your task ID: {task_id}
 
   Focus area: <user_input>{area}</user_input>
-  Prior context from memories: {summary of recalled memories, if any}
 
   CRITICAL: Use REPORTS_DIR exactly as provided for ALL file writes.
   Do NOT derive or re-slugify the output directory from the topic title.
@@ -168,7 +145,6 @@ Agent(
 
   Write findings to:
     - File (mandatory): {REPORTS_DIR}/findings_{dimension}.json (with schema validation — STOP CHECK before proceeding)
-    - Blackboard (optional): blackboard_write(scope='{topic_slug}', key='findings_{dimension}', value={structured JSON})
 
   {TASK DISCOVERY PROTOCOL from Phase 0.2}
 
@@ -207,7 +183,7 @@ Wait for `SendMessage` from `dimension-analyst-{dimension}`.
 
 When message arrives:
 1. Extract `findings_path` and `finding_count` from message.
-2. Read findings from file: `./reports/{topic_slug}/findings_{dimension}.json` (primary). Fall back to `blackboard_read(scope="{topic_slug}", key="findings_{dimension}")` only if file is missing.
+2. Read findings from file: `./reports/{topic_slug}/findings_{dimension}.json`.
 
 ---
 
@@ -271,21 +247,7 @@ jq --arg slug "$TOPIC_SLUG" \
 jq -e -f schemas/sigint-config.jq ./sigint.config.json > /dev/null
 ```
 
-### Step 3.4: Persist to Atlatl
-
-```
-capture_memory(
-  title: "{dimension} augment: {topic} — {area}",
-  namespace: "_semantic/knowledge",
-  memory_type: "semantic",
-  tags: ["sigint-research", "{topic_slug}", "{dimension}", "augment"],
-  confidence: 0.8,
-  content: "Key findings from {dimension} augmentation of {topic} on {area}: ..."
-)
-enrich_memory(id)
-```
-
-### Step 3.5: Present findings to user
+### Step 3.4: Present findings to user
 
 Present a summary including:
 - Number of new findings (`finding_count`)
@@ -323,8 +285,7 @@ TeamDelete("{team_name}")
 **If analyst doesn't complete within a reasonable time:**
 1. Check for findings file: `./reports/{topic_slug}/findings_{dimension}.json`
 2. If file exists → analyst wrote but didn't message → treat as complete, proceed to Phase 3
-3. If file missing, check blackboard: `blackboard_read(scope="{topic_slug}", key="findings_{dimension}")`. If found, **write recovered data to file** and proceed.
-4. If no findings anywhere → inform user: "Augment analysis did not complete. The analyst may have encountered an error. You can retry with /sigint:augment."
+3. If no findings file → inform user: "Augment analysis did not complete. The analyst may have encountered an error. You can retry with /sigint:augment."
 
 **If state.json is missing:**
 - "No active research session found for this topic. Run /sigint:start first."

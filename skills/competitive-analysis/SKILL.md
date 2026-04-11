@@ -212,7 +212,6 @@ For detailed frameworks and templates, see:
 
 Dimension-specific confidence criteria below REFINE (not replace) these universal definitions.
 
-- **Blackboard key**: `findings_competitive`
 - **Cross-reference dimensions**: sizing (validate market share figures), customer (switching costs, satisfaction gaps)
 - **Alert triggers**:
   - Major undiscovered competitor with >10% market share

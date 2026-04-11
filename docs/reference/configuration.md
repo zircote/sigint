@@ -36,7 +36,6 @@ For any field and topic, values resolve via this cascade:
 | `default_repo` | `string or null` | `null` | GitHub repo for issue creation (owner/repo) |
 | `report_format` | `markdown, html, or both` | `"markdown"` | Report output format |
 | `audiences` | `string[]` | `["technical"]` | Default report audiences |
-| `auto_atlatl` | `boolean` | `true` | Auto-persist findings to Atlatl memory |
 
 ### Research Runtime Fields (`research` block)
 
@@ -63,8 +62,7 @@ All user preference fields above, plus:
   "defaults": {
     "default_repo": "owner/repo",
     "report_format": "markdown",
-    "audiences": ["technical"],
-    "auto_atlatl": true
+    "audiences": ["technical"]
   },
   "research": {
     "maxDimensions": 5,

@@ -1,152 +1,5 @@
 [
   {
-    "id": "e2e-start-to-findings",
-    "description": "Full /sigint:start flow from elicitation through orchestration to findings output",
-    "prompt": "Research the AI code assistant market. Priorities: competitive landscape, market sizing, trend analysis. Audience: investors. Timeline: this month.",
-    "expectations": [
-      {
-        "description": "Research orchestrator is referenced as the coordination agent",
-        "deterministic_checks": [
-          { "type": "output_contains", "value": "research-orchestrator" }
-        ]
-      },
-      {
-        "description": "Dimension analyst agents are referenced as workers",
-        "deterministic_checks": [
-          { "type": "output_contains", "value": "dimension-analyst" }
-        ]
-      },
-      {
-        "description": "Blackboard is used for team coordination",
-        "deterministic_checks": [
-          { "type": "output_contains", "value": "blackboard" }
-        ]
-      },
-      {
-        "description": "Findings are produced from the research",
-        "deterministic_checks": [
-          { "type": "output_contains", "value": "findings" }
-        ]
-      },
-      {
-        "description": "State file is referenced for persistence",
-        "deterministic_checks": [
-          { "type": "output_contains", "value": "state.json" }
-        ]
-      },
-      {
-        "description": "Deprecated market-researcher agent pattern is not used",
-        "deterministic_checks": [
-          { "type": "output_not_contains", "value": "market-researcher" }
-        ]
-      },
-      {
-        "description": "Deprecated TodoWrite tool is not used",
-        "deterministic_checks": [
-          { "type": "output_not_contains", "value": "TodoWrite" }
-        ]
-      },
-      {
-        "description": "Deprecated Subcog pattern is not used",
-        "deterministic_checks": [
-          { "type": "output_not_contains", "value": "Subcog" }
-        ]
-      },
-      {
-        "description": "Deprecated subagent_type pattern is not used",
-        "deterministic_checks": [
-          { "type": "output_not_contains", "value": "subagent_type" }
-        ]
-      },
-      {
-        "description": "Elicitation captures all user context (audience, timeline, priorities), orchestrator spawns 3 dimension analysts (competitive, sizing, trends), and findings are written to state.json"
-      }
-    ]
-  },
-  {
-    "id": "e2e-start-to-report",
-    "description": "Research findings are synthesized into an investor-tailored report",
-    "prompt": "Generate a report from the AI code assistant research for investor audience in markdown format",
-    "expectations": [
-      {
-        "description": "Report synthesizer agent is referenced",
-        "deterministic_checks": [
-          { "type": "output_contains", "value": "report-synthesizer" }
-        ]
-      },
-      {
-        "description": "Executive Summary section is included in the report",
-        "deterministic_checks": [
-          { "type": "output_contains", "value": "Executive Summary" }
-        ]
-      },
-      {
-        "description": "Data source is blackboard or state.json",
-        "deterministic_checks": [
-          {
-            "type": "output_contains_any",
-            "values": ["blackboard", "state.json"]
-          }
-        ]
-      },
-      {
-        "description": "Investor audience is acknowledged in the report",
-        "deterministic_checks": [
-          { "type": "output_contains", "value": "investor" }
-        ]
-      },
-      {
-        "description": "Deprecated Subcog pattern is not used",
-        "deterministic_checks": [
-          { "type": "output_not_contains", "value": "Subcog" }
-        ]
-      },
-      {
-        "description": "Report synthesizer reads findings from state or blackboard, generates investor-tailored report with Executive Summary, competitive landscape, market sizing, and trend analysis sections"
-      }
-    ]
-  },
-  {
-    "id": "e2e-augment-single-dimension",
-    "description": "Deep dive augmentation into a single regulatory dimension",
-    "prompt": "/sigint:augment regulatory landscape for the AI code assistant research",
-    "expectations": [
-      {
-        "description": "Dimension analyst agent is referenced for the deep dive",
-        "deterministic_checks": [
-          { "type": "output_contains", "value": "dimension-analyst" }
-        ]
-      },
-      {
-        "description": "Regulatory dimension is targeted",
-        "deterministic_checks": [
-          { "type": "output_contains", "value": "regulatory" }
-        ]
-      },
-      {
-        "description": "Regulatory-review skill methodology is referenced",
-        "deterministic_checks": [
-          { "type": "output_contains", "value": "regulatory-review" }
-        ]
-      },
-      {
-        "description": "Regulatory findings blackboard key is used",
-        "deterministic_checks": [
-          { "type": "output_contains", "value": "findings_regulatory" }
-        ]
-      },
-      {
-        "description": "Deprecated market-researcher pattern is not used",
-        "deterministic_checks": [
-          { "type": "output_not_contains", "value": "market-researcher" }
-        ]
-      },
-      {
-        "description": "Single dimension-analyst is spawned for the regulatory dimension using regulatory-review skill methodology, findings stored under findings_regulatory blackboard key"
-      }
-    ]
-  },
-  {
     "id": "e2e-start-to-issues",
     "description": "Research findings are converted into structured GitHub issues",
     "prompt": "Create GitHub issues from the AI code assistant research findings",
@@ -154,129 +7,41 @@
       {
         "description": "Issue architect agent is referenced",
         "deterministic_checks": [
-          { "type": "output_contains", "value": "issue-architect" }
+          {
+            "type": "output_contains",
+            "value": "issue-architect"
+          }
         ]
       },
       {
         "description": "Acceptance criteria are included in issues",
         "deterministic_checks": [
-          { "type": "output_contains", "value": "acceptance criteria" }
+          {
+            "type": "output_contains",
+            "value": "acceptance criteria"
+          }
         ]
       },
       {
         "description": "Sprint planning is referenced",
         "deterministic_checks": [
-          { "type": "output_contains", "value": "sprint" }
+          {
+            "type": "output_contains",
+            "value": "sprint"
+          }
         ]
       },
       {
         "description": "Deprecated Subcog pattern is not used",
         "deterministic_checks": [
-          { "type": "output_not_contains", "value": "Subcog" }
+          {
+            "type": "output_not_contains",
+            "value": "Subcog"
+          }
         ]
       },
       {
         "description": "Issue architect extracts actionable items from research findings, creates categorized issues with clear acceptance criteria and sprint assignments"
-      }
-    ]
-  },
-  {
-    "id": "e2e-cross-session-recall",
-    "description": "New research session recalls prior research from Atlatl memory",
-    "prompt": "Research developer productivity tools. I previously researched AI code assistants - use those findings as context.",
-    "expectations": [
-      {
-        "description": "Atlatl recall is invoked to find prior research",
-        "deterministic_checks": [
-          { "type": "output_contains", "value": "recall_memories" }
-        ]
-      },
-      {
-        "description": "Research tag is used for memory search",
-        "deterministic_checks": [
-          { "type": "output_contains", "value": "sigint-research" }
-        ]
-      },
-      {
-        "description": "Prior AI code assistant research is referenced",
-        "deterministic_checks": [
-          {
-            "type": "output_contains_any",
-            "values": [
-              "AI code assistant",
-              "AI code assistants",
-              "prior research"
-            ]
-          }
-        ]
-      },
-      {
-        "description": "Atlatl recall successfully finds prior AI code assistant research and uses those findings to inform the new developer productivity tools research session"
-      }
-    ]
-  },
-  {
-    "id": "e2e-resume-with-atlatl",
-    "description": "Resume session combines state.json file restoration with Atlatl memory enhancement",
-    "prompt": "/sigint:resume AI code assistants",
-    "expectations": [
-      {
-        "description": "State file is referenced for session restoration",
-        "deterministic_checks": [
-          { "type": "output_contains", "value": "state.json" }
-        ]
-      },
-      {
-        "description": "Atlatl recall is used to enhance restored session",
-        "deterministic_checks": [
-          { "type": "output_contains", "value": "recall_memories" }
-        ]
-      },
-      {
-        "description": "Deprecated Subcog pattern is not used",
-        "deterministic_checks": [
-          { "type": "output_not_contains", "value": "Subcog" }
-        ]
-      },
-      {
-        "description": "Session is restored from state.json file state and enhanced with Atlatl memories for richer context, suggesting next actions based on combined data"
-      }
-    ]
-  },
-  {
-    "id": "e2e-init-atlatl-context",
-    "description": "Init command loads Atlatl context and identifies active sessions",
-    "prompt": "/sigint:init --topic 'AI code assistants'",
-    "expectations": [
-      {
-        "description": "Atlatl recall is invoked during initialization",
-        "deterministic_checks": [
-          { "type": "output_contains", "value": "recall_memories" }
-        ]
-      },
-      {
-        "description": "Semantic knowledge or research tag namespace is referenced",
-        "deterministic_checks": [
-          {
-            "type": "output_contains_any",
-            "values": ["_semantic/knowledge", "sigint-research"]
-          }
-        ]
-      },
-      {
-        "description": "Atlatl is explicitly named as the memory source",
-        "deterministic_checks": [
-          { "type": "output_contains", "value": "Atlatl" }
-        ]
-      },
-      {
-        "description": "Deprecated Subcog pattern is not used",
-        "deterministic_checks": [
-          { "type": "output_not_contains", "value": "Subcog" }
-        ]
-      },
-      {
-        "description": "Initialization loads Atlatl context for the topic, identifies any active research sessions, and suggests the next action (start new or resume existing)"
       }
     ]
   },
@@ -288,19 +53,28 @@
       {
         "description": "Source chunker is referenced for large document processing",
         "deterministic_checks": [
-          { "type": "output_contains", "value": "source-chunker" }
+          {
+            "type": "output_contains",
+            "value": "source-chunker"
+          }
         ]
       },
       {
         "description": "Chunking strategy is referenced",
         "deterministic_checks": [
-          { "type": "output_contains", "value": "chunk" }
+          {
+            "type": "output_contains",
+            "value": "chunk"
+          }
         ]
       },
       {
         "description": "Dimension analyst processes the chunked content",
         "deterministic_checks": [
-          { "type": "output_contains", "value": "dimension-analyst" }
+          {
+            "type": "output_contains",
+            "value": "dimension-analyst"
+          }
         ]
       },
       {
@@ -316,13 +90,19 @@
       {
         "description": "Dimension analyst processes the source directly",
         "deterministic_checks": [
-          { "type": "output_contains", "value": "dimension-analyst" }
+          {
+            "type": "output_contains",
+            "value": "dimension-analyst"
+          }
         ]
       },
       {
         "description": "Source chunker is not required for small documents",
         "deterministic_checks": [
-          { "type": "output_not_contains", "value": "source-chunker" }
+          {
+            "type": "output_not_contains",
+            "value": "source-chunker"
+          }
         ]
       },
       {
@@ -338,54 +118,40 @@
       {
         "description": "Conflict detection is referenced in the orchestration flow",
         "deterministic_checks": [
-          { "type": "output_contains", "value": "conflict" }
+          {
+            "type": "output_contains",
+            "value": "conflict"
+          }
         ]
       },
       {
         "description": "Conflicting dimensions are identified by name",
         "deterministic_checks": [
-          { "type": "output_contains_any", "values": ["competitive", "sizing", "financial"] }
+          {
+            "type": "output_contains_any",
+            "values": [
+              "competitive",
+              "sizing",
+              "financial"
+            ]
+          }
         ]
       },
       {
         "description": "Resolution rationale is provided",
         "deterministic_checks": [
-          { "type": "output_contains_any", "values": ["resolution", "rationale", "reconcil"] }
-        ]
-      },
-      {
-        "description": "When competitive analysis finds concentrated market share (few major players controlling most of the market) but sizing estimates suggest high fragmentation, the conflict is detected with specific dimension names, logged with structured context, and resolved with explicit rationale"
-      }
-    ]
-  },
-  {
-    "id": "e2e-update-stale-research",
-    "description": "Stale research findings are identified and refreshed with current data",
-    "prompt": "/sigint:update --area 'competitive landscape'",
-    "expectations": [
-      {
-        "description": "Staleness or freshness of data is referenced",
-        "deterministic_checks": [
           {
             "type": "output_contains_any",
-            "values": ["stale", "fresh", "recent"]
+            "values": [
+              "resolution",
+              "rationale",
+              "reconcil"
+            ]
           }
         ]
       },
       {
-        "description": "Memory capture is invoked to persist updated findings",
-        "deterministic_checks": [
-          { "type": "output_contains", "value": "capture_memory" }
-        ]
-      },
-      {
-        "description": "Deprecated Subcog pattern is not used",
-        "deterministic_checks": [
-          { "type": "output_not_contains", "value": "Subcog" }
-        ]
-      },
-      {
-        "description": "Stale findings are identified by comparing timestamps, fresh data is fetched, compared with existing findings, state.json is updated, and new findings are captured to Atlatl"
+        "description": "When competitive analysis finds concentrated market share (few major players controlling most of the market) but sizing estimates suggest high fragmentation, the conflict is detected with specific dimension names, logged with structured context, and resolved with explicit rationale"
       }
     ]
   },
@@ -399,7 +165,10 @@
         "deterministic_checks": [
           {
             "type": "output_contains_any",
-            "values": ["team_status", "TEAM STATUS"]
+            "values": [
+              "team_status",
+              "TEAM STATUS"
+            ]
           }
         ]
       },
@@ -408,7 +177,10 @@
         "deterministic_checks": [
           {
             "type": "output_contains_any",
-            "values": ["complete", "in_progress"]
+            "values": [
+              "complete",
+              "in_progress"
+            ]
           }
         ]
       },
@@ -427,137 +199,16 @@
         "deterministic_checks": [
           {
             "type": "output_contains_any",
-            "values": ["no research", "no session", "no findings"]
+            "values": [
+              "no research",
+              "no session",
+              "no findings"
+            ]
           }
         ]
       },
       {
         "description": "Graceful error message is shown suggesting /sigint:start, not a crash or stack trace"
-      }
-    ]
-  },
-  {
-    "id": "e2e-zero-deprecated-patterns-start",
-    "description": "Full start flow uses exclusively v0.4.0 patterns with zero deprecated references",
-    "prompt": "/sigint:start quantum computing hardware market",
-    "expectations": [
-      {
-        "description": "Deprecated TodoWrite is not used",
-        "deterministic_checks": [
-          { "type": "output_not_contains", "value": "TodoWrite" }
-        ]
-      },
-      {
-        "description": "Deprecated Subcog is not used",
-        "deterministic_checks": [
-          { "type": "output_not_contains", "value": "Subcog" }
-        ]
-      },
-      {
-        "description": "Deprecated subagent_type is not used",
-        "deterministic_checks": [
-          { "type": "output_not_contains", "value": "subagent_type" }
-        ]
-      },
-      {
-        "description": "Deprecated market-researcher delegation is not used",
-        "deterministic_checks": [
-          { "type": "output_not_contains", "value": "market-researcher" }
-        ]
-      },
-      {
-        "description": "Research orchestrator is used as the coordination agent",
-        "deterministic_checks": [
-          { "type": "output_contains", "value": "research-orchestrator" }
-        ]
-      },
-      {
-        "description": "Atlatl memory integration is present",
-        "deterministic_checks": [
-          {
-            "type": "output_contains_any",
-            "values": ["Atlatl", "capture_memory", "recall_memories"]
-          }
-        ]
-      },
-      {
-        "description": "Task or Agent orchestration tools are used",
-        "deterministic_checks": [
-          {
-            "type": "output_contains_any",
-            "values": ["TaskCreate", "Agent"]
-          }
-        ]
-      },
-      {
-        "description": "Entire start flow uses only v0.4.0 architecture: research-orchestrator for coordination, dimension-analyst for workers, blackboard for state, Atlatl for memory, and TaskCreate/Agent for orchestration"
-      }
-    ]
-  },
-  {
-    "id": "e2e-zero-deprecated-patterns-full-cycle",
-    "description": "Complete research cycle (start, augment, report, issues) uses exclusively v0.4.0 patterns",
-    "prompt": "Run complete research cycle: start with quantum computing, augment competitive, generate report, create issues",
-    "expectations": [
-      {
-        "description": "Deprecated TodoWrite is not used anywhere in the cycle",
-        "deterministic_checks": [
-          { "type": "output_not_contains", "value": "TodoWrite" }
-        ]
-      },
-      {
-        "description": "Deprecated Subcog is not used anywhere in the cycle",
-        "deterministic_checks": [
-          { "type": "output_not_contains", "value": "Subcog" }
-        ]
-      },
-      {
-        "description": "Deprecated subagent_type is not used anywhere in the cycle",
-        "deterministic_checks": [
-          { "type": "output_not_contains", "value": "subagent_type" }
-        ]
-      },
-      {
-        "description": "Research orchestrator coordinates the start phase",
-        "deterministic_checks": [
-          { "type": "output_contains", "value": "research-orchestrator" }
-        ]
-      },
-      {
-        "description": "Dimension analyst handles augmentation and initial research",
-        "deterministic_checks": [
-          { "type": "output_contains", "value": "dimension-analyst" }
-        ]
-      },
-      {
-        "description": "Report synthesizer generates the report",
-        "deterministic_checks": [
-          { "type": "output_contains", "value": "report-synthesizer" }
-        ]
-      },
-      {
-        "description": "Issue architect creates the GitHub issues",
-        "deterministic_checks": [
-          { "type": "output_contains", "value": "issue-architect" }
-        ]
-      },
-      {
-        "description": "Blackboard is used for inter-agent coordination",
-        "deterministic_checks": [
-          { "type": "output_contains", "value": "blackboard" }
-        ]
-      },
-      {
-        "description": "Atlatl memory is integrated",
-        "deterministic_checks": [
-          {
-            "type": "output_contains_any",
-            "values": ["Atlatl", "capture_memory"]
-          }
-        ]
-      },
-      {
-        "description": "Full research cycle completes through all four phases (start, augment, report, issues) using only v0.4.0 agents and patterns without any deprecated tool, agent, or memory references"
       }
     ]
   },
@@ -569,7 +220,10 @@
       {
         "description": "Methodology plan is written per dimension",
         "deterministic_checks": [
-          { "type": "output_contains", "value": "methodology_plan" }
+          {
+            "type": "output_contains",
+            "value": "methodology_plan"
+          }
         ]
       },
       {
@@ -577,7 +231,10 @@
         "deterministic_checks": [
           {
             "type": "output_contains_any",
-            "values": ["Frameworks Planned", "methodology plan"]
+            "values": [
+              "Frameworks Planned",
+              "methodology plan"
+            ]
           }
         ]
       },
@@ -586,20 +243,29 @@
         "deterministic_checks": [
           {
             "type": "output_contains_any",
-            "values": ["Coverage Matrix", "coverage matrix"]
+            "values": [
+              "Coverage Matrix",
+              "coverage matrix"
+            ]
           }
         ]
       },
       {
         "description": "Deprecated TodoWrite is not used",
         "deterministic_checks": [
-          { "type": "output_not_contains", "value": "TodoWrite" }
+          {
+            "type": "output_not_contains",
+            "value": "TodoWrite"
+          }
         ]
       },
       {
         "description": "Deprecated Subcog is not used",
         "deterministic_checks": [
-          { "type": "output_not_contains", "value": "Subcog" }
+          {
+            "type": "output_not_contains",
+            "value": "Subcog"
+          }
         ]
       },
       {
@@ -615,7 +281,10 @@
       {
         "description": "State diagram is included in output",
         "deterministic_checks": [
-          { "type": "output_contains", "value": "stateDiagram" }
+          {
+            "type": "output_contains",
+            "value": "stateDiagram"
+          }
         ]
       },
       {
@@ -623,7 +292,11 @@
         "deterministic_checks": [
           {
             "type": "output_contains_any",
-            "values": ["INC", "DEC", "CONST"]
+            "values": [
+              "INC",
+              "DEC",
+              "CONST"
+            ]
           }
         ]
       },
@@ -632,7 +305,10 @@
         "deterministic_checks": [
           {
             "type": "output_contains_any",
-            "values": ["Scenario", "scenario"]
+            "values": [
+              "Scenario",
+              "scenario"
+            ]
           }
         ]
       },
@@ -641,7 +317,11 @@
         "deterministic_checks": [
           {
             "type": "output_contains_any",
-            "values": ["Terminal", "terminal", "equilibrium"]
+            "values": [
+              "Terminal",
+              "terminal",
+              "equilibrium"
+            ]
           }
         ]
       },
@@ -660,7 +340,11 @@
         "deterministic_checks": [
           {
             "type": "output_contains_any",
-            "values": ["Porter", "5 Forces", "Five Forces"]
+            "values": [
+              "Porter",
+              "5 Forces",
+              "Five Forces"
+            ]
           }
         ]
       },
@@ -669,7 +353,11 @@
         "deterministic_checks": [
           {
             "type": "output_contains_any",
-            "values": ["HIGH", "MODERATE", "LOW"]
+            "values": [
+              "HIGH",
+              "MODERATE",
+              "LOW"
+            ]
           }
         ]
       },
@@ -678,7 +366,13 @@
         "deterministic_checks": [
           {
             "type": "output_contains_any",
-            "values": ["Competitive Rivalry", "Supplier", "Buyer", "Substitution", "New Entry"]
+            "values": [
+              "Competitive Rivalry",
+              "Supplier",
+              "Buyer",
+              "Substitution",
+              "New Entry"
+            ]
           }
         ]
       },
@@ -695,19 +389,32 @@
       {
         "description": "Output references config lookup using the topic slug",
         "deterministic_checks": [
-          { "type": "output_contains_any", "values": ["ai-code-assistants", "topic", "sigint.config.json"] }
+          {
+            "type": "output_contains_any",
+            "values": [
+              "ai-code-assistants",
+              "topic",
+              "sigint.config.json"
+            ]
+          }
         ]
       },
       {
         "description": "Output passes config to research-orchestrator",
         "deterministic_checks": [
-          { "type": "output_contains", "value": "research-orchestrator" }
+          {
+            "type": "output_contains",
+            "value": "research-orchestrator"
+          }
         ]
       },
       {
         "description": "Output does NOT read sigint.local.md as config source",
         "deterministic_checks": [
-          { "type": "output_not_contains", "value": "sigint.local.md" }
+          {
+            "type": "output_not_contains",
+            "value": "sigint.local.md"
+          }
         ]
       }
     ]
@@ -720,13 +427,25 @@
       {
         "description": "Output warns that the config is using the old v1.0 format",
         "deterministic_checks": [
-          { "type": "output_contains_any", "values": ["v1.0", "1.0", "migrate", "old format", "upgrade"] }
+          {
+            "type": "output_contains_any",
+            "values": [
+              "v1.0",
+              "1.0",
+              "migrate",
+              "old format",
+              "upgrade"
+            ]
+          }
         ]
       },
       {
         "description": "Output continues to function (does not fail) despite old format",
         "deterministic_checks": [
-          { "type": "output_contains", "value": "research-orchestrator" }
+          {
+            "type": "output_contains",
+            "value": "research-orchestrator"
+          }
         ]
       }
     ]
@@ -739,19 +458,28 @@
       {
         "description": "Output proceeds to research-orchestrator delegation without config errors",
         "deterministic_checks": [
-          { "type": "output_contains", "value": "research-orchestrator" }
+          {
+            "type": "output_contains",
+            "value": "research-orchestrator"
+          }
         ]
       },
       {
         "description": "Output does NOT report a config error or missing file error",
         "deterministic_checks": [
-          { "type": "output_not_contains", "value": "config not found" }
+          {
+            "type": "output_not_contains",
+            "value": "config not found"
+          }
         ]
       },
       {
         "description": "Output does NOT reference sigint.local.md as a config source",
         "deterministic_checks": [
-          { "type": "output_not_contains", "value": "sigint.local.md" }
+          {
+            "type": "output_not_contains",
+            "value": "sigint.local.md"
+          }
         ]
       }
     ]
@@ -764,13 +492,23 @@
       {
         "description": "Output references loading or reading the CONTEXT.md file",
         "deterministic_checks": [
-          { "type": "output_contains_any", "values": ["CONTEXT.md", "context_file", "context file"] }
+          {
+            "type": "output_contains_any",
+            "values": [
+              "CONTEXT.md",
+              "context_file",
+              "context file"
+            ]
+          }
         ]
       },
       {
         "description": "Output passes context to the research-orchestrator",
         "deterministic_checks": [
-          { "type": "output_contains", "value": "research-orchestrator" }
+          {
+            "type": "output_contains",
+            "value": "research-orchestrator"
+          }
         ]
       }
     ]
@@ -783,13 +521,24 @@
       {
         "description": "Output warns that the context file was not found",
         "deterministic_checks": [
-          { "type": "output_contains_any", "values": ["not found", "missing", "does not exist", "context"] }
+          {
+            "type": "output_contains_any",
+            "values": [
+              "not found",
+              "missing",
+              "does not exist",
+              "context"
+            ]
+          }
         ]
       },
       {
         "description": "Output continues to research-orchestrator delegation despite missing context file",
         "deterministic_checks": [
-          { "type": "output_contains", "value": "research-orchestrator" }
+          {
+            "type": "output_contains",
+            "value": "research-orchestrator"
+          }
         ]
       }
     ]
@@ -802,14 +551,23 @@
       {
         "description": "Output does not error or abort on missing topic slug",
         "deterministic_checks": [
-          { "type": "output_not_contains", "value": "error" },
-          { "type": "output_not_contains", "value": "abort" }
+          {
+            "type": "output_not_contains",
+            "value": "error"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "abort"
+          }
         ]
       },
       {
         "description": "Research session proceeds normally using defaults",
         "deterministic_checks": [
-          { "type": "output_contains", "value": "research-orchestrator" }
+          {
+            "type": "output_contains",
+            "value": "research-orchestrator"
+          }
         ]
       }
     ]
@@ -822,13 +580,23 @@
       {
         "description": "Output references the repository from config rather than prompting user",
         "deterministic_checks": [
-          { "type": "output_contains_any", "values": ["owner/repo", "repository", "default_repo"] }
+          {
+            "type": "output_contains_any",
+            "values": [
+              "owner/repo",
+              "repository",
+              "default_repo"
+            ]
+          }
         ]
       },
       {
         "description": "Output does NOT reference sigint.local.md as repo source",
         "deterministic_checks": [
-          { "type": "output_not_contains", "value": "sigint.local.md" }
+          {
+            "type": "output_not_contains",
+            "value": "sigint.local.md"
+          }
         ]
       }
     ]
@@ -841,13 +609,24 @@
       {
         "description": "Issue creation proceeds using the defaults block repo",
         "deterministic_checks": [
-          { "type": "output_contains_any", "values": ["default_repo", "defaults", "repository", "repo"] }
+          {
+            "type": "output_contains_any",
+            "values": [
+              "default_repo",
+              "defaults",
+              "repository",
+              "repo"
+            ]
+          }
         ]
       },
       {
         "description": "Output does NOT reference sigint.local.md as the source",
         "deterministic_checks": [
-          { "type": "output_not_contains", "value": "sigint.local.md" }
+          {
+            "type": "output_not_contains",
+            "value": "sigint.local.md"
+          }
         ]
       }
     ]
@@ -860,13 +639,19 @@
       {
         "description": "Output references sigint.config.json as the configuration file",
         "deterministic_checks": [
-          { "type": "output_contains", "value": "sigint.config.json" }
+          {
+            "type": "output_contains",
+            "value": "sigint.config.json"
+          }
         ]
       },
       {
         "description": "Output does NOT reference sigint.local.md as a config file",
         "deterministic_checks": [
-          { "type": "output_not_contains", "value": "sigint.local.md" }
+          {
+            "type": "output_not_contains",
+            "value": "sigint.local.md"
+          }
         ]
       }
     ]
@@ -879,14 +664,28 @@
       {
         "description": "The topic-specific maxDimensions value (3) is used",
         "deterministic_checks": [
-          { "type": "output_contains", "value": "maxDimensions" },
-          { "type": "output_contains_any", "values": ["MAX_DIMENSIONS: 3", "max_dimensions: 3", "maxDimensions: 3", "max_dimensions = 3"] }
+          {
+            "type": "output_contains",
+            "value": "maxDimensions"
+          },
+          {
+            "type": "output_contains_any",
+            "values": [
+              "MAX_DIMENSIONS: 3",
+              "max_dimensions: 3",
+              "maxDimensions: 3",
+              "max_dimensions = 3"
+            ]
+          }
         ]
       },
       {
         "description": "The defaults value (5) is not used for maxDimensions",
         "deterministic_checks": [
-          { "type": "output_not_contains", "value": "MAX_DIMENSIONS: 5" }
+          {
+            "type": "output_not_contains",
+            "value": "MAX_DIMENSIONS: 5"
+          }
         ]
       }
     ]
@@ -899,14 +698,27 @@
       {
         "description": "Project config value (4) takes precedence over global (7)",
         "deterministic_checks": [
-          { "type": "output_contains_any", "values": ["MAX_DIMENSIONS: 4", "max_dimensions: 4", "maxDimensions: 4"] },
-          { "type": "output_not_contains", "value": "MAX_DIMENSIONS: 7" }
+          {
+            "type": "output_contains_any",
+            "values": [
+              "MAX_DIMENSIONS: 4",
+              "max_dimensions: 4",
+              "maxDimensions: 4"
+            ]
+          },
+          {
+            "type": "output_not_contains",
+            "value": "MAX_DIMENSIONS: 7"
+          }
         ]
       },
       {
         "description": "Research session proceeds normally",
         "deterministic_checks": [
-          { "type": "output_contains", "value": "research-orchestrator" }
+          {
+            "type": "output_contains",
+            "value": "research-orchestrator"
+          }
         ]
       }
     ]

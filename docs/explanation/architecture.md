@@ -1,12 +1,12 @@
 ---
 diataxis_type: explanation
 title: Architecture
-description: How sigint's swarm orchestration, blackboard coordination, and memory systems work
+description: How sigint's swarm orchestration and coordination systems work
 ---
 
 # Architecture
 
-Sigint uses a swarm-orchestrated architecture where a research-orchestrator coordinates parallel dimension-analysts via an ephemeral blackboard, with long-term knowledge persisted through Atlatl memory.
+Sigint uses a swarm-orchestrated architecture where a research-orchestrator coordinates parallel dimension-analysts via the task system and file-based state.
 
 ## Agent hierarchy
 
@@ -93,43 +93,26 @@ The protocol mandates:
 
 1. **Write-then-validate**: Every JSON write is immediately followed by schema validation using the corresponding `schemas/*.jq` file
 2. **Retry-and-correct**: If validation fails, diagnose, fix with jq, and re-validate (max 2 retries). Invalid data never proceeds through the pipeline.
-3. **Dual-write**: Blackboard MCP + file persistence for all findings. Files are the durable store; blackboard is the coordination layer with 24h TTL.
+3. **File persistence**: All findings written to validated JSON files. Files are the sole durable store.
 4. **Safe interpolation**: Shell variables enter jq via `--arg`/`--argjson`, never via string interpolation.
 
 Twelve schema validators exist in `schemas/`: state, findings, elicitation, methodology-plan, reflection, quarantine, merged-findings, report-metadata, issues, team-status, conflicts, and sigint-config.
 
-## Blackboard coordination
+## File-based coordination
 
-The blackboard is an ephemeral key-value store (TTL 24h) created per research session. It serves as the shared scratchpad between the orchestrator and its analysts.
+All inter-agent coordination uses file-based state in the `reports/{topic_slug}/` directory. Each research session produces structured JSON files that serve as the shared state between the orchestrator and its analysts.
 
-### Blackboard schema
+### State files
 
-| Key | Written by | Read by | Content |
-|-----|-----------|---------|---------|
-| `elicitation` | orchestrator | all analysts | Full elicitation context from state.json |
-| `team_status` | orchestrator | status command | `{analysts: {dimension: status, ...}}` |
-| `methodology_plan_{dim}` | dimension-analyst | orchestrator | Planned frameworks per dimension |
-| `findings_{dimension}` | dimension-analyst | orchestrator, report-synthesizer | Structured findings with sources and gaps |
-| `conflicts` | dimension-analyst | orchestrator | Cross-dimension contradictions |
-| `merged_findings` | orchestrator | report-synthesizer | Consolidated post-merge findings |
+| File | Written by | Read by | Content |
+|------|-----------|---------|---------|
+| `state.json` | orchestrator | all agents | Full session state including elicitation |
+| `methodology_plan_{dim}.json` | dimension-analyst | orchestrator | Planned frameworks per dimension |
+| `findings_{dimension}.json` | dimension-analyst | orchestrator, report-synthesizer | Structured findings with sources and gaps |
+| `findings_{dim}_conflicts.json` | dimension-analyst | orchestrator | Cross-dimension contradictions |
+| `merged_findings.json` | orchestrator | report-synthesizer | Consolidated post-merge findings |
 
-### Alert channels
-
-| Channel | Publisher | Subscriber | Trigger |
-|---------|----------|------------|---------|
-| `finding_discovered` | analyst | orchestrator | Significant finding (>20% share shift, etc.) |
-| `conflict_detected` | analyst | orchestrator | Cross-dimension contradiction |
-| `phase_complete` | analyst | orchestrator | Dimension research finished |
-| `source_shared` | analyst | other analysts | High-value source useful across dimensions |
-
-## Blackboard vs Atlatl memory
-
-These serve different purposes and should not be confused:
-
-- **Blackboard** = ephemeral session coordination. Inter-agent scratchpad. Dies after 24 hours. Used during active research for team communication.
-- **Atlatl memory** = permanent cross-session knowledge. Key findings, decisions, methodology patterns. Survives across sessions. Used for recall when starting related research.
-
-**Rule:** Every finding written to the blackboard should also be captured to Atlatl memory if it has cross-session value.
+Agents signal completion via TaskUpdate and SendMessage.
 
 ## Source chunking (RLM)
 
@@ -146,13 +129,13 @@ This enables analysis of documents that would otherwise exceed a single agent's 
 ## Research flow
 
 1. `/sigint:start` conducts elicitation, creates state.json
-2. research-orchestrator creates blackboard, writes elicitation
+2. research-orchestrator creates session directory, writes elicitation to state.json
 3. Parallel dimension-analysts read elicitation, load skill methodologies, conduct web research
-4. Each analyst writes findings to blackboard + file (dual-write), alerts orchestrator on completion
+4. Each analyst writes findings to validated JSON files, signals orchestrator on completion
 5. Post-findings codex review gate runs per dimension; failures quarantined
 6. Orchestrator merges all findings into state.json (with delta detection in update mode)
 7. Post-merge codex review gate checks cross-dimension consistency
-8. `/sigint:report` spawns report-synthesizer, which reads state.json + blackboard findings
+8. `/sigint:report` spawns report-synthesizer, which reads state.json + dimension findings files
 9. Post-report codex review gate verifies claim traceability
 10. `/sigint:issues` spawns issue-architect to atomize findings into GitHub issues
 11. Post-issues codex review gate verifies issue-finding linkage

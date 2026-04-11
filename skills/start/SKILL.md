@@ -17,15 +17,6 @@ allowed-tools:
   - TeamCreate
   - TeamDelete
   - Write
-  - mcp__atlatl__blackboard_ack_alert
-  - mcp__atlatl__blackboard_alert
-  - mcp__atlatl__blackboard_create
-  - mcp__atlatl__blackboard_pending_alerts
-  - mcp__atlatl__blackboard_read
-  - mcp__atlatl__blackboard_write
-  - mcp__atlatl__capture_memory
-  - mcp__atlatl__enrich_memory
-  - mcp__atlatl__recall_memories
 ---
 
 # Sigint Start Skill (Launcher)
@@ -120,7 +111,7 @@ Agent(
   {If resuming: PRIOR_ELICITATION: {prior elicitation JSON}}
 
   Execute the full research orchestration:
-  1. Initialize team and blackboard (Phase 0)
+  1. Initialize team (Phase 0)
   2. Run elicitation (Phase 1) {quick mode note if applicable}
   3. Spawn dimension-analysts (Phase 2)
   4. Verify methodology plans (Phase 2.5)

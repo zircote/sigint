@@ -55,7 +55,7 @@ Operational skills have a simpler structure (typically just `SKILL.md`) since th
 ## Orchestration hints
 
 Every methodology SKILL.md includes an `## Orchestration Hints` section that tells dimension-analysts:
-- **Blackboard key** for writing findings
+- **Findings file key** for writing findings
 - **Cross-reference dimensions** to validate against
 - **Alert triggers** for significant findings
 - **Confidence rules** for source requirements

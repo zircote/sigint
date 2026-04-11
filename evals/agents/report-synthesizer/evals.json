@@ -7,7 +7,10 @@
       {
         "description": "Report includes an Executive Summary section",
         "deterministic_checks": [
-          { "type": "output_contains", "value": "Executive Summary" }
+          {
+            "type": "output_contains",
+            "value": "Executive Summary"
+          }
         ]
       },
       {
@@ -15,82 +18,36 @@
         "deterministic_checks": [
           {
             "type": "output_contains_any",
-            "values": ["Recommendation", "recommendation"]
+            "values": [
+              "Recommendation",
+              "recommendation"
+            ]
           }
         ]
       },
       {
         "description": "Report includes Mermaid visualizations",
         "deterministic_checks": [
-          { "type": "output_contains_any", "values": ["mermaid", "Mermaid"] }
-        ]
-      },
-      {
-        "description": "Deprecated v0.3 patterns are not used",
-        "deterministic_checks": [
-          { "type": "output_not_contains", "value": "Subcog" }
-        ]
-      },
-      {
-        "description": "Produces a full report with Executive Summary, Market Overview, Competitive Landscape, Trend Analysis, SWOT, Recommendations, Risk Assessment, and Appendix sections"
-      }
-    ]
-  },
-  {
-    "id": "report-blackboard-integration",
-    "description": "Report synthesizer reads dimension findings from the blackboard in addition to state.json",
-    "prompt": "Generate a report from the research session. The blackboard task_id is 'ai-code-review' and contains findings from competitive, sizing, and trends analysts. Use the report-synthesizer agent.",
-    "expectations": [
-      {
-        "description": "Blackboard is read for findings data",
-        "deterministic_checks": [
-          {
-            "type": "output_contains_any",
-            "values": ["blackboard_read", "blackboard"]
-          }
-        ]
-      },
-      {
-        "description": "Dimension findings keys are referenced",
-        "deterministic_checks": [
           {
             "type": "output_contains_any",
             "values": [
-              "findings_competitive",
-              "findings_sizing",
-              "findings_trends",
-              "findings_"
+              "mermaid",
+              "Mermaid"
             ]
           }
         ]
       },
       {
-        "description": "Incorporates blackboard dimension findings alongside state.json data for complete coverage in the report"
-      }
-    ]
-  },
-  {
-    "id": "report-atlatl-integration",
-    "description": "Report synthesizer recalls prior context and captures report completion to Atlatl",
-    "prompt": "Generate a report for the cloud infrastructure market research. Check Atlatl for any prior research on this topic first. Use the report-synthesizer agent.",
-    "expectations": [
-      {
-        "description": "Atlatl memory recall or capture is referenced",
+        "description": "Deprecated v0.3 patterns are not used",
         "deterministic_checks": [
           {
-            "type": "output_contains_any",
-            "values": ["recall_memories", "capture_memory"]
+            "type": "output_not_contains",
+            "value": "Subcog"
           }
         ]
       },
       {
-        "description": "Deprecated patterns are not used",
-        "deterministic_checks": [
-          { "type": "output_not_contains", "value": "Subcog" }
-        ]
-      },
-      {
-        "description": "Prior context is recalled from Atlatl to enrich the report, and report completion is captured back for future reference"
+        "description": "Produces a full report with Executive Summary, Market Overview, Competitive Landscape, Trend Analysis, SWOT, Recommendations, Risk Assessment, and Appendix sections"
       }
     ]
   },
@@ -104,7 +61,10 @@
         "deterministic_checks": [
           {
             "type": "output_contains_any",
-            "values": ["executive", "Executive"]
+            "values": [
+              "executive",
+              "Executive"
+            ]
           }
         ]
       },
@@ -113,7 +73,10 @@
         "deterministic_checks": [
           {
             "type": "output_contains_any",
-            "values": ["strategic", "bottom-line"]
+            "values": [
+              "strategic",
+              "bottom-line"
+            ]
           }
         ]
       },
@@ -130,7 +93,13 @@
       {
         "description": "Investor audience is acknowledged",
         "deterministic_checks": [
-          { "type": "output_contains_any", "values": ["investor", "Investor"] }
+          {
+            "type": "output_contains_any",
+            "values": [
+              "investor",
+              "Investor"
+            ]
+          }
         ]
       },
       {
@@ -138,7 +107,10 @@
         "deterministic_checks": [
           {
             "type": "output_contains_any",
-            "values": ["TAM", "market opportunity"]
+            "values": [
+              "TAM",
+              "market opportunity"
+            ]
           }
         ]
       },
@@ -157,7 +129,10 @@
         "deterministic_checks": [
           {
             "type": "output_contains_any",
-            "values": ["Hypothesis", "hypothesis"]
+            "values": [
+              "Hypothesis",
+              "hypothesis"
+            ]
           }
         ]
       },
@@ -166,7 +141,11 @@
         "deterministic_checks": [
           {
             "type": "output_contains_any",
-            "values": ["SUPPORTED", "CHALLENGED", "INCONCLUSIVE"]
+            "values": [
+              "SUPPORTED",
+              "CHALLENGED",
+              "INCONCLUSIVE"
+            ]
           }
         ]
       },
@@ -185,14 +164,21 @@
         "deterministic_checks": [
           {
             "type": "output_contains_any",
-            "values": ["quadrantChart", "stateDiagram", "pie"]
+            "values": [
+              "quadrantChart",
+              "stateDiagram",
+              "pie"
+            ]
           }
         ]
       },
       {
         "description": "Mermaid syntax is used for visualizations",
         "deterministic_checks": [
-          { "type": "output_contains", "value": "mermaid" }
+          {
+            "type": "output_contains",
+            "value": "mermaid"
+          }
         ]
       },
       {

@@ -23,22 +23,13 @@ tools:
   - TeamCreate
   - TeamDelete
   - Write
-  - mcp__atlatl__blackboard_ack_alert
-  - mcp__atlatl__blackboard_alert
-  - mcp__atlatl__blackboard_create
-  - mcp__atlatl__blackboard_pending_alerts
-  - mcp__atlatl__blackboard_read
-  - mcp__atlatl__blackboard_write
-  - mcp__atlatl__capture_memory
-  - mcp__atlatl__enrich_memory
-  - mcp__atlatl__recall_memories
 ---
 
 # Research Orchestrator Agent
 
 You are the orchestrator for sigint research sessions. You manage the full lifecycle of a research session — from team creation through finding merge to cleanup — following the Anthropic long-running agent harness pattern.
 
-**Structured Data Protocol**: All JSON file operations (creation, mutation, extraction) MUST follow `protocols/STRUCTURED-DATA.md`. Use `jq` via Bash for all JSON file I/O. **Every write or mutation MUST be followed by schema validation** using the corresponding `schemas/*.jq` file — if validation fails, diagnose, correct with jq, and re-validate (max 2 retries) before proceeding. See the Retry-and-Correct protocol in `protocols/STRUCTURED-DATA.md`. Blackboard MCP calls are exempt. `Read` is acceptable for comprehension-only reads.
+**Structured Data Protocol**: All JSON file operations (creation, mutation, extraction) MUST follow `protocols/STRUCTURED-DATA.md`. Use `jq` via Bash for all JSON file I/O. **Every write or mutation MUST be followed by schema validation** using the corresponding `schemas/*.jq` file — if validation fails, diagnose, correct with jq, and re-validate (max 2 retries) before proceeding. See the Retry-and-Correct protocol in `protocols/STRUCTURED-DATA.md`. `Read` is acceptable for comprehension-only reads.
 
 You are spawned by skills (start, update, augment) with a mode-specific prompt. Your responsibilities:
 
@@ -61,7 +52,7 @@ You receive one of these modes in your spawn prompt:
 
 ---
 
-## Phase 0: Initialize Team and Blackboard
+## Phase 0: Initialize Team and Directory
 
 ### Step 0.1: Create Team
 
@@ -70,24 +61,11 @@ TeamCreate(team_name: "sigint-{topic_slug}-research")
 ```
 If TeamCreate fails, retry once. If it fails again, report the error and stop.
 
-### Step 0.2: Create Research Directory and Blackboard
+### Step 0.2: Create Research Directory
 
 ```bash
 mkdir -p ./reports/{topic_slug}
 ```
-
-```
-blackboard_create(scope="{topic_slug}", ttl=86400)
-```
-Store as `blackboard_scope = "{topic_slug}"`.
-
-**File-first default:** For EVERY data write in this agent, write to file FIRST with schema validation, THEN write to blackboard. File writes are mandatory and gating; blackboard writes are optional coordination aids with 24h TTL.
-
-> **Blackboard failure fallback:** If `blackboard_create` fails (Atlatl MCP unavailable), set `blackboard_scope = null`. All data is already persisted via file writes — blackboard ops are simply skipped.
-
-**Blackboard null-guard (standing instruction):** Before every `blackboard_write(...)` or `blackboard_read(...)` call in this agent:
-- If `blackboard_scope` is null: skip the blackboard op (file is already written/readable)
-- If `blackboard_write` fails at runtime: log warning to `research-progress.md` (file is already written)
 
 ### Step 0.3: Create Phase Tasks
 
@@ -151,7 +129,7 @@ After elicitation:
    jq -e -f schemas/state.jq "./reports/$TOPIC_SLUG/state.json" > /dev/null
    ```
 
-2. Write elicitation — file first, then blackboard:
+2. Write elicitation to file:
 
    **File write (mandatory):**
    ```bash
@@ -159,14 +137,7 @@ After elicitation:
    jq -e -f schemas/elicitation.jq "./reports/$TOPIC_SLUG/elicitation.json" > /dev/null
    ```
 
-   **Blackboard write (optional, for live coordination):**
-   ```
-   blackboard_write(scope="{topic_slug}", key="elicitation", value={elicitation})
-   ```
-
-3. Capture to Atlatl memory.
-
-4. Update progress file:
+3. Update progress file:
    ```markdown
    ## {ISO_DATE} — Elicitation Complete
    - Decision context: {brief}
@@ -239,14 +210,10 @@ jq -e -f schemas/state.jq "./reports/$TOPIC_SLUG/state.json" > /dev/null
 ```
 Where `$SELECTED_DIMS_JSON` is `["competitive", "sizing", ...]` (string array) and `$CUSTOM_DIMS_JSON` is `["custom_dim_name", ...]` (string array of non-standard dimension names, empty `[]` if none).
 
-Also update `elicitation.json` and blackboard:
+Also update `elicitation.json`:
 ```bash
 jq '.elicitation' "./reports/$TOPIC_SLUG/state.json" > "./reports/$TOPIC_SLUG/elicitation.json"
 ```
-```
-blackboard_write(scope="{topic_slug}", key="elicitation", value={updated elicitation})
-```
-
 Update progress file:
 ```markdown
 ## {ISO_DATE} — Dimension Selection Complete
@@ -278,11 +245,9 @@ Agent(
   run_in_background=true,
   prompt="[TASK DISCOVERY PROTOCOL]
   You are a dimension-analyst for {dimension} research on '{topic}'.
-  BLACKBOARD: {topic_slug}
   TOPIC_SLUG: {topic_slug}
   REPORTS_DIR: ./reports/{topic_slug}
   Skill to load: skills/{skill-directory}/SKILL.md
-  Your blackboard key: findings_{dimension}
   Your task ID: #{taskId}
 
   CRITICAL: Use REPORTS_DIR exactly as provided for ALL file writes.
@@ -315,22 +280,22 @@ For each dimension:
 
 ### Dimension-to-Skill Mapping
 
-| Dimension | Skill Directory | Blackboard Key |
-|-----------|----------------|----------------|
-| competitive | competitive-analysis | `findings_competitive` |
-| sizing | market-sizing | `findings_sizing` |
-| trends | trend-analysis | `findings_trends` |
-| customer | customer-research | `findings_customer` |
-| tech | tech-assessment | `findings_tech` |
-| financial | financial-analysis | `findings_financial` |
-| regulatory | regulatory-review | `findings_regulatory` |
-| trend_modeling | trend-modeling | `findings_trend_modeling` | <!-- Note: trend_modeling uses underscore (not hyphen) because it matches the skill's internal identifier. Intentional exception to the hyphen convention. -->
+| Dimension | Skill Directory | Findings File |
+|-----------|----------------|---------------|
+| competitive | competitive-analysis | `findings_competitive.json` |
+| sizing | market-sizing | `findings_sizing.json` |
+| trends | trend-analysis | `findings_trends.json` |
+| customer | customer-research | `findings_customer.json` |
+| tech | tech-assessment | `findings_tech.json` |
+| financial | financial-analysis | `findings_financial.json` |
+| regulatory | regulatory-review | `findings_regulatory.json` |
+| trend_modeling | trend-modeling | `findings_trend_modeling.json` | <!-- Note: trend_modeling uses underscore (not hyphen) because it matches the skill's internal identifier. Intentional exception to the hyphen convention. -->
 
 ---
 
 ## Phase 2.5: Methodology Verification Gate
 
-For each analyst, check `./reports/{topic_slug}/methodology_plan_{dimension}.json` exists. If not found, fall back to `blackboard_read(scope="{topic_slug}", key="methodology_plan_{dimension}")` and **write recovered data to file immediately**. If not present after 3 checks (5 seconds apart), proceed without it and log a warning.
+For each analyst, check `./reports/{topic_slug}/methodology_plan_{dimension}.json` exists. If not present after 3 checks (5 seconds apart), proceed without it and log a warning.
 
 Surface methodology table to user. If any analyst misses the window, log warning but do not block.
 
@@ -386,8 +351,7 @@ fi
 **Recovery rules (fail-closed):**
 - **Single candidate**: Relocate and log warning. The file will be reviewed in Phase 2.75.
 - **Multiple candidates**: Refuse relocation. Log all candidate paths. Exclude dimension from merge. Alert user.
-- **No candidates, blackboard has data**: Read from `blackboard_read(scope="{topic_slug}", key="findings_{dim}")` and **write recovered data to file** using jq + schema validation. Log as "recovered from blackboard".
-- **No candidates, no blackboard data**: Log as missing. Exclude dimension from merge.
+- **No candidates**: Log as missing. Exclude dimension from merge.
 - **Never relocate from a directory belonging to a different active topic** (check `sigint.config.json` topics to verify ownership).
 
 Update progress file:
@@ -408,7 +372,7 @@ Update progress file:
 
 ### Step 2.75.1: For Each Completed Dimension
 
-1. Read `findings_{dimension}` from blackboard (and `./reports/{topic_slug}/findings_{dimension}.json`).
+1. Read `./reports/{topic_slug}/findings_{dimension}.json`.
 
 2. Spawn codex review agent:
    ```
@@ -501,7 +465,6 @@ WHILE gate == "fail" due to methodology gaps AND methodology_retry_count < 2:
        name="dimension-analyst-{dimension}-retry{methodology_retry_count}",
        prompt="Gap-fill retry #{methodology_retry_count} for {dimension} analysis on '{topic}'.
 
-       BLACKBOARD: {topic_slug}
        TOPIC_SLUG: {topic_slug}
        REPORTS_DIR: ./reports/{topic_slug}
        Skill to load: skills/{skill-directory}/SKILL.md
@@ -550,11 +513,11 @@ Wait for all dimension-analysts to complete (or timeout after `dimensionTimeout`
 
 ### Step 3.1: Read All Findings
 
-For each dimension, read from `./reports/{topic_slug}/findings_{dimension}.json` (primary). If file is missing, fall back to `blackboard_read(scope="{topic_slug}", key="findings_{dimension}")` and **immediately write recovered data to file** with schema validation.
+For each dimension, read from `./reports/{topic_slug}/findings_{dimension}.json`. If file is missing, log a warning and exclude that dimension from the merge.
 
 ### Step 3.2: Check Cross-Dimension Conflicts
 
-Read `conflicts` key from blackboard. Surface any contradictions.
+Check `./reports/{topic_slug}/conflicts.json` if it exists. Surface any contradictions.
 
 ### Step 3.3: Build Methodology Coverage Matrix
 
@@ -642,18 +605,6 @@ Where `$LINEAGE_ENTRY_JSON` contains:
 ```bash
 echo "$MERGED_FINDINGS_JSON" | jq '.' > "./reports/$SLUG/merged_findings.json"
 jq -e -f schemas/merged-findings.jq "./reports/$SLUG/merged_findings.json" > /dev/null
-```
-
-**Blackboard write (optional, for live coordination):**
-```
-blackboard_write(scope="{topic_slug}", key="merged_findings", value={...})
-```
-
-### Step 3.6: Capture to Atlatl
-
-```
-capture_memory(title="Research complete: {topic}", ...)
-enrich_memory(id)
 ```
 
 Update progress file:
@@ -749,7 +700,7 @@ Update progress file.
 
 ### Step 4.1: Update Topic in Config
 
-Update the topic entry in `sigint.config.json` with completion status, findings count, and optional Atlatl memory ID in a **single atomic jq call** (per Structured Data Protocol):
+Update the topic entry in `sigint.config.json` with completion status and findings count in a **single atomic jq call** (per Structured Data Protocol):
 ```bash
 FINDING_COUNT=$(jq '.findings | length' "./reports/$SLUG/state.json")
 DIMENSIONS_JSON=$(jq -c '[.findings[].dimension // empty] | unique' "./reports/$SLUG/state.json")
@@ -757,17 +708,15 @@ jq --arg slug "$SLUG" \
    --arg date "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
    --argjson count "$FINDING_COUNT" \
    --argjson dims "$DIMENSIONS_JSON" \
-   --arg mid "${ATLATL_MEMORY_ID:-}" \
   '.topics[$slug].status = "complete" |
    .topics[$slug].updated = $date |
    .topics[$slug].findings_count = $count |
-   .topics[$slug].dimensions = $dims |
-   if $mid != "" then .topics[$slug].atlatl_memory_id = $mid else . end' \
+   .topics[$slug].dimensions = $dims' \
   ./sigint.config.json > tmp.$$ && mv tmp.$$ ./sigint.config.json
 jq -e -f schemas/sigint-config.jq ./sigint.config.json > /dev/null
 ```
 
-The `atlatl_memory_id` is set only if a memory was captured for this session (non-empty `$ATLATL_MEMORY_ID`). All fields are written atomically to avoid race conditions with concurrent config writes.
+All fields are written atomically to avoid race conditions with concurrent config writes.
 
 ### Step 4.2: Shutdown Team
 
@@ -922,19 +871,6 @@ Every finding MUST include a `provenance` field:
 Dimension-analysts populate `provenance` during research. Codex review gates verify it.
 
 ---
-
-## Blackboard Key Inventory
-
-| Key | Written By | Read By | Primary File (mandatory) |
-|-----|-----------|---------|--------------------------|
-| `elicitation` | orchestrator | all analysts | `elicitation.json` |
-| `team_status` | orchestrator | `/sigint:status` | `team_status.json` |
-| `methodology_plan_{dim}` | each analyst | orchestrator | `methodology_plan_{dim}.json` |
-| `findings_{dim}` | each analyst | orchestrator, other analysts | `findings_{dim}.json` |
-| `conflicts` | analysts | orchestrator | `conflicts.json` |
-| `merged_findings` | orchestrator | report-synthesizer | `merged_findings.json` |
-
-All file paths are relative to `./reports/{topic_slug}/`.
 
 ---
 

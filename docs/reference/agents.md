@@ -23,8 +23,6 @@ Orchestrator agent for sigint research sessions. Owns all phase management: team
 
 **Tools:** Agent, AskUserQuestion, Bash, Glob, Grep, Read, SendMessage, TaskCreate, TaskGet, TaskList, TaskUpdate, TeamCreate, TeamDelete, Write
 
-**Atlatl tools:** blackboard_ack_alert, blackboard_alert, blackboard_create, blackboard_pending_alerts, blackboard_read, blackboard_write, capture_memory, enrich_memory, recall_memories
-
 **Modes**: `full` (start), `update` (update), `augment` (augment)
 
 **Key capabilities**:
@@ -33,7 +31,7 @@ Orchestrator agent for sigint research sessions. Owns all phase management: team
 - Delta detection protocol for update mode (NEW/UPDATED/CONFIRMED/POTENTIALLY_REMOVED/TREND_REVERSAL)
 - Progress file generation (`research-progress.md`) for cross-session continuity
 - Lineage tracking in `state.json` for full provenance chain
-- Blackboard dual-write (blackboard + file) as default behavior
+- File-based persistence as default behavior
 
 ---
 
@@ -50,11 +48,9 @@ Focused research on a single market dimension, parameterized by skill.
 
 **Tools:** Bash, Glob, Grep, Read, SendMessage, Skill, TaskCreate, TaskGet, TaskList, TaskUpdate, WebFetch, WebSearch, Write
 
-**Atlatl tools:** blackboard_alert, blackboard_read, blackboard_write, capture_memory, enrich_memory, recall_memories
-
 **Dimension-to-skill mapping:**
 
-| Dimension | Skill | Blackboard Key |
+| Dimension | Skill | Findings File |
 |-----------|-------|---------------|
 | competitive | competitive-analysis | `findings_competitive` |
 | sizing | market-sizing | `findings_sizing` |
@@ -106,8 +102,6 @@ Transforms research findings into executive-ready documents with visualizations.
 
 **Tools:** Bash, Glob, Grep, Read, SendMessage, Skill, TaskGet, TaskList, TaskUpdate, WebFetch, Write
 
-**Atlatl tools:** blackboard_read, capture_memory, enrich_memory, recall_memories
-
 **Report sections:** Executive Summary, Market Overview, Market Sizing (TAM/SAM/SOM), Competitive Landscape, Trend Analysis, SWOT Analysis, Recommendations, Risk Assessment, Appendix
 
 **Audience tailoring:** Executives (strategic), Product Managers (features/roadmap), Investors (opportunity/growth), Developers (technical feasibility)
@@ -126,8 +120,6 @@ Converts research findings into sprint-sized GitHub issues.
 | **Spawned by** | `/sigint:issues` |
 
 **Tools:** Bash, Glob, Grep, Read, SendMessage, TaskGet, TaskList, TaskUpdate, ToolSearch, Write
-
-**Atlatl tools:** capture_memory, enrich_memory, recall_memories
 
 **GitHub tools:** issue_read, issue_write
 

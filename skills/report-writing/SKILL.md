@@ -328,7 +328,6 @@ For detailed templates, see:
 
 ## Orchestration Hints
 
-- **Blackboard key**: N/A (report-writing is a synthesis skill, not a research dimension)
 - **Cross-reference dimensions**: N/A — consumes all dimensions' findings
 - **Alert triggers**: N/A
 - **Confidence rules**: Report confidence inherits from source findings; flag any section relying on low-confidence data

@@ -39,5 +39,5 @@ Information-oriented descriptions for lookup.
 
 Understanding-oriented discussion of concepts and design.
 
-- [Architecture](explanation/architecture.md) — Swarm orchestration, blackboard, and memory systems
+- [Architecture](explanation/architecture.md) — Swarm orchestration and coordination systems
 - [Research Methodology](explanation/methodology.md) — Three-valued logic and analytical frameworks

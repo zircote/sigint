@@ -26,7 +26,6 @@ All `.json` file creation, mutation, and extraction must use `jq` via Bash. The 
 | Mutate JSON file | `jq '.key = "val"' file.json > tmp.$$ && mv tmp.$$ file.json` | Always |
 | Extract fields | `jq '.field' file.json` | Always |
 | Comprehension-only read | `Read` tool | Understanding file structure, not transforming |
-| Blackboard operations | MCP tools | Exempt from jq requirement (MCP handles serialization) |
 
 ### Variable interpolation
 
@@ -86,12 +85,6 @@ If schema validation fails, the agent must not continue the pipeline. Instead:
 2. **Correct**: Use jq to fix the data in-place (missing fields, wrong types, missing nested structures)
 3. **Re-validate**: Run the schema check again
 4. **Retry limit**: Maximum 2 correction attempts. If validation still fails after 2 fixes, log the failure, write a `.invalid` sidecar, and report the error. Do not proceed with invalid data.
-
-### Dual-write pattern
-
-Sigint uses dual-write as the default: blackboard MCP + file persistence. Blackboard writes are exempt from jq (MCP handles serialization). File writes must use jq and pass schema validation.
-
-If blackboard is unavailable, the file write is the sole persistence path.
 
 ---
 

@@ -271,7 +271,6 @@ For detailed templates and examples, see:
 
 Dimension-specific confidence criteria below REFINE (not replace) these universal definitions.
 
-- **Blackboard key**: `findings_sizing`
 - **Cross-reference dimensions**: financial (revenue validation), competitive (player count and share)
 - **Alert triggers**:
   - TAM deviation >30% from initial expectations
