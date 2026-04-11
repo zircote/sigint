@@ -37,7 +37,7 @@ Parse `$ARGUMENTS` to extract:
 - Read `./reports/` directory to find report folders containing `state.json`
 - If multiple sessions exist, select the most recently modified `state.json` (by file timestamp)
 - Extract `topic_slug` from state.json's `topic_slug` field
-- **Validate state.json**: Confirm `topic_slug` is a non-empty string and `status` is `"active"`. If state.json is malformed or missing required fields, inform the user: "Research session state.json is corrupted or incomplete. Re-run `/sigint:start <topic>` to reinitialize."
+- **Validate state.json**: Confirm `topic_slug` is a non-empty string and `status` is one of `"active"` or `"complete"`. If state.json is malformed or missing required fields, inform the user: "Research session state.json is corrupted or incomplete. Re-run `/sigint:start <topic>` to reinitialize."
 - If no reports directory exists, inform the user: "No research session found. Run `/sigint:start <topic>` first."
 - **Resolve `reports_dir` from config** (REQUIRED — do not hardcode paths):
   ```bash

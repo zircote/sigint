@@ -5,7 +5,7 @@ argument-hint: "[--dry-run] [--global]"
 allowed-tools:
   - Read
   - Write
-  - Edit
+
   - Glob
   - Bash
   - AskUserQuestion
@@ -253,8 +253,8 @@ WARNING: Schema file schemas/sigint-config.jq not found — skipping validation.
 
 If `.gitignore` exists:
 - Read it. Find a line containing `.claude/sigint.local.md`:
-  - If found, use Edit to replace that line with `sigint.config.json`
-  - If not found, check if `sigint.config.json` is already listed. If not, append:
+  - If found, use `sed` via Bash to replace that line with `sigint.config.json`
+  - If not found, check if `sigint.config.json` is already listed. If not, append via Bash:
     ```
     # Sigint local config (contains user-specific settings)
     sigint.config.json
