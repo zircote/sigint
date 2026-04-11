@@ -25,7 +25,6 @@ This protocol defines how sigint agents handle JSON file operations. All agents 
 
 **Out of scope:**
 - YAML frontmatter in `.md` files (embedded structured data in non-structured files)
-- Blackboard MCP tool calls (`blackboard_write`, `blackboard_read`) — MCP handles serialization internally
 - Markdown, HTML, and plain-text files
 - `plugin.json` (read-only, never mutated by agents)
 
@@ -143,7 +142,7 @@ sigint.config.json                 → schemas/sigint-config.jq
 
 ## File-First Write Pattern
 
-File writes are the authoritative persistence path. Blackboard writes are optional coordination aids with 24h TTL. Always write to file first, validate, then optionally write to blackboard.
+File writes are the authoritative persistence path. Always write to file first, then validate.
 
 ```bash
 # Step 1: File write (MANDATORY — must use jq)
@@ -154,12 +153,7 @@ jq -e -f "schemas/${SCHEMA}.jq" "./reports/{topic_slug}/{key}.json" > /dev/null 
   echo "SCHEMA VIOLATION: {key}.json failed validation"
   exit 1
 }
-
-# Step 3: Blackboard (optional — MCP handles serialization, exempt from jq requirement)
-blackboard_write(scope="{topic_slug}", key="{key}", value={object})
 ```
-
-If blackboard is unavailable, no action needed — the file is already written and validated.
 
 ---
 

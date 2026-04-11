@@ -49,18 +49,6 @@ To connect GitHub in Cowork:
 2. Enable the **GitHub** connector
 3. Authorize access to your target repositories
 
-### Atlatl MCP (Optional)
-
-Sigint uses Atlatl MCP for blackboard coordination and persistent memory. If Atlatl is not available in your Cowork environment:
-
-- **Blackboard coordination** falls back to file-based state in `./reports/{topic-slug}/` (per-key files)
-- **Persistent memory** falls back to `./reports/{topic-slug}/state.json` per research session
-- **All core research workflows** continue to function without Atlatl
-
-To add Atlatl in Cowork (if available):
-1. Go to **Customize > Connectors**
-2. Enable the **Atlatl** connector
-
 ### File System
 
 Cowork provides a sandboxed filesystem. Sigint writes all output to `./reports/` within the active project directory. This works normally in Cowork's sandbox.
@@ -77,10 +65,6 @@ Usage is identical to Claude Code. All commands work the same way:
 ```
 
 ## Troubleshooting
-
-### "Blackboard tools not available"
-
-Atlatl MCP is not connected. Sigint will automatically fall back to file-based coordination. Research workflows are unaffected.
 
 ### "Cannot create GitHub issues"
 

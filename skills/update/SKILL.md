@@ -17,15 +17,6 @@ allowed-tools:
   - TeamCreate
   - TeamDelete
   - Write
-  - mcp__atlatl__blackboard_ack_alert
-  - mcp__atlatl__blackboard_alert
-  - mcp__atlatl__blackboard_create
-  - mcp__atlatl__blackboard_pending_alerts
-  - mcp__atlatl__blackboard_read
-  - mcp__atlatl__blackboard_write
-  - mcp__atlatl__capture_memory
-  - mcp__atlatl__enrich_memory
-  - mcp__atlatl__recall_memories
 ---
 
 # Sigint Update Skill (Swarm Orchestration)
@@ -144,10 +135,9 @@ Agent(
   ELICITATION: {prior elicitation JSON from state.json}
 
   Execute the update orchestration:
-  1. Initialize team and blackboard (Phase 0) — reuse topic_slug
+  1. Initialize team (Phase 0) — reuse topic_slug
   2. Skip elicitation — load from ELICITATION above
-  3. Write elicitation to blackboard for analysts
-  4. Spawn dimension-analysts for DIMENSIONS (Phase 2)
+  3. Spawn dimension-analysts for DIMENSIONS (Phase 2)
   5. Verify methodology plans (Phase 2.5)
   6. Run post-findings codex review gates (Phase 2.75)
   7. Run delta detection BEFORE merge (Delta Protocol) — classify findings as NEW/UPDATED/CONFIRMED/POTENTIALLY_REMOVED/TREND_REVERSAL

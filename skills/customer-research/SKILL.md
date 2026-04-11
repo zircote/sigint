@@ -297,7 +297,6 @@ For detailed frameworks, see:
 
 Dimension-specific confidence criteria below REFINE (not replace) these universal definitions.
 
-- **Blackboard key**: `findings_customer`
 - **Cross-reference dimensions**: competitive (feature gaps map to unmet needs), financial (willingness to pay, price sensitivity)
 - **Alert triggers**:
   - Unmet customer need with no existing solution in market

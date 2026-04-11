@@ -1,8 +1,8 @@
 ---
-description: Resume a previous research session from progress file and Atlatl
+description: Resume a previous research session from progress file
 version: 0.5.0
 argument-hint: "[<topic>] [--list]"
-allowed-tools: AskUserQuestion, Glob, Grep, Read, Write, mcp__atlatl__inject_context, mcp__atlatl__recall_memories
+allowed-tools: AskUserQuestion, Glob, Grep, Read, Write
 ---
 
 Resume a previous sigint research session following the harness initialization protocol.
@@ -22,17 +22,15 @@ The resume command follows the Anthropic long-running agent harness pattern: rea
    
    Fall back to scanning `./reports/*/state.json` for sessions not registered in the config (legacy sessions predating topic registration).
    
-   Recall Atlatl memories: `recall_memories(query="sigint research sessions", tags=["sigint-research"])`
    Display table:
    ```
-   | Topic | Status | Last Updated | Dimensions | Findings | Atlatl Memory |
-   |-------|--------|--------------|------------|----------|---------------|
+   | Topic | Status | Last Updated | Dimensions | Findings |
+   |-------|--------|--------------|------------|----------|
    ```
 
 2. **If topic specified:**
    Load `./reports/[topic]/research-progress.md` **FIRST** (harness init protocol).
    Then load `./reports/[topic]/state.json` for structured data.
-   Recall related Atlatl memories: `recall_memories(query="sigint {topic}", tags=["sigint-research"])`
 
 3. **If no topic specified:**
    Check for single active session.

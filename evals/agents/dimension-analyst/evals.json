@@ -1,259 +1,5 @@
 [
   {
-    "id": "analyst-competitive-happy-path",
-    "description": "Dimension analyst correctly loads the competitive-analysis skill and writes findings to file and blackboard",
-    "prompt": "You are a dimension-analyst for competitive research on 'AI code review tools'. Blackboard task_id: ai-code-review. Skill to load: skills/competitive-analysis/SKILL.md. Your blackboard key: findings_competitive. Analyze the competitive landscape.",
-    "expectations": [
-      {
-        "description": "The competitive analysis skill is loaded",
-        "deterministic_checks": [
-          {
-            "type": "output_contains_any",
-            "values": ["competitive-analysis", "competitive-analysis/SKILL.md"]
-          }
-        ]
-      },
-      {
-        "description": "Findings are written to file (mandatory) and blackboard key",
-        "deterministic_checks": [
-          { "type": "output_contains", "value": "findings_competitive" },
-          { "type": "output_contains_any", "values": ["findings_competitive.json", "jq", "REPORTS_DIR"] }
-        ]
-      },
-      {
-        "description": "Web search is used for current data gathering",
-        "deterministic_checks": [
-          {
-            "type": "output_contains_any",
-            "values": ["WebSearch", "web search", "search"]
-          }
-        ]
-      },
-      {
-        "description": "Deprecated v0.3 patterns are not used",
-        "deterministic_checks": [
-          { "type": "output_not_contains", "value": "TodoWrite" },
-          { "type": "output_not_contains", "value": "Subcog" }
-        ]
-      },
-      {
-        "description": "Follows competitive analysis methodology from the loaded skill including competitor profiles, matrix, and strategic positioning"
-      }
-    ]
-  },
-  {
-    "id": "analyst-sizing-happy-path",
-    "description": "Dimension analyst loads market-sizing skill and produces quantified TAM/SAM/SOM estimates",
-    "prompt": "You are a dimension-analyst for sizing research on 'autonomous vehicle fleet management'. Blackboard task_id: av-fleet-mgmt. Skill to load: skills/market-sizing/SKILL.md. Your blackboard key: findings_sizing. Estimate the market size.",
-    "expectations": [
-      {
-        "description": "The market-sizing skill is loaded",
-        "deterministic_checks": [
-          {
-            "type": "output_contains_any",
-            "values": ["market-sizing", "market-sizing/SKILL.md"]
-          }
-        ]
-      },
-      {
-        "description": "Findings are written to the correct blackboard key",
-        "deterministic_checks": [
-          { "type": "output_contains", "value": "findings_sizing" }
-        ]
-      },
-      {
-        "description": "Market sizing methodology is applied with TAM/SAM/SOM",
-        "deterministic_checks": [
-          { "type": "output_contains_any", "values": ["TAM", "SAM", "SOM"] }
-        ]
-      },
-      {
-        "description": "Produces quantified market size estimates with dollar figures or growth rates"
-      }
-    ]
-  },
-  {
-    "id": "analyst-trends-happy-path",
-    "description": "Dimension analyst loads trend-analysis skill and identifies trends with direction indicators",
-    "prompt": "You are a dimension-analyst for trends research on 'generative AI in healthcare'. Blackboard task_id: gen-ai-healthcare. Skill to load: skills/trend-analysis/SKILL.md. Your blackboard key: findings_trends. Identify market trends.",
-    "expectations": [
-      {
-        "description": "The trend-analysis skill is loaded",
-        "deterministic_checks": [
-          {
-            "type": "output_contains_any",
-            "values": ["trend-analysis", "trend-analysis/SKILL.md"]
-          }
-        ]
-      },
-      {
-        "description": "Findings are written to the correct blackboard key",
-        "deterministic_checks": [
-          { "type": "output_contains", "value": "findings_trends" }
-        ]
-      },
-      {
-        "description": "Trend direction indicators are used",
-        "deterministic_checks": [
-          { "type": "output_contains_any", "values": ["INC", "DEC", "CONST"] }
-        ]
-      },
-      {
-        "description": "Identifies both macro trends (economic, regulatory) and micro trends (industry-specific, adoption patterns) with direction indicators"
-      }
-    ]
-  },
-  {
-    "id": "analyst-customer-happy-path",
-    "description": "Dimension analyst loads customer-research skill and identifies customer segments",
-    "prompt": "You are a dimension-analyst for customer research on 'developer productivity tools'. Blackboard task_id: dev-prod-tools. Skill to load: skills/customer-research/SKILL.md. Your blackboard key: findings_customer. Research the target customers.",
-    "expectations": [
-      {
-        "description": "The customer-research skill is loaded",
-        "deterministic_checks": [
-          {
-            "type": "output_contains_any",
-            "values": ["customer-research", "customer-research/SKILL.md"]
-          }
-        ]
-      },
-      {
-        "description": "Findings are written to the correct blackboard key",
-        "deterministic_checks": [
-          { "type": "output_contains", "value": "findings_customer" }
-        ]
-      },
-      {
-        "description": "Identifies distinct customer segments with needs, pain points, and buying behaviors"
-      }
-    ]
-  },
-  {
-    "id": "analyst-tech-happy-path",
-    "description": "Dimension analyst loads tech-assessment skill and evaluates technology landscape",
-    "prompt": "You are a dimension-analyst for tech research on 'WebAssembly in server-side computing'. Blackboard task_id: wasm-server. Skill to load: skills/tech-assessment/SKILL.md. Your blackboard key: findings_tech. Assess the technology landscape.",
-    "expectations": [
-      {
-        "description": "The tech-assessment skill is loaded",
-        "deterministic_checks": [
-          {
-            "type": "output_contains_any",
-            "values": ["tech-assessment", "tech-assessment/SKILL.md"]
-          }
-        ]
-      },
-      {
-        "description": "Findings are written to the correct blackboard key",
-        "deterministic_checks": [
-          { "type": "output_contains", "value": "findings_tech" }
-        ]
-      },
-      {
-        "description": "Evaluates technology readiness, feasibility, and adoption landscape with specific technical findings"
-      }
-    ]
-  },
-  {
-    "id": "analyst-financial-happy-path",
-    "description": "Dimension analyst loads financial-analysis skill and produces unit economics or revenue analysis",
-    "prompt": "You are a dimension-analyst for financial research on 'subscription-based SaaS for logistics'. Blackboard task_id: saas-logistics. Skill to load: skills/financial-analysis/SKILL.md. Your blackboard key: findings_financial. Analyze the financial dynamics.",
-    "expectations": [
-      {
-        "description": "The financial-analysis skill is loaded",
-        "deterministic_checks": [
-          {
-            "type": "output_contains_any",
-            "values": ["financial-analysis", "financial-analysis/SKILL.md"]
-          }
-        ]
-      },
-      {
-        "description": "Findings are written to the correct blackboard key",
-        "deterministic_checks": [
-          { "type": "output_contains", "value": "findings_financial" }
-        ]
-      },
-      {
-        "description": "Produces unit economics, revenue models, or financial projections relevant to the SaaS logistics domain"
-      }
-    ]
-  },
-  {
-    "id": "analyst-regulatory-happy-path",
-    "description": "Dimension analyst loads regulatory-review skill and identifies compliance requirements",
-    "prompt": "You are a dimension-analyst for regulatory research on 'digital health platforms in the US and EU'. Blackboard task_id: digital-health. Skill to load: skills/regulatory-review/SKILL.md. Your blackboard key: findings_regulatory. Review the regulatory landscape.",
-    "expectations": [
-      {
-        "description": "The regulatory-review skill is loaded",
-        "deterministic_checks": [
-          {
-            "type": "output_contains_any",
-            "values": ["regulatory-review", "regulatory-review/SKILL.md"]
-          }
-        ]
-      },
-      {
-        "description": "Findings are written to the correct blackboard key",
-        "deterministic_checks": [
-          { "type": "output_contains", "value": "findings_regulatory" }
-        ]
-      },
-      {
-        "description": "Identifies compliance requirements, regulatory bodies, and risk factors for the specified jurisdictions"
-      }
-    ]
-  },
-  {
-    "id": "analyst-elicitation-read",
-    "description": "Analyst reads elicitation context from file (primary) or blackboard (fallback) to shape its research approach",
-    "prompt": "You are a dimension-analyst for competitive research on 'cloud-native observability'. Blackboard task_id: cloud-observability. Read the elicitation from the blackboard first to understand the research scope and priorities before conducting research.",
-    "expectations": [
-      {
-        "description": "Elicitation context is loaded from file or blackboard",
-        "deterministic_checks": [
-          {
-            "type": "output_contains_any",
-            "values": ["elicitation.json", "state.json", "elicitation", "blackboard_read"]
-          }
-        ]
-      },
-      {
-        "description": "Research scope or priorities from the elicitation are referenced",
-        "deterministic_checks": [
-          { "type": "output_contains_any", "values": ["scope", "priorities"] }
-        ]
-      },
-      {
-        "description": "Research queries and focus areas are shaped by the elicitation context rather than being generic"
-      }
-    ]
-  },
-  {
-    "id": "analyst-conflict-detection",
-    "description": "Analyst detects contradictions with another dimension's findings and raises a blackboard alert",
-    "prompt": "You are a dimension-analyst for sizing research on 'quantum computing services'. Blackboard task_id: quantum-computing. After writing your findings, check the competitive dimension's findings on the blackboard. The competitive analysis says the market has 50+ active players suggesting maturity, but your sizing data shows the market is under $500M suggesting it is still nascent. Flag the conflict.",
-    "expectations": [
-      {
-        "description": "Cross-dimension conflict is detected and reported",
-        "deterministic_checks": [
-          { "type": "output_contains", "value": "conflict" }
-        ]
-      },
-      {
-        "description": "A blackboard alert is raised for the conflict",
-        "deterministic_checks": [
-          {
-            "type": "output_contains_any",
-            "values": ["blackboard_alert", "alert"]
-          }
-        ]
-      },
-      {
-        "description": "Detects the specific contradiction between competitive maturity signals and early-stage sizing data and reports it to the orchestrator"
-      }
-    ]
-  },
-  {
     "id": "analyst-large-source-delegation",
     "description": "Analyst delegates large documents to the source-chunker agent instead of processing directly",
     "prompt": "You are a dimension-analyst for competitive research on 'enterprise search platforms'. You fetched a 100-page Gartner Magic Quadrant report that is approximately 80,000 tokens. How do you handle this large document?",
@@ -261,7 +7,10 @@
       {
         "description": "The source-chunker agent is referenced for delegation",
         "deterministic_checks": [
-          { "type": "output_contains", "value": "source-chunker" }
+          {
+            "type": "output_contains",
+            "value": "source-chunker"
+          }
         ]
       },
       {
@@ -269,247 +18,17 @@
         "deterministic_checks": [
           {
             "type": "output_contains_any",
-            "values": ["15K", "15,000", "15000", "token"]
+            "values": [
+              "15K",
+              "15,000",
+              "15000",
+              "token"
+            ]
           }
         ]
       },
       {
         "description": "Delegates to the source-chunker agent for parallel chunk processing instead of attempting single-pass analysis"
-      }
-    ]
-  },
-  {
-    "id": "analyst-methodology-gate-competitive",
-    "description": "Analyst writes a methodology plan to the blackboard BEFORE conducting any web research for competitive dimension",
-    "prompt": "You are a dimension-analyst for competitive research on 'cloud storage providers'. Blackboard scope: cloud-storage. Skill to load: skills/competitive-analysis/SKILL.md. Your blackboard key: findings_competitive. Before researching, you must write a methodology plan to the blackboard.",
-    "expectations": [
-      {
-        "description": "Methodology plan is written to file before any WebSearch",
-        "deterministic_checks": [
-          { "type": "output_contains", "value": "methodology_plan_competitive" }
-        ]
-      },
-      {
-        "description": "Plan references Porter's 5 Forces framework",
-        "deterministic_checks": [
-          {
-            "type": "output_contains_any",
-            "values": ["Porter", "5 Forces", "Five Forces"]
-          }
-        ]
-      },
-      {
-        "description": "Plan references Competitor Matrix framework",
-        "deterministic_checks": [
-          { "type": "output_contains", "value": "Competitor Matrix" }
-        ]
-      },
-      {
-        "description": "methodology_plan file is written before any WebSearch invocation in execution order"
-      }
-    ]
-  },
-  {
-    "id": "analyst-methodology-gate-sizing",
-    "description": "Analyst writes a methodology plan referencing TAM/SAM/SOM before conducting sizing research",
-    "prompt": "You are a dimension-analyst for sizing research on 'enterprise data lakehouse platforms'. Blackboard scope: data-lakehouse. Skill to load: skills/market-sizing/SKILL.md. Your blackboard key: findings_sizing. Before researching, you must write a methodology plan to the blackboard.",
-    "expectations": [
-      {
-        "description": "Methodology plan is written to file before any WebSearch",
-        "deterministic_checks": [
-          { "type": "output_contains", "value": "methodology_plan_sizing" }
-        ]
-      },
-      {
-        "description": "Plan references TAM/SAM/SOM hierarchy",
-        "deterministic_checks": [
-          {
-            "type": "output_contains_any",
-            "values": ["TAM", "SAM", "SOM"]
-          }
-        ]
-      },
-      {
-        "description": "methodology_plan file is written before any WebSearch invocation in execution order"
-      }
-    ]
-  },
-  {
-    "id": "analyst-methodology-gate-trends",
-    "description": "Analyst writes a methodology plan referencing Macro Trends, Micro Trends, and Transitional Scenario Graph before conducting trends research",
-    "prompt": "You are a dimension-analyst for trends research on 'digital twin technology in manufacturing'. Blackboard scope: digital-twin-mfg. Skill to load: skills/trend-analysis/SKILL.md. Your blackboard key: findings_trends. Before researching, you must write a methodology plan to the blackboard.",
-    "expectations": [
-      {
-        "description": "Methodology plan is written to file before any WebSearch",
-        "deterministic_checks": [
-          { "type": "output_contains", "value": "methodology_plan_trends" }
-        ]
-      },
-      {
-        "description": "Plan references Macro Trends framework",
-        "deterministic_checks": [
-          { "type": "output_contains", "value": "Macro Trends" }
-        ]
-      },
-      {
-        "description": "Plan references Micro Trends framework",
-        "deterministic_checks": [
-          { "type": "output_contains", "value": "Micro Trends" }
-        ]
-      },
-      {
-        "description": "Plan references Transitional Scenario Graph",
-        "deterministic_checks": [
-          { "type": "output_contains", "value": "Transitional Scenario Graph" }
-        ]
-      },
-      {
-        "description": "methodology_plan file is written before any WebSearch invocation in execution order"
-      }
-    ]
-  },
-  {
-    "id": "analyst-methodology-gate-customer",
-    "description": "Analyst writes a methodology plan referencing Personas, JTBD, and Journey Mapping before conducting customer research",
-    "prompt": "You are a dimension-analyst for customer research on 'B2B fintech payment solutions'. Blackboard scope: b2b-fintech. Skill to load: skills/customer-research/SKILL.md. Your blackboard key: findings_customer. Before researching, you must write a methodology plan to the blackboard.",
-    "expectations": [
-      {
-        "description": "Methodology plan is written to file before any WebSearch",
-        "deterministic_checks": [
-          { "type": "output_contains", "value": "methodology_plan_customer" }
-        ]
-      },
-      {
-        "description": "Plan references Personas framework",
-        "deterministic_checks": [
-          { "type": "output_contains", "value": "Personas" }
-        ]
-      },
-      {
-        "description": "Plan references Jobs To Be Done framework",
-        "deterministic_checks": [
-          {
-            "type": "output_contains_any",
-            "values": ["JTBD", "Jobs To Be Done", "Jobs-to-be-Done"]
-          }
-        ]
-      },
-      {
-        "description": "Plan references Journey Mapping framework",
-        "deterministic_checks": [
-          { "type": "output_contains", "value": "Journey Mapping" }
-        ]
-      },
-      {
-        "description": "methodology_plan file is written before any WebSearch invocation in execution order"
-      }
-    ]
-  },
-  {
-    "id": "analyst-methodology-gate-tech",
-    "description": "Analyst writes a methodology plan referencing TRL, Hype Cycle, and Build vs Buy before conducting tech research",
-    "prompt": "You are a dimension-analyst for tech research on 'federated learning platforms'. Blackboard scope: federated-learning. Skill to load: skills/tech-assessment/SKILL.md. Your blackboard key: findings_tech. Before researching, you must write a methodology plan to the blackboard.",
-    "expectations": [
-      {
-        "description": "Methodology plan is written to file before any WebSearch",
-        "deterministic_checks": [
-          { "type": "output_contains", "value": "methodology_plan_tech" }
-        ]
-      },
-      {
-        "description": "Plan references Technology Readiness Level",
-        "deterministic_checks": [
-          {
-            "type": "output_contains_any",
-            "values": ["TRL", "Technology Readiness Level"]
-          }
-        ]
-      },
-      {
-        "description": "Plan references Hype Cycle framework",
-        "deterministic_checks": [
-          { "type": "output_contains", "value": "Hype Cycle" }
-        ]
-      },
-      {
-        "description": "Plan references Build vs Buy analysis",
-        "deterministic_checks": [
-          {
-            "type": "output_contains_any",
-            "values": ["Build vs Buy", "Build-vs-Buy", "Build versus Buy"]
-          }
-        ]
-      },
-      {
-        "description": "methodology_plan file is written before any WebSearch invocation in execution order"
-      }
-    ]
-  },
-  {
-    "id": "analyst-methodology-gate-financial",
-    "description": "Analyst writes a methodology plan referencing Unit Economics, Revenue Model, and Rule of 40 before conducting financial research",
-    "prompt": "You are a dimension-analyst for financial research on 'vertical SaaS for construction management'. Blackboard scope: construction-saas. Skill to load: skills/financial-analysis/SKILL.md. Your blackboard key: findings_financial. Before researching, you must write a methodology plan to the blackboard.",
-    "expectations": [
-      {
-        "description": "Methodology plan is written to file before any WebSearch",
-        "deterministic_checks": [
-          { "type": "output_contains", "value": "methodology_plan_financial" }
-        ]
-      },
-      {
-        "description": "Plan references Unit Economics framework",
-        "deterministic_checks": [
-          { "type": "output_contains", "value": "Unit Economics" }
-        ]
-      },
-      {
-        "description": "Plan references Revenue Model framework",
-        "deterministic_checks": [
-          { "type": "output_contains", "value": "Revenue Model" }
-        ]
-      },
-      {
-        "description": "Plan references Rule of 40",
-        "deterministic_checks": [
-          { "type": "output_contains", "value": "Rule of 40" }
-        ]
-      },
-      {
-        "description": "methodology_plan file is written before any WebSearch invocation in execution order"
-      }
-    ]
-  },
-  {
-    "id": "analyst-methodology-gate-regulatory",
-    "description": "Analyst writes a methodology plan referencing Framework Identification, Penalty Ranges, and Risk Matrix before conducting regulatory research",
-    "prompt": "You are a dimension-analyst for regulatory research on 'cross-border cryptocurrency exchanges'. Blackboard scope: crypto-exchanges. Skill to load: skills/regulatory-review/SKILL.md. Your blackboard key: findings_regulatory. Before researching, you must write a methodology plan to the blackboard.",
-    "expectations": [
-      {
-        "description": "Methodology plan is written to file before any WebSearch",
-        "deterministic_checks": [
-          { "type": "output_contains", "value": "methodology_plan_regulatory" }
-        ]
-      },
-      {
-        "description": "Plan references Framework Identification",
-        "deterministic_checks": [
-          { "type": "output_contains", "value": "Framework Identification" }
-        ]
-      },
-      {
-        "description": "Plan references Penalty Ranges",
-        "deterministic_checks": [
-          { "type": "output_contains", "value": "Penalty Ranges" }
-        ]
-      },
-      {
-        "description": "Plan references Risk Matrix",
-        "deterministic_checks": [
-          { "type": "output_contains", "value": "Risk Matrix" }
-        ]
-      },
-      {
-        "description": "methodology_plan file is written before any WebSearch invocation in execution order"
       }
     ]
   },
@@ -523,7 +42,10 @@
         "deterministic_checks": [
           {
             "type": "output_contains_any",
-            "values": ["Competitive Rivalry", "competitive rivalry"]
+            "values": [
+              "Competitive Rivalry",
+              "competitive rivalry"
+            ]
           }
         ]
       },
@@ -532,7 +54,11 @@
         "deterministic_checks": [
           {
             "type": "output_contains_any",
-            "values": ["Supplier Power", "supplier power", "Bargaining Power of Suppliers"]
+            "values": [
+              "Supplier Power",
+              "supplier power",
+              "Bargaining Power of Suppliers"
+            ]
           }
         ]
       },
@@ -541,7 +67,11 @@
         "deterministic_checks": [
           {
             "type": "output_contains_any",
-            "values": ["Buyer Power", "buyer power", "Bargaining Power of Buyers"]
+            "values": [
+              "Buyer Power",
+              "buyer power",
+              "Bargaining Power of Buyers"
+            ]
           }
         ]
       },
@@ -550,7 +80,11 @@
         "deterministic_checks": [
           {
             "type": "output_contains_any",
-            "values": ["Threat of Substitution", "threat of substitution", "Threat of Substitutes"]
+            "values": [
+              "Threat of Substitution",
+              "threat of substitution",
+              "Threat of Substitutes"
+            ]
           }
         ]
       },
@@ -559,7 +93,11 @@
         "deterministic_checks": [
           {
             "type": "output_contains_any",
-            "values": ["Threat of New Entry", "threat of new entry", "Threat of New Entrants"]
+            "values": [
+              "Threat of New Entry",
+              "threat of new entry",
+              "Threat of New Entrants"
+            ]
           }
         ]
       },
@@ -568,7 +106,11 @@
         "deterministic_checks": [
           {
             "type": "output_contains_any",
-            "values": ["HIGH", "MODERATE", "LOW"]
+            "values": [
+              "HIGH",
+              "MODERATE",
+              "LOW"
+            ]
           }
         ]
       },
@@ -585,7 +127,10 @@
       {
         "description": "Mermaid quadrantChart syntax is used",
         "deterministic_checks": [
-          { "type": "output_contains", "value": "quadrantChart" }
+          {
+            "type": "output_contains",
+            "value": "quadrantChart"
+          }
         ]
       },
       {
@@ -593,7 +138,10 @@
         "deterministic_checks": [
           {
             "type": "output_contains_any",
-            "values": ["```mermaid", "mermaid"]
+            "values": [
+              "```mermaid",
+              "mermaid"
+            ]
           }
         ]
       },
@@ -612,7 +160,11 @@
         "deterministic_checks": [
           {
             "type": "output_contains_any",
-            "values": ["Macro Trends", "Macro trends", "macro trends"]
+            "values": [
+              "Macro Trends",
+              "Macro trends",
+              "macro trends"
+            ]
           }
         ]
       },
@@ -621,7 +173,11 @@
         "deterministic_checks": [
           {
             "type": "output_contains_any",
-            "values": ["Micro Trends", "Micro trends", "micro trends"]
+            "values": [
+              "Micro Trends",
+              "Micro trends",
+              "micro trends"
+            ]
           }
         ]
       },
@@ -630,14 +186,21 @@
         "deterministic_checks": [
           {
             "type": "output_contains_any",
-            "values": ["Emerging Signals", "emerging signals", "Emerging signals"]
+            "values": [
+              "Emerging Signals",
+              "emerging signals",
+              "Emerging signals"
+            ]
           }
         ]
       },
       {
         "description": "Mermaid stateDiagram-v2 is used for scenario transitions",
         "deterministic_checks": [
-          { "type": "output_contains", "value": "stateDiagram-v2" }
+          {
+            "type": "output_contains",
+            "value": "stateDiagram-v2"
+          }
         ]
       },
       {
@@ -645,7 +208,11 @@
         "deterministic_checks": [
           {
             "type": "output_contains_any",
-            "values": ["Terminal Scenarios", "terminal scenarios", "Terminal scenarios"]
+            "values": [
+              "Terminal Scenarios",
+              "terminal scenarios",
+              "Terminal scenarios"
+            ]
           }
         ]
       },
@@ -654,7 +221,11 @@
         "deterministic_checks": [
           {
             "type": "output_contains_any",
-            "values": ["Monitoring Indicators", "monitoring indicators", "Monitoring indicators"]
+            "values": [
+              "Monitoring Indicators",
+              "monitoring indicators",
+              "Monitoring indicators"
+            ]
           }
         ]
       },
@@ -673,7 +244,12 @@
         "deterministic_checks": [
           {
             "type": "output_contains_any",
-            "values": ["r > 0.3", "r < -0.3", "|r| > 0.3", "0.3"]
+            "values": [
+              "r > 0.3",
+              "r < -0.3",
+              "|r| > 0.3",
+              "0.3"
+            ]
           }
         ]
       },
@@ -690,32 +266,50 @@
       {
         "description": "TAM is present with dollar figure",
         "deterministic_checks": [
-          { "type": "output_contains", "value": "TAM" }
+          {
+            "type": "output_contains",
+            "value": "TAM"
+          }
         ]
       },
       {
         "description": "SAM is present with dollar figure",
         "deterministic_checks": [
-          { "type": "output_contains", "value": "SAM" }
+          {
+            "type": "output_contains",
+            "value": "SAM"
+          }
         ]
       },
       {
         "description": "SOM is present with dollar figure",
         "deterministic_checks": [
-          { "type": "output_contains", "value": "SOM" }
+          {
+            "type": "output_contains",
+            "value": "SOM"
+          }
         ]
       },
       {
         "description": "Dollar figures are present",
         "deterministic_checks": [
-          { "type": "output_contains", "value": "$" }
+          {
+            "type": "output_contains",
+            "value": "$"
+          }
         ]
       },
       {
         "description": "No placeholder values are used",
         "deterministic_checks": [
-          { "type": "output_not_contains", "value": "$X.XB" },
-          { "type": "output_not_contains", "value": "$X.X" }
+          {
+            "type": "output_not_contains",
+            "value": "$X.XB"
+          },
+          {
+            "type": "output_not_contains",
+            "value": "$X.X"
+          }
         ]
       },
       {
@@ -733,7 +327,11 @@
         "deterministic_checks": [
           {
             "type": "output_contains_any",
-            "values": ["Bear", "bear", "Conservative"]
+            "values": [
+              "Bear",
+              "bear",
+              "Conservative"
+            ]
           }
         ]
       },
@@ -742,7 +340,11 @@
         "deterministic_checks": [
           {
             "type": "output_contains_any",
-            "values": ["Base", "base", "Moderate"]
+            "values": [
+              "Base",
+              "base",
+              "Moderate"
+            ]
           }
         ]
       },
@@ -751,7 +353,11 @@
         "deterministic_checks": [
           {
             "type": "output_contains_any",
-            "values": ["Bull", "bull", "Aggressive"]
+            "values": [
+              "Bull",
+              "bull",
+              "Aggressive"
+            ]
           }
         ]
       },
@@ -768,13 +374,19 @@
       {
         "description": "CAC (Customer Acquisition Cost) is present",
         "deterministic_checks": [
-          { "type": "output_contains", "value": "CAC" }
+          {
+            "type": "output_contains",
+            "value": "CAC"
+          }
         ]
       },
       {
         "description": "LTV (Lifetime Value) is present",
         "deterministic_checks": [
-          { "type": "output_contains", "value": "LTV" }
+          {
+            "type": "output_contains",
+            "value": "LTV"
+          }
         ]
       },
       {
@@ -782,7 +394,11 @@
         "deterministic_checks": [
           {
             "type": "output_contains_any",
-            "values": ["LTV:CAC", "LTV/CAC", "LTV to CAC"]
+            "values": [
+              "LTV:CAC",
+              "LTV/CAC",
+              "LTV to CAC"
+            ]
           }
         ]
       },
@@ -791,7 +407,11 @@
         "deterministic_checks": [
           {
             "type": "output_contains_any",
-            "values": ["payback", "Payback", "payback period"]
+            "values": [
+              "payback",
+              "Payback",
+              "payback period"
+            ]
           }
         ]
       },
@@ -808,7 +428,10 @@
       {
         "description": "Rule of 40 is referenced",
         "deterministic_checks": [
-          { "type": "output_contains", "value": "Rule of 40" }
+          {
+            "type": "output_contains",
+            "value": "Rule of 40"
+          }
         ]
       },
       {
@@ -826,7 +449,10 @@
         "deterministic_checks": [
           {
             "type": "output_contains_any",
-            "values": ["TRL", "Technology Readiness Level"]
+            "values": [
+              "TRL",
+              "Technology Readiness Level"
+            ]
           }
         ]
       },
@@ -854,7 +480,14 @@
         "deterministic_checks": [
           {
             "type": "output_contains_any",
-            "values": ["FDA", "MDR", "HIPAA", "CE", "EU AI Act", "framework"]
+            "values": [
+              "FDA",
+              "MDR",
+              "HIPAA",
+              "CE",
+              "EU AI Act",
+              "framework"
+            ]
           }
         ]
       },
@@ -863,7 +496,12 @@
         "deterministic_checks": [
           {
             "type": "output_contains_any",
-            "values": ["|", "table", "Framework", "Jurisdiction"]
+            "values": [
+              "|",
+              "table",
+              "Framework",
+              "Jurisdiction"
+            ]
           }
         ]
       },
@@ -882,55 +520,34 @@
         "deterministic_checks": [
           {
             "type": "output_contains_any",
-            "values": ["SendMessage", "team-lead", "source_chunking_request"]
+            "values": [
+              "SendMessage",
+              "team-lead",
+              "source_chunking_request"
+            ]
           }
         ]
       },
       {
         "description": "Does not attempt direct processing of 80K tokens",
         "deterministic_checks": [
-          { "type": "output_not_contains", "value": "process directly" }
+          {
+            "type": "output_not_contains",
+            "value": "process directly"
+          }
         ]
       },
       {
         "description": "Does not reference spawning sub-agents",
         "deterministic_checks": [
-          { "type": "output_not_contains", "value": "spawn" }
-        ]
-      },
-      {
-        "description": "Analyst routes the large document to team-lead via SendMessage with a source_chunking_request, delegating chunking coordination to the orchestrator rather than handling it itself"
-      }
-    ]
-  },
-  {
-    "id": "analyst-methodology-plan-before-research",
-    "description": "Analyst always writes methodology_plan to file before any WebSearch regardless of dimension",
-    "prompt": "You are a dimension-analyst for competitive research on 'edge AI inference chips'. Blackboard scope: edge-ai-chips. Skill to load: skills/competitive-analysis/SKILL.md. Your blackboard key: findings_competitive. Conduct your research following proper methodology gating.",
-    "expectations": [
-      {
-        "description": "Methodology plan is written to file",
-        "deterministic_checks": [
-          { "type": "output_contains", "value": "methodology_plan" }
-        ]
-      },
-      {
-        "description": "Methodology plan file write occurs before any WebSearch in logical execution order",
-        "deterministic_checks": [
           {
-            "type": "output_contains_any",
-            "values": ["methodology_plan", "jq", "REPORTS_DIR"]
+            "type": "output_not_contains",
+            "value": "spawn"
           }
         ]
       },
       {
-        "description": "Does not skip methodology planning step",
-        "deterministic_checks": [
-          { "type": "output_not_contains", "value": "skip methodology" }
-        ]
-      },
-      {
-        "description": "The methodology plan is written to file as the first research action, before any WebSearch or WebFetch calls"
+        "description": "Analyst routes the large document to team-lead via SendMessage with a source_chunking_request, delegating chunking coordination to the orchestrator rather than handling it itself"
       }
     ]
   }

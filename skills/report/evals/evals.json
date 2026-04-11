@@ -92,6 +92,126 @@
         "The --audience executives argument is parsed and passed to the synthesizer",
         "The synthesizer prompt includes both parameters"
       ]
+    },
+    {
+      "id": 4,
+      "prompt": "--sections competitive,trends generate report",
+      "expected_output": "Skill validates the --sections argument, confirms competitive and trends are valid section names, and passes only those sections to the report-synthesizer.",
+      "files": [
+        {
+          "path": "reports/test-topic/state.json",
+          "content": "{\n  \"topic\": \"Test Topic\",\n  \"topic_slug\": \"test-topic\",\n  \"started\": \"2026-04-01\",\n  \"status\": \"active\",\n  \"findings\": [],\n  \"elicitation\": {}\n}"
+        }
+      ],
+      "deterministic_checks": [
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "competitive",
+          "description": "competitive section is included"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "trends",
+          "description": "trends section is included"
+        }
+      ],
+      "expectations": [
+        "The --sections competitive,trends argument is validated against valid section names",
+        "Only competitive and trends sections are passed to the synthesizer",
+        "The synthesizer prompt specifies sections: competitive,trends (not all)"
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "generate report from corrupted session",
+      "expected_output": "When state.json is malformed (missing topic_slug), the skill detects the error and informs the user about the corrupted state.",
+      "files": [
+        {
+          "path": "reports/broken-session/state.json",
+          "content": "{\n  \"topic\": \"Broken\",\n  \"started\": \"2026-04-01\"\n}"
+        }
+      ],
+      "deterministic_checks": [
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "corrupted|incomplete|malformed|missing.*field|invalid.*state",
+          "description": "Error message mentions corrupted/incomplete state"
+        }
+      ],
+      "expectations": [
+        "The skill detects that state.json is missing the topic_slug field",
+        "An informative error message is displayed",
+        "No swarm orchestration is attempted with invalid state"
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "--format both generate report",
+      "expected_output": "Skill parses --format both and instructs the report-synthesizer to generate both markdown and HTML output files.",
+      "files": [
+        {
+          "path": "reports/test-topic/state.json",
+          "content": "{\n  \"topic\": \"Test Topic\",\n  \"topic_slug\": \"test-topic\",\n  \"started\": \"2026-04-01\",\n  \"status\": \"active\",\n  \"findings\": [],\n  \"elicitation\": {}\n}"
+        }
+      ],
+      "deterministic_checks": [
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "both",
+          "description": "Both format is referenced in the transcript"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "\\.md.*\\.html|\\.html.*\\.md",
+          "description": "Both .md and .html file extensions appear in output"
+        }
+      ],
+      "expectations": [
+        "The --format both argument is parsed correctly",
+        "The synthesizer is instructed to produce both markdown and HTML files",
+        "The completion message lists both .md and .html files"
+      ]
+    },
+    {
+      "id": 7,
+      "prompt": "--sections competitive,bogus-section,trends generate report",
+      "expected_output": "Skill validates section names, warns about 'bogus-section' being unrecognized, lists valid options, and proceeds with only competitive and trends.",
+      "files": [
+        {
+          "path": "reports/test-topic/state.json",
+          "content": "{\n  \"topic\": \"Test Topic\",\n  \"topic_slug\": \"test-topic\",\n  \"started\": \"2026-04-01\",\n  \"status\": \"active\",\n  \"findings\": [],\n  \"elicitation\": {}\n}"
+        }
+      ],
+      "deterministic_checks": [
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "bogus-section",
+          "description": "The invalid section name is mentioned in the warning"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "unrecognized|invalid|unknown",
+          "description": "A warning about the invalid section is present"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "competitive.*trends|trends.*competitive",
+          "description": "Valid sections competitive and trends are still used"
+        }
+      ],
+      "expectations": [
+        "The invalid section bogus-section is flagged with a warning",
+        "Valid section names are listed for the user",
+        "The report proceeds with only the valid sections (competitive, trends)"
+      ]
     }
   ]
 }

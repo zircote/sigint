@@ -40,7 +40,7 @@ This displays:
 The migrate skill performs these steps:
 
 1. **Detects legacy config files** -- scans for `.claude/sigint.local.md` (project and global) and `.sigint.config.json` v1.0
-2. **Parses legacy settings** -- extracts `default_repo`, `report_format`, `audiences`, `auto_atlatl` from YAML frontmatter, and `maxDimensions`, `dimensionTimeout`, `defaultPriorities` from v1.0 JSON
+2. **Parses legacy settings** -- extracts `default_repo`, `report_format`, `audiences` from YAML frontmatter, and `maxDimensions`, `dimensionTimeout`, `defaultPriorities` from v1.0 JSON
 3. **Discovers existing topics** -- scans `./reports/*/state.json` for previously researched topics
 4. **Builds v2.0 config** -- assembles `defaults`, `research`, and `topics` blocks from parsed values (with hardcoded defaults for missing fields)
 5. **Creates CONTEXT.md files** -- generates a context file for each discovered topic at `./reports/{slug}/CONTEXT.md` (skips if already exists)

@@ -30,8 +30,7 @@ Create `sigint.config.json` in your project root:
   "defaults": {
     "default_repo": "myorg/myrepo",
     "report_format": "markdown",
-    "audiences": ["developers", "product-managers"],
-    "auto_atlatl": true
+    "audiences": ["developers", "product-managers"]
   },
   "research": {
     "maxDimensions": 5,
@@ -51,8 +50,7 @@ Create `~/.claude/sigint.config.json` for user-wide defaults:
   "version": "2.0",
   "defaults": {
     "report_format": "markdown",
-    "audiences": ["executives"],
-    "auto_atlatl": true
+    "audiences": ["executives"]
   },
   "research": {
     "maxDimensions": 5,
@@ -73,8 +71,7 @@ Override defaults for specific research topics in the `topics` block:
   "defaults": {
     "default_repo": "myorg/myrepo",
     "report_format": "markdown",
-    "audiences": ["technical"],
-    "auto_atlatl": true
+    "audiences": ["technical"]
   },
   "research": {
     "maxDimensions": 5,
@@ -109,7 +106,6 @@ When you run `/sigint:start`, the topic is automatically registered in `sigint.c
     "updated": "2026-04-03T09:15:00Z",
     "reports_dir": "./reports/ag-grants-research",
     "findings_count": 42,
-    "atlatl_memory_id": "mem_abc123",
     "context_file": "./reports/ag-grants-research/CONTEXT.md"
   }
 }
@@ -123,7 +119,6 @@ When you run `/sigint:start`, the topic is automatically registered in `sigint.c
 | `updated` | all lifecycle commands | Last activity timestamp |
 | `reports_dir` | start | Path to reports directory |
 | `findings_count` | orchestrator/augment | Total active findings |
-| `atlatl_memory_id` | orchestrator | Atlatl memory ID linking session findings |
 | `context_file` | migrate/manual | Optional CONTEXT.md path |
 
 These fields enable `/sigint:status` and `/sigint:resume --list` to discover sessions from the config without globbing report directories.
@@ -159,7 +154,6 @@ The context file is loaded by `/sigint:start` and passed to the research orchest
 | `default_repo` | `string or null` | `null` | GitHub repo for issue creation (`owner/repo`) |
 | `report_format` | `markdown, html, or both` | `"markdown"` | Report output format |
 | `audiences` | `string[]` | `["technical"]` | Default report audiences |
-| `auto_atlatl` | `boolean` | `true` | Auto-persist findings to Atlatl memory |
 
 ### Research block
 
@@ -175,7 +169,7 @@ The context file is loaded by `/sigint:start` and passed to the research orchest
 /sigint:init
 ```
 
-Creates `sigint.config.json` with default template if it does not exist, and loads Atlatl memory context.
+Creates `sigint.config.json` with default template if it does not exist.
 
 ## Migrate from legacy configuration
 

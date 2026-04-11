@@ -69,7 +69,7 @@ The issue-architect atomizes findings into sprint-sized issues with acceptance c
 /sigint:resume --list
 ```
 
-Restores research state from files and Atlatl memory.
+Restores research state from files.
 
 ## Check session status
 

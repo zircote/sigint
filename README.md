@@ -32,12 +32,11 @@ See the [Getting Started Tutorial](docs/tutorials/getting-started.md) for a deta
 
 ## Features
 
-- **Swarm-Orchestrated Research**: Parallel dimension-analysts coordinate via Atlatl blackboard
+- **Swarm-Orchestrated Research**: Parallel dimension-analysts coordinate via task system and file-based state
 - **Iterative Research Workflow**: Start, refine, and finalize market research through commands
 - **Multi-Audience Reports**: Generate reports for executives, PMs, investors, and developers
 - **Trend-Based Modeling**: Three-valued logic analysis (INC/DEC/CONST) for uncertain data
 - **GitHub Integration**: Automatically create sprint-sized issues from findings
-- **Atlatl Memory**: Persist research state across sessions via Atlatl MCP
 - **RLM Large Document Processing**: Source-chunker handles documents exceeding context limits
 - **Multi-Format Output**: Markdown, HTML, Mermaid diagrams
 
@@ -79,7 +78,7 @@ For organization-wide deployment and detailed setup, see the [Cowork deployment 
 
 ## Agents
 
-- **research-orchestrator**: Coordinates parallel dimension-analysts via blackboard, merges findings
+- **research-orchestrator**: Coordinates parallel dimension-analysts, merges findings
 - **dimension-analyst**: Focused research on a single dimension (competitive, sizing, trends, etc.)
 - **source-chunker**: RLM processor for large documents — partitions, analyzes chunks, synthesizes
 - **issue-architect**: Converts findings to sprint-sized GitHub issues
@@ -148,8 +147,7 @@ Create `sigint.config.json` at the project root (generated automatically by `/si
   "defaults": {
     "default_repo": "owner/repo",
     "report_format": "markdown",
-    "audiences": ["executives", "product-managers"],
-    "auto_atlatl": true
+    "audiences": ["executives", "product-managers"]
   },
   "research": {
     "maxDimensions": 5,
@@ -168,7 +166,6 @@ Create `sigint.config.json` at the project root (generated automatically by `/si
 - WebSearch/WebFetch tools for research
 
 **Optional:**
-- Atlatl MCP server for blackboard coordination and persistent memory (falls back to file-based state)
 - GitHub MCP server or GitHub CLI (`gh`) for issue creation
 
 ## References

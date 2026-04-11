@@ -21,7 +21,6 @@ By the end of this tutorial, you will have:
 - Claude Code installed and running
 - `jq` installed (used for all JSON file operations)
 - (Optional) GitHub CLI (`gh`) for issue creation
-- (Optional) Atlatl MCP server for cross-session memory
 
 ## Step 1: Install the plugin
 

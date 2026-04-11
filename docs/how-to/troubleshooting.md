@@ -157,55 +157,20 @@ Or specify at runtime:
 /sigint:issues --repo owner/repo
 ```
 
-## Atlatl Memory Issues
-
-### Memory Not Persisting
-
-**Symptom:** Research doesn't recall previous sessions
-
-**Causes:**
-- Atlatl MCP server not running
-- Different namespace or tags
-
-**Solutions:**
-
-1. Check Atlatl status:
-   ```
-   Use system_status MCP tool
-   ```
-
-2. Manually search:
-   ```
-   recall_memories(query="sigint research", tags=["sigint-research"])
-   ```
-
-3. Re-initialize:
-   ```
-   /sigint:init
-   ```
-
-### Atlatl Not Available
-
-**Symptom:** Memory tools not found
-
-**Cause:** Atlatl MCP server not configured
-
-**Solution:** sigint works without Atlatl — memory just won't persist across sessions. Research still saves to `./reports/`.
-
-## Blackboard Issues
+## Team Status Issues
 
 ### Team Status Not Updating
 
 **Symptom:** `/sigint:status` doesn't show analyst progress
 
 **Causes:**
-- Blackboard expired (TTL is 24h)
 - Research orchestrator hasn't started yet
+- Findings files not yet written by analysts
 
 **Solutions:**
-1. Check if research is active — orchestrator creates blackboard on start
-2. If blackboard expired, findings are still in state.json
-3. Re-run research to create fresh blackboard
+1. Check if research is active — orchestrator creates session directory on start
+2. Findings are persisted in state.json and dimension findings files
+3. Re-run research if session state is missing
 
 ### Analyst Not Completing
 

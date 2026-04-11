@@ -18,7 +18,10 @@
         "deterministic_checks": [
           {
             "type": "output_contains_any",
-            "values": ["research-orchestrator", "research orchestrator"]
+            "values": [
+              "research-orchestrator",
+              "research orchestrator"
+            ]
           }
         ]
       },
@@ -113,7 +116,10 @@
         "deterministic_checks": [
           {
             "type": "output_contains_any",
-            "values": ["research-orchestrator", "research orchestrator"]
+            "values": [
+              "research-orchestrator",
+              "research orchestrator"
+            ]
           }
         ]
       },
@@ -179,99 +185,6 @@
     ]
   },
   {
-    "id": "start-no-subcog",
-    "description": "Verify Subcog is never referenced in /sigint:start transcript",
-    "prompt": "/sigint:start Digital health platforms for chronic disease management",
-    "expectations": [
-      {
-        "description": "Subcog never appears in the output",
-        "deterministic_checks": [
-          {
-            "type": "output_not_contains",
-            "value": "Subcog"
-          },
-          {
-            "type": "output_not_contains",
-            "value": "subcog"
-          },
-          {
-            "type": "output_not_contains",
-            "value": "SUBCOG"
-          }
-        ]
-      },
-      {
-        "description": "Output uses Atlatl memory system instead of Subcog",
-        "deterministic_checks": [
-          {
-            "type": "output_contains_any",
-            "values": ["Atlatl", "atlatl", "capture_memory", "recall_memories"]
-          }
-        ]
-      },
-      {
-        "description": "Output does not contain other deprecated patterns",
-        "deterministic_checks": [
-          {
-            "type": "output_not_contains",
-            "value": "TodoWrite"
-          },
-          {
-            "type": "output_not_contains",
-            "value": "subagent_type"
-          },
-          {
-            "type": "output_not_contains",
-            "value": "market-researcher"
-          }
-        ]
-      }
-    ]
-  },
-  {
-    "id": "start-atlatl-capture",
-    "description": "Verify /sigint:start references Atlatl memory capture for persisting research context",
-    "prompt": "/sigint:start Autonomous vehicle regulations in the EU",
-    "expectations": [
-      {
-        "description": "Output references Atlatl memory capture for research persistence",
-        "deterministic_checks": [
-          {
-            "type": "output_contains_any",
-            "values": [
-              "capture_memory",
-              "Atlatl",
-              "atlatl",
-              "memory capture",
-              "persist"
-            ]
-          }
-        ]
-      },
-      {
-        "description": "Output does not contain deprecated patterns",
-        "deterministic_checks": [
-          {
-            "type": "output_not_contains",
-            "value": "TodoWrite"
-          },
-          {
-            "type": "output_not_contains",
-            "value": "Subcog"
-          },
-          {
-            "type": "output_not_contains",
-            "value": "subagent_type"
-          },
-          {
-            "type": "output_not_contains",
-            "value": "market-researcher"
-          }
-        ]
-      }
-    ]
-  },
-  {
     "id": "start-orchestrator-delegation",
     "description": "Verify /sigint:start delegates to research-orchestrator, not market-researcher",
     "prompt": "/sigint:start Quantum computing applications in financial services",
@@ -281,7 +194,10 @@
         "deterministic_checks": [
           {
             "type": "output_contains_any",
-            "values": ["research-orchestrator", "research orchestrator"]
+            "values": [
+              "research-orchestrator",
+              "research orchestrator"
+            ]
           }
         ]
       },
@@ -323,7 +239,11 @@
         "deterministic_checks": [
           {
             "type": "output_contains_any",
-            "values": ["TaskCreate", "task", "research plan"]
+            "values": [
+              "TaskCreate",
+              "task",
+              "research plan"
+            ]
           }
         ]
       },
@@ -332,246 +252,10 @@
         "deterministic_checks": [
           {
             "type": "output_contains_any",
-            "values": ["research-orchestrator", "research orchestrator"]
-          }
-        ]
-      },
-      {
-        "description": "Output does not contain deprecated patterns",
-        "deterministic_checks": [
-          {
-            "type": "output_not_contains",
-            "value": "TodoWrite"
-          },
-          {
-            "type": "output_not_contains",
-            "value": "Subcog"
-          },
-          {
-            "type": "output_not_contains",
-            "value": "subagent_type"
-          },
-          {
-            "type": "output_not_contains",
-            "value": "market-researcher"
-          }
-        ]
-      }
-    ]
-  },
-  {
-    "id": "init-happy-path",
-    "description": "Default /sigint:init loads Atlatl context and displays readiness",
-    "prompt": "/sigint:init",
-    "expectations": [
-      {
-        "description": "Output indicates Atlatl context loading or initialization",
-        "deterministic_checks": [
-          {
-            "type": "output_contains_any",
             "values": [
-              "Atlatl",
-              "atlatl",
-              "context loaded",
-              "initialized",
-              "memory"
+              "research-orchestrator",
+              "research orchestrator"
             ]
-          }
-        ]
-      },
-      {
-        "description": "Output does not contain deprecated patterns",
-        "deterministic_checks": [
-          {
-            "type": "output_not_contains",
-            "value": "TodoWrite"
-          },
-          {
-            "type": "output_not_contains",
-            "value": "Subcog"
-          },
-          {
-            "type": "output_not_contains",
-            "value": "subagent_type"
-          },
-          {
-            "type": "output_not_contains",
-            "value": "market-researcher"
-          }
-        ]
-      }
-    ]
-  },
-  {
-    "id": "init-full-flag",
-    "description": "/sigint:init --full triggers comprehensive memory load",
-    "prompt": "/sigint:init --full",
-    "expectations": [
-      {
-        "description": "Output indicates comprehensive or full memory load",
-        "deterministic_checks": [
-          {
-            "type": "output_contains_any",
-            "values": [
-              "full",
-              "comprehensive",
-              "all memories",
-              "complete context",
-              "recall_memories"
-            ]
-          }
-        ]
-      },
-      {
-        "description": "Output references Atlatl memory system",
-        "deterministic_checks": [
-          {
-            "type": "output_contains_any",
-            "values": ["Atlatl", "atlatl", "recall_memories", "memory"]
-          }
-        ]
-      },
-      {
-        "description": "Output does not contain deprecated patterns",
-        "deterministic_checks": [
-          {
-            "type": "output_not_contains",
-            "value": "TodoWrite"
-          },
-          {
-            "type": "output_not_contains",
-            "value": "Subcog"
-          },
-          {
-            "type": "output_not_contains",
-            "value": "subagent_type"
-          },
-          {
-            "type": "output_not_contains",
-            "value": "market-researcher"
-          }
-        ]
-      }
-    ]
-  },
-  {
-    "id": "init-topic-flag",
-    "description": "/sigint:init --topic scopes recall to a specific topic",
-    "prompt": "/sigint:init --topic \"autonomous vehicles\"",
-    "expectations": [
-      {
-        "description": "Output scopes context loading to the specified topic",
-        "deterministic_checks": [
-          {
-            "type": "output_contains_any",
-            "values": ["autonomous vehicle", "autonomous vehicles", "topic"]
-          }
-        ]
-      },
-      {
-        "description": "Output references recall_memories or Atlatl for topic-scoped retrieval",
-        "deterministic_checks": [
-          {
-            "type": "output_contains_any",
-            "values": ["recall_memories", "Atlatl", "atlatl", "memory"]
-          }
-        ]
-      },
-      {
-        "description": "Output does not contain deprecated patterns",
-        "deterministic_checks": [
-          {
-            "type": "output_not_contains",
-            "value": "TodoWrite"
-          },
-          {
-            "type": "output_not_contains",
-            "value": "Subcog"
-          },
-          {
-            "type": "output_not_contains",
-            "value": "subagent_type"
-          },
-          {
-            "type": "output_not_contains",
-            "value": "market-researcher"
-          }
-        ]
-      }
-    ]
-  },
-  {
-    "id": "init-no-subcog",
-    "description": "Verify /sigint:init uses Atlatl namespaces, not Subcog namespaces",
-    "prompt": "/sigint:init --full",
-    "expectations": [
-      {
-        "description": "Output never references Subcog namespace format",
-        "deterministic_checks": [
-          {
-            "type": "output_not_contains",
-            "value": "Subcog"
-          },
-          {
-            "type": "output_not_contains",
-            "value": "subcog"
-          }
-        ]
-      },
-      {
-        "description": "Output references Atlatl namespace conventions",
-        "deterministic_checks": [
-          {
-            "type": "output_contains_any",
-            "values": [
-              "_semantic",
-              "_procedural",
-              "_episodic",
-              "Atlatl",
-              "atlatl"
-            ]
-          }
-        ]
-      },
-      {
-        "description": "Output does not contain other deprecated patterns",
-        "deterministic_checks": [
-          {
-            "type": "output_not_contains",
-            "value": "TodoWrite"
-          },
-          {
-            "type": "output_not_contains",
-            "value": "subagent_type"
-          },
-          {
-            "type": "output_not_contains",
-            "value": "market-researcher"
-          }
-        ]
-      }
-    ]
-  },
-  {
-    "id": "init-atlatl-namespaces",
-    "description": "Verify /sigint:init references correct Atlatl namespaces",
-    "prompt": "/sigint:init",
-    "expectations": [
-      {
-        "description": "Output references _semantic/knowledge namespace",
-        "deterministic_checks": [
-          {
-            "type": "output_contains_any",
-            "values": ["_semantic/knowledge", "_semantic", "semantic"]
-          }
-        ]
-      },
-      {
-        "description": "Output references _procedural/patterns namespace",
-        "deterministic_checks": [
-          {
-            "type": "output_contains_any",
-            "values": ["_procedural/patterns", "_procedural", "procedural"]
           }
         ]
       },
@@ -631,7 +315,12 @@
         "deterministic_checks": [
           {
             "type": "output_contains_any",
-            "values": ["version", "2.0", "defaults", "topics"]
+            "values": [
+              "version",
+              "2.0",
+              "defaults",
+              "topics"
+            ]
           }
         ]
       },
@@ -668,7 +357,10 @@
         "deterministic_checks": [
           {
             "type": "output_contains_any",
-            "values": ["report-synthesizer", "report synthesizer"]
+            "values": [
+              "report-synthesizer",
+              "report synthesizer"
+            ]
           }
         ]
       },
@@ -705,7 +397,11 @@
         "deterministic_checks": [
           {
             "type": "output_contains_any",
-            "values": ["executive-brief", "executive brief", "executive"]
+            "values": [
+              "executive-brief",
+              "executive brief",
+              "executive"
+            ]
           }
         ]
       },
@@ -714,7 +410,11 @@
         "deterministic_checks": [
           {
             "type": "output_contains_any",
-            "values": ["C-suite", "c-suite", "C-Suite"]
+            "values": [
+              "C-suite",
+              "c-suite",
+              "C-Suite"
+            ]
           }
         ]
       },
@@ -723,7 +423,10 @@
         "deterministic_checks": [
           {
             "type": "output_contains_any",
-            "values": ["report-synthesizer", "report synthesizer"]
+            "values": [
+              "report-synthesizer",
+              "report synthesizer"
+            ]
           }
         ]
       },
@@ -801,7 +504,11 @@
         "deterministic_checks": [
           {
             "type": "output_contains_any",
-            "values": ["Agent", "agent", "report-synthesizer"]
+            "values": [
+              "Agent",
+              "agent",
+              "report-synthesizer"
+            ]
           }
         ]
       },
@@ -834,43 +541,6 @@
     ]
   },
   {
-    "id": "report-blackboard-read",
-    "description": "Verify /sigint:report references blackboard for reading research findings",
-    "prompt": "/sigint:report",
-    "expectations": [
-      {
-        "description": "Output references blackboard_read or blackboard for gathering findings",
-        "deterministic_checks": [
-          {
-            "type": "output_contains_any",
-            "values": ["blackboard_read", "blackboard", "findings"]
-          }
-        ]
-      },
-      {
-        "description": "Output does not contain deprecated patterns",
-        "deterministic_checks": [
-          {
-            "type": "output_not_contains",
-            "value": "TodoWrite"
-          },
-          {
-            "type": "output_not_contains",
-            "value": "Subcog"
-          },
-          {
-            "type": "output_not_contains",
-            "value": "subagent_type"
-          },
-          {
-            "type": "output_not_contains",
-            "value": "market-researcher"
-          }
-        ]
-      }
-    ]
-  },
-  {
     "id": "report-no-market-researcher",
     "description": "Verify /sigint:report never references deprecated market-researcher",
     "prompt": "/sigint:report --format comprehensive",
@@ -889,7 +559,10 @@
         "deterministic_checks": [
           {
             "type": "output_contains_any",
-            "values": ["report-synthesizer", "report synthesizer"]
+            "values": [
+              "report-synthesizer",
+              "report synthesizer"
+            ]
           }
         ]
       },
@@ -922,7 +595,10 @@
         "deterministic_checks": [
           {
             "type": "output_contains_any",
-            "values": ["dimension-analyst", "dimension analyst"]
+            "values": [
+              "dimension-analyst",
+              "dimension analyst"
+            ]
           }
         ]
       },
@@ -931,7 +607,11 @@
         "deterministic_checks": [
           {
             "type": "output_contains_any",
-            "values": ["competitive", "landscape", "competitive-landscape"]
+            "values": [
+              "competitive",
+              "landscape",
+              "competitive-landscape"
+            ]
           }
         ]
       },
@@ -968,7 +648,11 @@
         "deterministic_checks": [
           {
             "type": "output_contains_any",
-            "values": ["regulatory-review", "regulatory review", "regulatory"]
+            "values": [
+              "regulatory-review",
+              "regulatory review",
+              "regulatory"
+            ]
           }
         ]
       },
@@ -977,49 +661,9 @@
         "deterministic_checks": [
           {
             "type": "output_contains_any",
-            "values": ["dimension-analyst", "dimension analyst"]
-          }
-        ]
-      },
-      {
-        "description": "Output does not contain deprecated patterns",
-        "deterministic_checks": [
-          {
-            "type": "output_not_contains",
-            "value": "TodoWrite"
-          },
-          {
-            "type": "output_not_contains",
-            "value": "Subcog"
-          },
-          {
-            "type": "output_not_contains",
-            "value": "subagent_type"
-          },
-          {
-            "type": "output_not_contains",
-            "value": "market-researcher"
-          }
-        ]
-      }
-    ]
-  },
-  {
-    "id": "augment-atlatl-recall",
-    "description": "Verify /sigint:augment uses recall_memories for prior research context",
-    "prompt": "/sigint:augment financial-analysis",
-    "expectations": [
-      {
-        "description": "Output references recall_memories or Atlatl recall for prior context",
-        "deterministic_checks": [
-          {
-            "type": "output_contains_any",
             "values": [
-              "recall_memories",
-              "Atlatl",
-              "atlatl",
-              "prior research",
-              "existing findings"
+              "dimension-analyst",
+              "dimension analyst"
             ]
           }
         ]
@@ -1034,99 +678,6 @@
           {
             "type": "output_not_contains",
             "value": "Subcog"
-          },
-          {
-            "type": "output_not_contains",
-            "value": "subagent_type"
-          },
-          {
-            "type": "output_not_contains",
-            "value": "market-researcher"
-          }
-        ]
-      }
-    ]
-  },
-  {
-    "id": "augment-atlatl-capture",
-    "description": "Verify /sigint:augment uses capture_memory for persisting findings",
-    "prompt": "/sigint:augment market-sizing",
-    "expectations": [
-      {
-        "description": "Output references capture_memory or Atlatl capture for findings persistence",
-        "deterministic_checks": [
-          {
-            "type": "output_contains_any",
-            "values": [
-              "capture_memory",
-              "Atlatl",
-              "atlatl",
-              "capture",
-              "persist"
-            ]
-          }
-        ]
-      },
-      {
-        "description": "Output does not contain deprecated patterns",
-        "deterministic_checks": [
-          {
-            "type": "output_not_contains",
-            "value": "TodoWrite"
-          },
-          {
-            "type": "output_not_contains",
-            "value": "Subcog"
-          },
-          {
-            "type": "output_not_contains",
-            "value": "subagent_type"
-          },
-          {
-            "type": "output_not_contains",
-            "value": "market-researcher"
-          }
-        ]
-      }
-    ]
-  },
-  {
-    "id": "augment-no-subcog",
-    "description": "Verify Subcog never appears in /sigint:augment transcript",
-    "prompt": "/sigint:augment tech-assessment",
-    "expectations": [
-      {
-        "description": "Subcog never appears in any form",
-        "deterministic_checks": [
-          {
-            "type": "output_not_contains",
-            "value": "Subcog"
-          },
-          {
-            "type": "output_not_contains",
-            "value": "subcog"
-          },
-          {
-            "type": "output_not_contains",
-            "value": "SUBCOG"
-          }
-        ]
-      },
-      {
-        "description": "Output uses Atlatl memory system",
-        "deterministic_checks": [
-          {
-            "type": "output_contains_any",
-            "values": ["Atlatl", "atlatl", "capture_memory", "recall_memories"]
-          }
-        ]
-      },
-      {
-        "description": "Output does not contain other deprecated patterns",
-        "deterministic_checks": [
-          {
-            "type": "output_not_contains",
-            "value": "TodoWrite"
           },
           {
             "type": "output_not_contains",
@@ -1159,7 +710,10 @@
         "deterministic_checks": [
           {
             "type": "output_contains_any",
-            "values": ["dimension-analyst", "dimension analyst"]
+            "values": [
+              "dimension-analyst",
+              "dimension analyst"
+            ]
           }
         ]
       },
@@ -1192,7 +746,12 @@
         "deterministic_checks": [
           {
             "type": "output_contains_any",
-            "values": ["source-chunker", "source chunker", "chunking", "chunk"]
+            "values": [
+              "source-chunker",
+              "source chunker",
+              "chunking",
+              "chunk"
+            ]
           }
         ]
       },
@@ -1229,7 +788,10 @@
         "deterministic_checks": [
           {
             "type": "output_contains_any",
-            "values": ["issue-architect", "issue architect"]
+            "values": [
+              "issue-architect",
+              "issue architect"
+            ]
           }
         ]
       },
@@ -1281,7 +843,10 @@
         "deterministic_checks": [
           {
             "type": "output_contains_any",
-            "values": ["issue-architect", "issue architect"]
+            "values": [
+              "issue-architect",
+              "issue architect"
+            ]
           }
         ]
       },
@@ -1318,7 +883,11 @@
         "deterministic_checks": [
           {
             "type": "output_contains_any",
-            "values": ["Agent", "agent", "issue-architect"]
+            "values": [
+              "Agent",
+              "agent",
+              "issue-architect"
+            ]
           }
         ]
       },
@@ -1341,43 +910,6 @@
           {
             "type": "output_not_contains",
             "value": "Subcog"
-          },
-          {
-            "type": "output_not_contains",
-            "value": "market-researcher"
-          }
-        ]
-      }
-    ]
-  },
-  {
-    "id": "issues-atlatl-capture",
-    "description": "Verify /sigint:issues uses Atlatl for memory persistence",
-    "prompt": "/sigint:issues",
-    "expectations": [
-      {
-        "description": "Output references Atlatl memory for persisting issue creation context",
-        "deterministic_checks": [
-          {
-            "type": "output_contains_any",
-            "values": ["Atlatl", "atlatl", "capture_memory", "blackboard"]
-          }
-        ]
-      },
-      {
-        "description": "Output does not contain deprecated patterns",
-        "deterministic_checks": [
-          {
-            "type": "output_not_contains",
-            "value": "TodoWrite"
-          },
-          {
-            "type": "output_not_contains",
-            "value": "Subcog"
-          },
-          {
-            "type": "output_not_contains",
-            "value": "subagent_type"
           },
           {
             "type": "output_not_contains",
@@ -1438,7 +970,13 @@
         "deterministic_checks": [
           {
             "type": "output_contains_any",
-            "values": ["refresh", "update", "re-research", "latest", "current"]
+            "values": [
+              "refresh",
+              "update",
+              "re-research",
+              "latest",
+              "current"
+            ]
           }
         ]
       },
@@ -1475,55 +1013,16 @@
         "deterministic_checks": [
           {
             "type": "output_contains_any",
-            "values": ["competitive", "landscape", "competitive-landscape"]
+            "values": [
+              "competitive",
+              "landscape",
+              "competitive-landscape"
+            ]
           }
         ]
       },
       {
         "description": "Output indicates targeted rather than full refresh"
-      },
-      {
-        "description": "Output does not contain deprecated patterns",
-        "deterministic_checks": [
-          {
-            "type": "output_not_contains",
-            "value": "TodoWrite"
-          },
-          {
-            "type": "output_not_contains",
-            "value": "Subcog"
-          },
-          {
-            "type": "output_not_contains",
-            "value": "subagent_type"
-          },
-          {
-            "type": "output_not_contains",
-            "value": "market-researcher"
-          }
-        ]
-      }
-    ]
-  },
-  {
-    "id": "update-atlatl-capture",
-    "description": "Verify /sigint:update references capture_memory for updated findings",
-    "prompt": "/sigint:update",
-    "expectations": [
-      {
-        "description": "Output references capture_memory or Atlatl for persisting updates",
-        "deterministic_checks": [
-          {
-            "type": "output_contains_any",
-            "values": [
-              "capture_memory",
-              "Atlatl",
-              "atlatl",
-              "update_memory",
-              "capture"
-            ]
-          }
-        ]
       },
       {
         "description": "Output does not contain deprecated patterns",
@@ -1599,7 +1098,14 @@
         "deterministic_checks": [
           {
             "type": "output_contains_any",
-            "values": ["INC", "DEC", "CONST", "trend", "Trend", "recalcul"]
+            "values": [
+              "INC",
+              "DEC",
+              "CONST",
+              "trend",
+              "Trend",
+              "recalcul"
+            ]
           }
         ]
       },
@@ -1636,7 +1142,13 @@
         "deterministic_checks": [
           {
             "type": "output_contains_any",
-            "values": ["resum", "restor", "session", "previous", "continu"]
+            "values": [
+              "resum",
+              "restor",
+              "session",
+              "previous",
+              "continu"
+            ]
           }
         ]
       },
@@ -1673,55 +1185,18 @@
         "deterministic_checks": [
           {
             "type": "output_contains_any",
-            "values": ["session", "Session", "list", "available", "topic"]
+            "values": [
+              "session",
+              "Session",
+              "list",
+              "available",
+              "topic"
+            ]
           }
         ]
       },
       {
         "description": "Output presents sessions in a structured format (table or list)"
-      },
-      {
-        "description": "Output does not contain deprecated patterns",
-        "deterministic_checks": [
-          {
-            "type": "output_not_contains",
-            "value": "TodoWrite"
-          },
-          {
-            "type": "output_not_contains",
-            "value": "Subcog"
-          },
-          {
-            "type": "output_not_contains",
-            "value": "subagent_type"
-          },
-          {
-            "type": "output_not_contains",
-            "value": "market-researcher"
-          }
-        ]
-      }
-    ]
-  },
-  {
-    "id": "resume-atlatl-recall",
-    "description": "Verify /sigint:resume uses recall_memories to restore session context",
-    "prompt": "/sigint:resume",
-    "expectations": [
-      {
-        "description": "Output references recall_memories or Atlatl for session restoration",
-        "deterministic_checks": [
-          {
-            "type": "output_contains_any",
-            "values": [
-              "recall_memories",
-              "Atlatl",
-              "atlatl",
-              "memory",
-              "recall"
-            ]
-          }
-        ]
       },
       {
         "description": "Output does not contain deprecated patterns",
@@ -1774,58 +1249,6 @@
           {
             "type": "output_not_contains",
             "value": "TodoWrite"
-          },
-          {
-            "type": "output_not_contains",
-            "value": "subagent_type"
-          },
-          {
-            "type": "output_not_contains",
-            "value": "market-researcher"
-          }
-        ]
-      }
-    ]
-  },
-  {
-    "id": "resume-topic-specified",
-    "description": "/sigint:resume with topic loads topic-specific context",
-    "prompt": "/sigint:resume autonomous vehicles",
-    "expectations": [
-      {
-        "description": "Output scopes restoration to the specified topic",
-        "deterministic_checks": [
-          {
-            "type": "output_contains_any",
-            "values": ["autonomous vehicle", "autonomous vehicles"]
-          }
-        ]
-      },
-      {
-        "description": "Output references recall_memories or Atlatl for topic-specific recall",
-        "deterministic_checks": [
-          {
-            "type": "output_contains_any",
-            "values": [
-              "recall_memories",
-              "Atlatl",
-              "atlatl",
-              "recall",
-              "memory"
-            ]
-          }
-        ]
-      },
-      {
-        "description": "Output does not contain deprecated patterns",
-        "deterministic_checks": [
-          {
-            "type": "output_not_contains",
-            "value": "TodoWrite"
-          },
-          {
-            "type": "output_not_contains",
-            "value": "Subcog"
           },
           {
             "type": "output_not_contains",
@@ -1906,49 +1329,6 @@
       },
       {
         "description": "Output renders more information than default status view"
-      },
-      {
-        "description": "Output does not contain deprecated patterns",
-        "deterministic_checks": [
-          {
-            "type": "output_not_contains",
-            "value": "TodoWrite"
-          },
-          {
-            "type": "output_not_contains",
-            "value": "Subcog"
-          },
-          {
-            "type": "output_not_contains",
-            "value": "subagent_type"
-          },
-          {
-            "type": "output_not_contains",
-            "value": "market-researcher"
-          }
-        ]
-      }
-    ]
-  },
-  {
-    "id": "status-team-progress",
-    "description": "Verify /sigint:status shows team progress via blackboard",
-    "prompt": "/sigint:status",
-    "expectations": [
-      {
-        "description": "Output references blackboard or team status tracking",
-        "deterministic_checks": [
-          {
-            "type": "output_contains_any",
-            "values": [
-              "blackboard",
-              "team_status",
-              "team progress",
-              "team",
-              "Team"
-            ]
-          }
-        ]
       },
       {
         "description": "Output does not contain deprecated patterns",
@@ -2072,19 +1452,31 @@
       {
         "description": "Output references sigint.config.json as the created file",
         "deterministic_checks": [
-          { "type": "output_contains", "value": "sigint.config.json" }
+          {
+            "type": "output_contains",
+            "value": "sigint.config.json"
+          }
         ]
       },
       {
         "description": "Output does NOT create sigint.local.md",
         "deterministic_checks": [
-          { "type": "output_not_contains", "value": "sigint.local.md" }
+          {
+            "type": "output_not_contains",
+            "value": "sigint.local.md"
+          }
         ]
       },
       {
         "description": "Schema version 2.0 is used",
         "deterministic_checks": [
-          { "type": "output_contains_any", "values": ["2.0", "\"version\""] }
+          {
+            "type": "output_contains_any",
+            "values": [
+              "2.0",
+              "\"version\""
+            ]
+          }
         ]
       },
       {
@@ -2103,13 +1495,27 @@
       {
         "description": "Output mentions sigint:migrate as the recommended next step",
         "deterministic_checks": [
-          { "type": "output_contains_any", "values": ["sigint:migrate", "migrate"] }
+          {
+            "type": "output_contains_any",
+            "values": [
+              "sigint:migrate",
+              "migrate"
+            ]
+          }
         ]
       },
       {
         "description": "Output warns that a legacy configuration was found",
         "deterministic_checks": [
-          { "type": "output_contains_any", "values": ["legacy", "existing", "already exists", "found"] }
+          {
+            "type": "output_contains_any",
+            "values": [
+              "legacy",
+              "existing",
+              "already exists",
+              "found"
+            ]
+          }
         ]
       },
       {
@@ -2125,19 +1531,31 @@
       {
         "description": "Output references the topic slug in the created config",
         "deterministic_checks": [
-          { "type": "output_contains_any", "values": ["ai-code-assistants", "topics"] }
+          {
+            "type": "output_contains_any",
+            "values": [
+              "ai-code-assistants",
+              "topics"
+            ]
+          }
         ]
       },
       {
         "description": "Output references sigint.config.json as target",
         "deterministic_checks": [
-          { "type": "output_contains", "value": "sigint.config.json" }
+          {
+            "type": "output_contains",
+            "value": "sigint.config.json"
+          }
         ]
       },
       {
         "description": "Output does not create sigint.local.md",
         "deterministic_checks": [
-          { "type": "output_not_contains", "value": "sigint.local.md" }
+          {
+            "type": "output_not_contains",
+            "value": "sigint.local.md"
+          }
         ]
       }
     ]
@@ -2150,13 +1568,19 @@
       {
         "description": "Output does NOT reference creating sigint.local.md",
         "deterministic_checks": [
-          { "type": "output_not_contains", "value": "sigint.local.md" }
+          {
+            "type": "output_not_contains",
+            "value": "sigint.local.md"
+          }
         ]
       },
       {
         "description": "Output does NOT reference .claude/ directory as config target",
         "deterministic_checks": [
-          { "type": "output_not_contains", "value": ".claude/sigint" }
+          {
+            "type": "output_not_contains",
+            "value": ".claude/sigint"
+          }
         ]
       }
     ]
@@ -2169,19 +1593,32 @@
       {
         "description": "Output references writing sigint.config.json",
         "deterministic_checks": [
-          { "type": "output_contains", "value": "sigint.config.json" }
+          {
+            "type": "output_contains",
+            "value": "sigint.config.json"
+          }
         ]
       },
       {
         "description": "Output references writing CONTEXT.md",
         "deterministic_checks": [
-          { "type": "output_contains", "value": "CONTEXT.md" }
+          {
+            "type": "output_contains",
+            "value": "CONTEXT.md"
+          }
         ]
       },
       {
         "description": "Output references renaming original to .bak",
         "deterministic_checks": [
-          { "type": "output_contains_any", "values": [".bak", "backup", "renamed"] }
+          {
+            "type": "output_contains_any",
+            "values": [
+              ".bak",
+              "backup",
+              "renamed"
+            ]
+          }
         ]
       },
       {
@@ -2197,19 +1634,38 @@
       {
         "description": "Output shows what would be written without committing",
         "deterministic_checks": [
-          { "type": "output_contains_any", "values": ["dry-run", "dry run", "would", "preview"] }
+          {
+            "type": "output_contains_any",
+            "values": [
+              "dry-run",
+              "dry run",
+              "would",
+              "preview"
+            ]
+          }
         ]
       },
       {
         "description": "Output shows sigint.config.json content that would be created",
         "deterministic_checks": [
-          { "type": "output_contains", "value": "sigint.config.json" }
+          {
+            "type": "output_contains",
+            "value": "sigint.config.json"
+          }
         ]
       },
       {
         "description": "Output explicitly states no files were written",
         "deterministic_checks": [
-          { "type": "output_contains_any", "values": ["no files", "not written", "dry run", "preview only"] }
+          {
+            "type": "output_contains_any",
+            "values": [
+              "no files",
+              "not written",
+              "dry run",
+              "preview only"
+            ]
+          }
         ]
       }
     ]
@@ -2222,13 +1678,30 @@
       {
         "description": "Output detects that v2.0 config already exists",
         "deterministic_checks": [
-          { "type": "output_contains_any", "values": ["already exists", "existing", "found", "v2", "2.0"] }
+          {
+            "type": "output_contains_any",
+            "values": [
+              "already exists",
+              "existing",
+              "found",
+              "v2",
+              "2.0"
+            ]
+          }
         ]
       },
       {
         "description": "Output offers merge mode or asks for confirmation before overwriting",
         "deterministic_checks": [
-          { "type": "output_contains_any", "values": ["merge", "overwrite", "confirm", "already"] }
+          {
+            "type": "output_contains_any",
+            "values": [
+              "merge",
+              "overwrite",
+              "confirm",
+              "already"
+            ]
+          }
         ]
       },
       {
@@ -2244,13 +1717,27 @@
       {
         "description": "Output reports no source config files found",
         "deterministic_checks": [
-          { "type": "output_contains_any", "values": ["not found", "no config", "nothing to migrate", "does not exist"] }
+          {
+            "type": "output_contains_any",
+            "values": [
+              "not found",
+              "no config",
+              "nothing to migrate",
+              "does not exist"
+            ]
+          }
         ]
       },
       {
         "description": "Output suggests running /sigint:init to create a fresh config",
         "deterministic_checks": [
-          { "type": "output_contains_any", "values": ["sigint:init", "init"] }
+          {
+            "type": "output_contains_any",
+            "values": [
+              "sigint:init",
+              "init"
+            ]
+          }
         ]
       }
     ]
@@ -2263,19 +1750,37 @@
       {
         "description": "Output references migrating runtime config fields",
         "deterministic_checks": [
-          { "type": "output_contains_any", "values": ["maxDimensions", "dimensionTimeout", "research", "runtime"] }
+          {
+            "type": "output_contains_any",
+            "values": [
+              "maxDimensions",
+              "dimensionTimeout",
+              "research",
+              "runtime"
+            ]
+          }
         ]
       },
       {
         "description": "Output produces sigint.config.json v2.0",
         "deterministic_checks": [
-          { "type": "output_contains", "value": "sigint.config.json" }
+          {
+            "type": "output_contains",
+            "value": "sigint.config.json"
+          }
         ]
       },
       {
         "description": "Old .sigint.config.json is renamed to .bak",
         "deterministic_checks": [
-          { "type": "output_contains_any", "values": [".bak", "backed up", "renamed"] }
+          {
+            "type": "output_contains_any",
+            "values": [
+              ".bak",
+              "backed up",
+              "renamed"
+            ]
+          }
         ]
       }
     ]

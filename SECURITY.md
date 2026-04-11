@@ -13,7 +13,6 @@ sigint is a Claude Code plugin that performs web searches and fetches external c
 
 - **Web Content**: Research commands fetch data from external sources
 - **Report Storage**: Research findings are stored locally in `./reports/`
-- **Atlatl Memory**: Optional memory persistence via Atlatl MCP server
 - **GitHub Integration**: Issue creation requires `gh` CLI authentication
 
 ## Threat Model
