@@ -1,0 +1,70 @@
+{
+  "version": "1.0",
+  "description": "Known entities for deterministic entity recognition. Entries are normalized (lowercase-hyphenated) keys with name variants for matching against finding titles and summaries.",
+  "entities": {
+    "datadog": {
+      "names": ["Datadog", "DDOG", "Datadog Inc"],
+      "type": "company"
+    },
+    "dynatrace": {
+      "names": ["Dynatrace", "Dynatrace AG"],
+      "type": "company"
+    },
+    "splunk": {
+      "names": ["Splunk", "Splunk Inc"],
+      "type": "company"
+    },
+    "cisco": {
+      "names": ["Cisco", "Cisco Systems"],
+      "type": "company"
+    },
+    "elastic": {
+      "names": ["Elastic", "Elastic NV", "Elasticsearch"],
+      "type": "company"
+    },
+    "grafana-labs": {
+      "names": ["Grafana Labs", "Grafana"],
+      "type": "company"
+    },
+    "new-relic": {
+      "names": ["New Relic", "New Relic Inc"],
+      "type": "company"
+    },
+    "honeycomb": {
+      "names": ["Honeycomb", "Honeycomb.io"],
+      "type": "company"
+    },
+    "appdynamics": {
+      "names": ["AppDynamics"],
+      "type": "product"
+    },
+    "opentelemetry": {
+      "names": ["OpenTelemetry", "OTel"],
+      "type": "standard"
+    },
+    "gartner": {
+      "names": ["Gartner", "Gartner Inc"],
+      "type": "company"
+    },
+    "idc": {
+      "names": ["IDC", "International Data Corporation"],
+      "type": "company"
+    },
+    "solarwinds": {
+      "names": ["SolarWinds"],
+      "type": "company"
+    },
+    "davis-ai": {
+      "names": ["Davis AI", "Davis"],
+      "type": "product"
+    },
+    "francisco-partners": {
+      "names": ["Francisco Partners"],
+      "type": "company"
+    },
+    "tpg": {
+      "names": ["TPG", "TPG Capital"],
+      "type": "company"
+    }
+  }
+}

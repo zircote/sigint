@@ -92,6 +92,23 @@ After writing, report to user what frameworks will be applied:
 ### Step 5: Proceed to Research
 **ONLY AFTER Step 4 succeeds**, proceed to web research. If Step 4 fails, retry once. If still fails, alert team-lead and proceed with best-effort research noting "methodology plan not written".
 
+### Step 5.5: Load Tag Vocabulary
+
+Read the session's controlled tag vocabulary:
+```bash
+jq '.' "$REPORTS_DIR/vocabulary.json"
+```
+
+This vocabulary defines the terms you MUST use when tagging findings:
+
+- **`tags` field**: Select terms ONLY from the vocabulary's `all_terms` list. Do not invent tags outside this list.
+- **`entities` field**: Lowercase-hyphenated proper nouns only (company, product, standard names). Cross-reference `schemas/entity-gazetteer.json` for known entities and their canonical names. If an entity is in the gazetteer, use the gazetteer key as the entity value. For entities not in the gazetteer, use lowercase-hyphenated format. Examples: `"Datadog"` → `"datadog"`, `"New Relic"` → `"new-relic"`, `"OpenTelemetry"` → `"opentelemetry"`.
+- **`market_dynamic` field**: Select at most ONE value from: `consolidation`, `disruption`, `maturation`, `emergence`, `fragmentation`, `commoditization`, `regulation`, `standardization`. Omit if none applies to the finding.
+- **`proposed_tags` field**: If a finding involves a concept not covered by the vocabulary, add up to 3 proposed terms (lowercase-hyphenated). These will be reviewed by the orchestrator at merge. Use sparingly — prefer vocabulary terms.
+- **ALL values** in `tags`, `entities`, and `proposed_tags` MUST be lowercase-hyphenated format.
+
+If `vocabulary.json` does not exist, log a warning and proceed with best-effort tagging using lowercase-hyphenated terms.
+
 ## Research Flow
 
 ### Step 6: Plan Research
@@ -140,7 +157,10 @@ Format findings as structured JSON:
       "evidence": ["source1", "source2"],
       "confidence": "high|medium|low",
       "trend": "INC|DEC|CONST",
-      "tags": ["relevant", "tags"],
+      "tags": ["from-vocabulary-terms"],
+      "entities": ["company-name"],
+      "market_dynamic": "consolidation|disruption|maturation|emergence|fragmentation|commoditization|regulation|standardization",
+      "proposed_tags": ["novel-term-if-needed"],
       "provenance": {
         "claim": "The specific factual claim this finding makes",
         "sources": [

@@ -72,7 +72,7 @@ Process each chunk sequentially (subagents cannot spawn further agents). If any 
 For each chunk:
 1. Read the chunk content
 2. Apply the calling dimension's methodology to extract findings
-3. Extract findings as a JSON array: `[{id, type, title, summary, evidence, confidence, trend, tags}]`
+3. Extract findings as a JSON array: `[{id, type, title, summary, evidence, confidence, trend, tags, entities, market_dynamic, proposed_tags}]`
 4. Note any references to content likely in other chunks
 
 ### Step 6: Collect Results

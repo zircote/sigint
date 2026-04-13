@@ -224,6 +224,79 @@ Update progress file:
 
 ---
 
+## Phase 1.75: Tag Vocabulary Generation
+
+Generate or load the controlled tag vocabulary that all dimension-analysts share. This ensures consistent, connected tagging across dimensions.
+
+### Step 1.75.1: Determine Vocabulary Mode
+
+- **Full mode**: Generate a new vocabulary from elicitation context.
+- **Update/Augment mode**: Load existing `./reports/$SLUG/vocabulary.json`. If it does not exist (pre-vocabulary session), generate one as in full mode.
+
+### Step 1.75.2: Load Base Vocabulary
+
+Read the base vocabulary:
+```bash
+jq '.' schemas/base-vocabulary.json
+```
+This contains universally applicable terms across all research topics (competitive_position, strategy, business_model, risk_factor, growth_pattern categories).
+
+### Step 1.75.3: Generate Topic-Specific Vocabulary (Full Mode / Missing Vocabulary)
+
+Using the elicitation context (topic, decision_context, scope, priorities, known_competitors, selected dimensions), generate 15-25 topic-specific terms across 2-4 categories that supplement the base vocabulary.
+
+**Generation rules:**
+- All terms must be lowercase-hyphenated (e.g., `distributed-tracing`, not `Distributed Tracing`)
+- Prefer broad, reusable terms over narrow specifics
+- Each term should plausibly appear in findings from at least 2 dimensions
+- Derive terms from: `elicitation.priorities`, `elicitation.known_competitors` context, `elicitation.scope` boundaries
+- Typical topic-specific categories: `market_segment`, `technology`, `domain_specific`
+- Do not duplicate terms already in the base vocabulary
+
+### Step 1.75.4: Build and Write Vocabulary File
+
+Merge base categories with topic-specific categories. Build `all_terms` as the flattened, deduplicated union of all category arrays (base + topic-specific).
+
+**File write (mandatory):**
+```bash
+echo "$VOCABULARY_JSON" | jq '.' > "./reports/$SLUG/vocabulary.json"
+jq -e -f schemas/vocabulary.jq "./reports/$SLUG/vocabulary.json" > /dev/null
+```
+
+The vocabulary JSON must have this structure:
+```json
+{
+  "version": "1.0",
+  "inherits": "base",
+  "generated": "{ISO_DATE}",
+  "topic_slug": "{topic_slug}",
+  "categories": {
+    "competitive_position": ["...from base..."],
+    "strategy": ["...from base..."],
+    "business_model": ["...from base..."],
+    "risk_factor": ["...from base..."],
+    "growth_pattern": ["...from base..."],
+    "market_segment": ["...topic-specific..."],
+    "technology": ["...topic-specific..."]
+  },
+  "all_terms": ["...flattened unique union of all categories..."]
+}
+```
+
+**STOP CHECK:** Verify `./reports/$SLUG/vocabulary.json` exists and passes schema validation before proceeding.
+
+Update progress file:
+```markdown
+## {ISO_DATE} — Tag Vocabulary Generated
+- Mode: {generated|loaded}
+- Base terms: {N} (from schemas/base-vocabulary.json)
+- Topic-specific terms: {N}
+- Total vocabulary: {N} unique terms
+- Categories: {list}
+```
+
+---
+
 ## Phase 2: Spawn Dimension-Analysts
 
 ### Step 2.1: Create Tasks
@@ -252,6 +325,9 @@ Agent(
 
   CRITICAL: Use REPORTS_DIR exactly as provided for ALL file writes.
   Do NOT derive or re-slugify the output directory from the topic title.
+
+  Tag vocabulary: $REPORTS_DIR/vocabulary.json — load in Step 5.5, use for tags field.
+  All tag/entity values must be lowercase-hyphenated.
 
   {If dimension is in elicitation.custom_dimensions:
     SKILL_OVERRIDE: null
@@ -523,6 +599,43 @@ Check `./reports/{topic_slug}/conflicts.json` if it exists. Surface any contradi
 
 Compare planned vs applied frameworks per dimension. Write to state.json.
 
+### Step 3.35: Tag Vocabulary Compliance and Normalization
+
+Before merging findings into state, enforce tag vocabulary compliance:
+
+1. **Load vocabulary**: Read `./reports/$SLUG/vocabulary.json` and extract `all_terms`.
+
+2. **Normalize all tag values**: For each finding, normalize `tags`, `entities`, and `proposed_tags` to lowercase-hyphenated format using jq:
+   ```bash
+   jq '(.findings // []) |= map(
+     .tags |= map(ascii_downcase | gsub("[^a-z0-9]+"; "-") | gsub("^-|-$"; "")) |
+     (if has("entities") then .entities |= map(ascii_downcase | gsub("[^a-z0-9]+"; "-") | gsub("^-|-$"; "")) else . end) |
+     (if has("proposed_tags") then .proposed_tags |= map(ascii_downcase | gsub("[^a-z0-9]+"; "-") | gsub("^-|-$"; "")) else . end)
+   )'
+   ```
+
+3. **Validate tags against vocabulary**: For each finding, check that every entry in `tags` exists in `all_terms`. Log non-compliant tags as warnings but do not reject findings — move non-compliant tags to `proposed_tags` (respecting the max 3 limit; excess go to a `_overflow_tags` field for manual review).
+
+4. **Review proposed_tags**: Collect all `proposed_tags` across all findings. If any proposed tag appears in findings from 2+ different dimensions:
+   - Add the term to `vocabulary.json` under the most appropriate category (or `domain_specific` if unclear)
+   - Move promoted terms from `proposed_tags` to `tags` in each finding that used them
+   - Update `all_terms` to include the new term
+   - Re-validate vocabulary: `jq -e -f schemas/vocabulary.jq "./reports/$SLUG/vocabulary.json" > /dev/null`
+
+5. **Validate entities against gazetteer**: Read `schemas/entity-gazetteer.json`. For each finding's `entities` array, verify entries match known gazetteer keys. Entities not in the gazetteer are acceptable (new entities discovered during research) but log them as "unregistered entities" for potential gazetteer update.
+
+6. **Deduplicate**: Remove duplicate entries within `tags`, `entities`, and `proposed_tags` per finding.
+
+Update progress file:
+```markdown
+## {ISO_DATE} — Tag Vocabulary Compliance
+- Findings processed: {N}
+- Tags compliant: {N}/{total}
+- Non-compliant tags moved to proposed: {list or "none"}
+- Proposed tags promoted (2+ dimensions): {list or "none"}
+- Vocabulary terms added: {N}
+```
+
 ### Step 3.4: Merge into State
 
 Update `./reports/{topic_slug}/state.json` using jq (per Structured Data Protocol) with mode-appropriate merge strategy:
@@ -718,6 +831,20 @@ jq -e -f schemas/sigint-config.jq ./sigint.config.json > /dev/null
 
 All fields are written atomically to avoid race conditions with concurrent config writes.
 
+### Step 4.15: Base Vocabulary Promotion Recommendations
+
+Identify topic-specific vocabulary terms that were heavily used and may deserve promotion to the base vocabulary (`schemas/base-vocabulary.json`):
+
+1. Count usage of each topic-specific term (terms NOT in `schemas/base-vocabulary.json`) across all findings
+2. Terms used in 5+ findings are candidates for promotion
+3. Log recommendations in progress file — do NOT auto-modify `schemas/base-vocabulary.json`
+
+```markdown
+## {ISO_DATE} — Base Vocabulary Promotion Candidates
+- {term}: used in {N} findings across {M} dimensions — candidate for base category "{category}"
+- (or "No promotion candidates — all heavily-used terms already in base vocabulary")
+```
+
 ### Step 4.2: Shutdown Team
 
 1. Send shutdown requests to all dimension-analyst teammates.
@@ -851,7 +978,10 @@ Every finding MUST include a `provenance` field:
   "evidence": ["url1", "url2"],
   "confidence": "high|medium|low",
   "trend": "INC|DEC|CONST",
-  "tags": ["..."],
+  "tags": ["from-vocabulary-only"],
+  "entities": ["company-name", "product-name"],
+  "market_dynamic": "consolidation|disruption|maturation|emergence|fragmentation|commoditization|regulation|standardization",
+  "proposed_tags": ["novel-term-not-in-vocabulary"],
   "provenance": {
     "claim": "The specific factual claim this finding makes",
     "sources": [
@@ -867,6 +997,12 @@ Every finding MUST include a `provenance` field:
   }
 }
 ```
+
+**Tag field rules:**
+- `tags`: Select ONLY from `vocabulary.json` `all_terms`. All values lowercase-hyphenated.
+- `entities`: Proper nouns (company, product, standard names) normalized to lowercase-hyphenated. E.g., "Datadog" → "datadog", "New Relic" → "new-relic".
+- `market_dynamic`: Optional. At most one value from the enum above.
+- `proposed_tags`: Optional. Max 3 per finding. For concepts not in the vocabulary. Reviewed at merge.
 
 Dimension-analysts populate `provenance` during research. Codex review gates verify it.
 

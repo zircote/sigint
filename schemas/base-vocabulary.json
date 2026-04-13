@@ -1,0 +1,47 @@
+{
+  "version": "1.0",
+  "categories": {
+    "competitive_position": [
+      "market-leader",
+      "challenger",
+      "niche-specialist",
+      "emerging-entrant",
+      "incumbent",
+      "disruptor"
+    ],
+    "strategy": [
+      "platform-play",
+      "open-source-core",
+      "vertical-integration",
+      "bundling",
+      "enterprise-focus",
+      "developer-first",
+      "land-and-expand"
+    ],
+    "business_model": [
+      "subscription",
+      "consumption-based",
+      "seat-based",
+      "usage-based",
+      "freemium",
+      "enterprise-license",
+      "marketplace"
+    ],
+    "risk_factor": [
+      "vendor-lock-in",
+      "regulatory-exposure",
+      "pricing-pressure",
+      "talent-shortage",
+      "security-risk",
+      "concentration-risk",
+      "tech-debt"
+    ],
+    "growth_pattern": [
+      "organic-growth",
+      "acquisition-driven",
+      "partner-ecosystem",
+      "geographic-expansion",
+      "segment-expansion"
+    ]
+  }
+}

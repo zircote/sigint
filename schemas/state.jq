@@ -27,6 +27,10 @@ has("lineage")    and (.lineage    | type == "array") and
   has("summary") and (.summary | type == "string") and
   has("confidence") and (.confidence | type == "string" and valid_confidence) and
   has("trend") and (.trend | type == "string" and valid_trend) and
+  has("tags") and (.tags | type == "array" and all(type == "string")) and
+  (if has("entities") then (.entities | type == "array" and all(type == "string")) else true end) and
+  (if has("market_dynamic") then (.market_dynamic | type == "string" and IN("consolidation", "disruption", "maturation", "emergence", "fragmentation", "commoditization", "regulation", "standardization")) else true end) and
+  (if has("proposed_tags") then (.proposed_tags | type == "array" and length <= 3 and all(type == "string")) else true end) and
   has("provenance") and (.provenance | type == "object" and
     has("claim") and (.claim | type == "string") and
     has("sources") and (.sources | type == "array") and

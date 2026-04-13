@@ -143,6 +143,9 @@ Agent(
   IMPORTANT: Use WebSearch and WebFetch for real web research. Minimum 5 searches.
   Do NOT fabricate findings. Every finding must be backed by a retrieved source.
 
+  Tag vocabulary: $REPORTS_DIR/vocabulary.json — load in Step 5.5, use for tags field.
+  All tag/entity values must be lowercase-hyphenated.
+
   Write findings to:
     - File (mandatory): {REPORTS_DIR}/findings_{dimension}.json (with schema validation — STOP CHECK before proceeding)
 
@@ -216,6 +219,21 @@ stateDiagram-v2
     DisruptionScenario --> NewParadigm: Successful adaptation
     DisruptionScenario --> Obsolete: Failed adaptation
 ```
+
+### Step 3.15: Tag Vocabulary Compliance
+
+Before merging new findings into state, normalize and validate tags:
+
+1. **Load vocabulary**: Read `./reports/$TOPIC_SLUG/vocabulary.json` (if it exists).
+2. **Normalize**: Lowercase-hyphenate all values in `tags`, `entities`, `proposed_tags` of new findings:
+   ```bash
+   NEW_FINDINGS_JSON=$(echo "$NEW_FINDINGS_JSON" | jq 'map(
+     .tags |= (map(ascii_downcase | gsub("[^a-z0-9]+"; "-") | gsub("^-|-$"; "")) | unique) |
+     (if has("entities") then .entities |= (map(ascii_downcase | gsub("[^a-z0-9]+"; "-") | gsub("^-|-$"; "")) | unique) else . end) |
+     (if has("proposed_tags") then .proposed_tags |= (map(ascii_downcase | gsub("[^a-z0-9]+"; "-") | gsub("^-|-$"; "")) | unique) else . end)
+   )')
+   ```
+3. **Validate**: If vocabulary exists, check `tags` against `all_terms`. Move non-compliant tags to `proposed_tags` (respecting max 3 limit).
 
 ### Step 3.2: Update research state
 

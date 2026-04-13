@@ -149,6 +149,11 @@ Agent(
   IMPORTANT: Include SINCE_DATE context in analyst spawn prompts so they
   prioritize recent data. Analysts should use date-filtered WebSearch queries.
 
+  VOCABULARY: Load existing ./reports/{topic_slug}/vocabulary.json for tag vocabulary.
+  Do NOT regenerate — reuse the session's existing vocabulary. If vocabulary.json
+  does not exist (pre-vocabulary session), generate one per Phase 1.75 of your
+  agent definition before spawning analysts.
+
   Follow all protocols defined in your agent definition."
 )
 ```
