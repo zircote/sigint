@@ -6,7 +6,16 @@ description: Sigint documentation organized by the Diataxis framework
 
 # Sigint Documentation
 
-Documentation organized by the [Diataxis framework](https://diataxis.fr/).
+Sigint is a market research toolkit for Claude Code that orchestrates parallel analyst agents to investigate competitive landscapes, market sizing, trends, customer needs, technology stacks, financials, and regulatory environments. It produces multi-format reports and GitHub issues from research findings.
+
+This documentation is organized by the [Diataxis framework](https://diataxis.fr/) into four categories:
+
+| Category | Purpose | Start here if you... |
+|----------|---------|----------------------|
+| **Tutorials** | Step-by-step learning | are new to sigint |
+| **How-to Guides** | Goal-oriented recipes | need to accomplish a specific task |
+| **Reference** | Technical details | need to look up commands, config, or agents |
+| **Explanation** | Design rationale | want to understand how and why sigint works |
 
 ## Tutorials
 
