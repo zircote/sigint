@@ -622,7 +622,7 @@ Before merging findings into state, enforce tag vocabulary compliance:
    - Update `all_terms` to include the new term
    - Re-validate vocabulary: `jq -e -f schemas/vocabulary.jq "./reports/$SLUG/vocabulary.json" > /dev/null`
 
-5. **Validate entities against gazetteer**: Read `schemas/entity-gazetteer.json`. For each finding's `entities` array, verify entries match known gazetteer keys. Entities not in the gazetteer are acceptable (new entities discovered during research) but log them as "unregistered entities" for potential gazetteer update.
+5. **Validate entities against gazetteer**: If `./reports/$SLUG/entity-gazetteer.json` exists, read it. For each finding's `entities` array, verify entries match known gazetteer keys. Entities not in the gazetteer are acceptable (new entities discovered during research) but log them as "unregistered entities" for potential gazetteer update. If the gazetteer does not exist, skip entity validation — entity classification is the analyst's responsibility.
 
 6. **Deduplicate**: Remove duplicate entries within `tags`, `entities`, and `proposed_tags` per finding.
 

@@ -102,7 +102,7 @@ jq '.' "$REPORTS_DIR/vocabulary.json"
 This vocabulary defines the terms you MUST use when tagging findings:
 
 - **`tags` field**: Select terms ONLY from the vocabulary's `all_terms` list. Do not invent tags outside this list.
-- **`entities` field**: Lowercase-hyphenated proper nouns only (company, product, standard names). Cross-reference `schemas/entity-gazetteer.json` for known entities and their canonical names. If an entity is in the gazetteer, use the gazetteer key as the entity value. For entities not in the gazetteer, use lowercase-hyphenated format. Examples: `"Datadog"` → `"datadog"`, `"New Relic"` → `"new-relic"`, `"OpenTelemetry"` → `"opentelemetry"`.
+- **`entities` field**: Lowercase-hyphenated proper nouns only (company, product, standard names). If `$REPORTS_DIR/entity-gazetteer.json` exists, cross-reference it for known entities and use the gazetteer key as the entity value. For entities not in the gazetteer (or if no gazetteer exists), use lowercase-hyphenated format. Examples: `"Datadog"` → `"datadog"`, `"New Relic"` → `"new-relic"`, `"OpenTelemetry"` → `"opentelemetry"`.
 - **`market_dynamic` field**: Select at most ONE value from: `consolidation`, `disruption`, `maturation`, `emergence`, `fragmentation`, `commoditization`, `regulation`, `standardization`. Omit if none applies to the finding.
 - **`proposed_tags` field**: If a finding involves a concept not covered by the vocabulary, add up to 3 proposed terms (lowercase-hyphenated). These will be reviewed by the orchestrator at merge. Use sparingly — prefer vocabulary terms.
 - **ALL values** in `tags`, `entities`, and `proposed_tags` MUST be lowercase-hyphenated format.
