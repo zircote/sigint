@@ -22,6 +22,7 @@ This protocol defines how sigint agents handle JSON file operations. All agents 
 - `YYYY-MM-DD-issues.json` / `issues-dry-run.json` — issue manifests
 - `team_status.json` — team coordination status
 - `conflicts.json` — cross-dimension conflicts
+- `findings_hashes.json` — dimension-level SHA-256 hashes for incremental merge skip
 
 **Out of scope:**
 - YAML frontmatter in `.md` files (embedded structured data in non-structured files)
@@ -72,6 +73,7 @@ Every JSON file type has a corresponding schema validator in `schemas/`. Schema 
 | `issues-dry-run.json` | `schemas/issues.jq` | issue-architect |
 | `team_status.json` | `schemas/team-status.jq` | orchestrator |
 | `conflicts.json` | `schemas/conflicts.jq` | dimension-analyst, orchestrator |
+| `findings_hashes.json` | inline (`to_entries \| all(.value \| type == "string")`) | orchestrator |
 
 ### Mandatory Write-Then-Validate Pattern
 
@@ -136,6 +138,7 @@ merged_findings.json               → schemas/merged-findings.jq
 team_status.json                   → schemas/team-status.jq
 conflicts.json                     → schemas/conflicts.jq
 sigint.config.json                 → schemas/sigint-config.jq
+findings_hashes.json               → inline (to_entries | all(.value | type == "string"))
 ```
 
 ---
@@ -207,13 +210,18 @@ jq -e -f schemas/state.jq "./reports/$SLUG/state.json" > /dev/null
 
 ### D. Merge Findings (Append Array + Update Fields)
 
+Use `--slurpfile` with temp files for findings and sources arrays. Shell `ARG_MAX` (1MB on macOS) cannot hold large arrays as `--argjson` command-line arguments.
+
 ```bash
-jq --argjson new_findings "$NEW_FINDINGS_JSON" \
-   --argjson new_sources "$NEW_SOURCES_JSON" \
+echo "$NEW_FINDINGS_JSON" | jq '.' > /tmp/sigint_findings_$$.json
+echo "$NEW_SOURCES_JSON" | jq '.' > /tmp/sigint_sources_$$.json
+jq --slurpfile new_findings /tmp/sigint_findings_$$.json \
+   --slurpfile new_sources /tmp/sigint_sources_$$.json \
    --arg phase "complete" \
    --arg updated "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
-  '.findings += $new_findings | .sources += $new_sources | .phase = $phase | .last_updated = $updated' \
+  '.findings += $new_findings[0] | .sources += $new_sources[0] | .phase = $phase | .last_updated = $updated' \
   "./reports/$SLUG/state.json" > tmp.$$ && mv tmp.$$ "./reports/$SLUG/state.json"
+rm -f /tmp/sigint_findings_$$.json /tmp/sigint_sources_$$.json
 
 # Validate
 jq -e -f schemas/state.jq "./reports/$SLUG/state.json" > /dev/null

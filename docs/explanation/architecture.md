@@ -83,6 +83,14 @@ When the research-orchestrator runs in update mode (via `/sigint:update`), it cl
 
 Matching uses dimension + title similarity (>0.8 threshold). Sequential IDs like `f_competitive_3` are for human readability, not stable matching.
 
+### Incremental merge and partitioned detection (v0.10.0+)
+
+Delta detection is **partitioned by dimension** — each dimension's new findings are compared only against that dimension's prior findings. This keeps each comparison set small enough for the LLM context window (e.g., ~1,250 findings per dimension instead of 10K total) and produces identical classifications since matching already requires dimension equality.
+
+**Dimension-level file hashing** provides a further optimization: `findings_hashes.json` stores SHA-256 hashes of each `findings_{dimension}.json` file. Dimensions whose file hash hasn't changed since the last merge are bulk-classified as CONFIRMED with zero LLM reasoning. Only changed dimensions go through title-similarity matching.
+
+The merge pipeline also uses `--slurpfile` instead of `--argjson` for large jq payloads, avoiding shell `ARG_MAX` limits that would crash at scale.
+
 ### Delta detail and newsworthiness (v0.9.0+)
 
 UPDATED findings carry a `delta_detail` object that sub-classifies the change and signals newsworthiness for downstream consumers (report generators, article writers):

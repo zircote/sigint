@@ -15,7 +15,7 @@ has("topics")   and (.topics   | type == "object") and
 
 (.defaults |
   has("report_format") and (.report_format | type == "string" and IN("markdown", "html", "both")) and
-  has("audiences")     and (.audiences     | type == "array" and length > 0 and all(type == "string")) and
+  has("audiences")     and (.audiences     | type == "array" and length > 0 and all(type == "string"))
 ) and
 
 (.research |

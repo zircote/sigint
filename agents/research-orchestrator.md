@@ -587,9 +587,24 @@ Update progress file:
 
 Wait for all dimension-analysts to complete (or timeout after `dimensionTimeout` seconds).
 
-### Step 3.1: Read All Findings
+### Step 3.1: Read Findings (with Incremental Skip)
 
 For each dimension, read from `./reports/{topic_slug}/findings_{dimension}.json`. If file is missing, log a warning and exclude that dimension from the merge.
+
+**Incremental dimension skip** (update and augment modes only):
+
+If `./reports/{topic_slug}/findings_hashes.json` exists, load it. This file maps dimension names to SHA-256 file hashes from the previous merge. For each dimension file that exists, compute its current hash:
+```bash
+shasum -a 256 "./reports/$SLUG/findings_${DIM}.json" | cut -d' ' -f1
+```
+
+Compare against the stored hash. If they match, that dimension's findings have not changed since the last merge — mark the dimension as **skipped** and exclude it from tag normalization (Step 3.35) and delta detection. Skipped dimensions retain their existing findings in `state.json` as-is.
+
+If `findings_hashes.json` does not exist (first run, or deleted), process all dimensions — full rebuild, no skip.
+
+Track two sets through the remaining Phase 3 steps:
+- `CHANGED_DIMENSIONS` — dimensions whose file hash differs or is new (to be processed)
+- `SKIPPED_DIMENSIONS` — dimensions whose file hash matches (retained from prior state)
 
 ### Step 3.2: Check Cross-Dimension Conflicts
 
@@ -601,11 +616,11 @@ Compare planned vs applied frameworks per dimension. Write to state.json.
 
 ### Step 3.35: Tag Vocabulary Compliance and Normalization
 
-Before merging findings into state, enforce tag vocabulary compliance:
+Before merging findings into state, enforce tag vocabulary compliance. **When incremental skip is active** (Step 3.1 identified `SKIPPED_DIMENSIONS`), only process findings from `CHANGED_DIMENSIONS` through steps 1-3 and 5-6. Step 4 (proposed_tag promotion) must still consider all findings — see note below.
 
 1. **Load vocabulary**: Read `./reports/$SLUG/vocabulary.json` and extract `all_terms`.
 
-2. **Normalize all tag values**: For each finding, normalize `tags`, `entities`, and `proposed_tags` to lowercase-hyphenated format using jq:
+2. **Normalize tag values** (changed dimensions only): For each finding in `CHANGED_DIMENSIONS`, normalize `tags`, `entities`, and `proposed_tags` to lowercase-hyphenated format using jq:
    ```bash
    jq '(.findings // []) |= map(
      .tags |= map(ascii_downcase | gsub("[^a-z0-9]+"; "-") | gsub("^-|-$"; "")) |
@@ -613,27 +628,35 @@ Before merging findings into state, enforce tag vocabulary compliance:
      (if has("proposed_tags") then .proposed_tags |= map(ascii_downcase | gsub("[^a-z0-9]+"; "-") | gsub("^-|-$"; "")) else . end)
    )'
    ```
+   Skipped dimensions' findings were already normalized in a prior merge and retain their tags as-is.
 
-3. **Validate tags against vocabulary**: For each finding, check that every entry in `tags` exists in `all_terms`. Log non-compliant tags as warnings but do not reject findings — move non-compliant tags to `proposed_tags` (respecting the max 3 limit; excess go to a `_overflow_tags` field for manual review).
+3. **Validate tags against vocabulary** (changed dimensions only): For each finding in `CHANGED_DIMENSIONS`, check that every entry in `tags` exists in `all_terms`. Log non-compliant tags as warnings but do not reject findings — move non-compliant tags to `proposed_tags` (respecting the max 3 limit; excess go to a `_overflow_tags` field for manual review).
 
-4. **Review proposed_tags**: Collect all `proposed_tags` across all findings. If any proposed tag appears in findings from 2+ different dimensions:
+4. **Review proposed_tags** (all dimensions): Collect all `proposed_tags` across all findings — including findings from skipped dimensions. For skipped dimensions, extract proposed_tags from state.json:
+   ```bash
+   jq --arg dim "$SKIPPED_DIM" \
+     '[.findings[] | select(.dimension == $dim) | .proposed_tags // [] | .[]] | unique' \
+     "./reports/$SLUG/state.json"
+   ```
+   If any proposed tag appears in findings from 2+ different dimensions:
    - Add the term to `vocabulary.json` under the most appropriate category (or `domain_specific` if unclear)
-   - Move promoted terms from `proposed_tags` to `tags` in each finding that used them
+   - Move promoted terms from `proposed_tags` to `tags` in each finding that used them (for skipped dimensions, patch state.json in-place)
    - Update `all_terms` to include the new term
    - Re-validate vocabulary: `jq -e -f schemas/vocabulary.jq "./reports/$SLUG/vocabulary.json" > /dev/null`
 
-5. **Validate entities against gazetteer**: If `./reports/$SLUG/entity-gazetteer.json` exists, read it. For each finding's `entities` array, verify entries match known gazetteer keys. Entities not in the gazetteer are acceptable (new entities discovered during research) but log them as "unregistered entities" for potential gazetteer update. If the gazetteer does not exist, skip entity validation — entity classification is the analyst's responsibility.
+5. **Validate entities against gazetteer** (changed dimensions only): If `./reports/$SLUG/entity-gazetteer.json` exists, read it. For each finding's `entities` array in `CHANGED_DIMENSIONS`, verify entries match known gazetteer keys. Entities not in the gazetteer are acceptable (new entities discovered during research) but log them as "unregistered entities" for potential gazetteer update. If the gazetteer does not exist, skip entity validation — entity classification is the analyst's responsibility.
 
-6. **Deduplicate**: Remove duplicate entries within `tags`, `entities`, and `proposed_tags` per finding.
+6. **Deduplicate** (changed dimensions only): Remove duplicate entries within `tags`, `entities`, and `proposed_tags` per finding.
 
 Update progress file:
 ```markdown
 ## {ISO_DATE} — Tag Vocabulary Compliance
-- Findings processed: {N}
+- Findings processed: {N} ({N} skipped — unchanged dimensions)
 - Tags compliant: {N}/{total}
 - Non-compliant tags moved to proposed: {list or "none"}
 - Proposed tags promoted (2+ dimensions): {list or "none"}
 - Vocabulary terms added: {N}
+- Dimensions skipped: {list or "none"}
 ```
 
 ### Step 3.4: Merge into State
@@ -642,14 +665,20 @@ Update `./reports/{topic_slug}/state.json` using jq (per Structured Data Protoco
 
 #### Full Mode (initial research)
 
-No prior findings exist. Write new findings and sources directly:
+No prior findings exist. Write new findings and sources directly.
+
+**Note:** Use `--slurpfile` with temp files instead of `--argjson` for findings and sources arrays. Shell `ARG_MAX` (1MB on macOS) cannot hold large arrays as command-line arguments — at ~500+ findings, `--argjson` will crash with `Argument list too long`.
+
 ```bash
-jq --argjson findings "$FINDINGS_JSON" \
-   --argjson sources "$SOURCES_JSON" \
+echo "$FINDINGS_JSON" | jq '.' > /tmp/sigint_findings_$$.json
+echo "$SOURCES_JSON" | jq '.' > /tmp/sigint_sources_$$.json
+jq --slurpfile findings /tmp/sigint_findings_$$.json \
+   --slurpfile sources /tmp/sigint_sources_$$.json \
    --arg phase "complete" \
    --arg updated "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
-  '.findings = $findings | .sources = $sources | .phase = $phase | .last_updated = $updated' \
+  '.findings = $findings[0] | .sources = $sources[0] | .phase = $phase | .last_updated = $updated' \
   "./reports/$SLUG/state.json" > tmp.$$ && mv tmp.$$ "./reports/$SLUG/state.json"
+rm -f /tmp/sigint_findings_$$.json /tmp/sigint_sources_$$.json
 jq -e -f schemas/state.jq "./reports/$SLUG/state.json" > /dev/null
 ```
 
@@ -667,26 +696,33 @@ Prior findings exist in state.json. **Do NOT blindly append.** Reconcile:
 4. **Deduplicate**: After reconciliation, verify no duplicate finding IDs exist in the active findings array
 5. **Update sources**: Replace sources for updated dimensions; keep sources for non-refreshed dimensions
 
-Apply the reconciled result using jq:
+Apply the reconciled result using jq (via `--slurpfile` temp files to avoid `ARG_MAX` limits):
 ```bash
-jq --argjson findings "$RECONCILED_FINDINGS" \
-   --argjson sources "$RECONCILED_SOURCES" \
-   --argjson archived "$ARCHIVED_FINDINGS" \
+echo "$RECONCILED_FINDINGS" | jq '.' > /tmp/sigint_findings_$$.json
+echo "$RECONCILED_SOURCES" | jq '.' > /tmp/sigint_sources_$$.json
+echo "$ARCHIVED_FINDINGS" | jq '.' > /tmp/sigint_archived_$$.json
+jq --slurpfile findings /tmp/sigint_findings_$$.json \
+   --slurpfile sources /tmp/sigint_sources_$$.json \
+   --slurpfile archived /tmp/sigint_archived_$$.json \
    --arg updated "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
-  '.findings = $findings | .sources = $sources | .archived_findings = ((.archived_findings // []) + $archived) | .last_updated = $updated' \
+  '.findings = $findings[0] | .sources = $sources[0] | .archived_findings = ((.archived_findings // []) + $archived[0]) | .last_updated = $updated' \
   "./reports/$SLUG/state.json" > tmp.$$ && mv tmp.$$ "./reports/$SLUG/state.json"
+rm -f /tmp/sigint_findings_$$.json /tmp/sigint_sources_$$.json /tmp/sigint_archived_$$.json
 jq -e -f schemas/state.jq "./reports/$SLUG/state.json" > /dev/null
 ```
 
 #### Augment Mode (single dimension addition)
 
 - If the dimension was previously researched: replace that dimension's findings (same as update mode for one dimension)
-- If the dimension is new: append findings using jq:
+- If the dimension is new: append findings using jq (via `--slurpfile` to avoid `ARG_MAX` limits):
   ```bash
-  jq --argjson new_findings "$NEW_FINDINGS" \
-     --argjson new_sources "$NEW_SOURCES" \
-    '.findings += $new_findings | .sources += $new_sources' \
+  echo "$NEW_FINDINGS" | jq '.' > /tmp/sigint_findings_$$.json
+  echo "$NEW_SOURCES" | jq '.' > /tmp/sigint_sources_$$.json
+  jq --slurpfile new_findings /tmp/sigint_findings_$$.json \
+     --slurpfile new_sources /tmp/sigint_sources_$$.json \
+    '.findings += $new_findings[0] | .sources += $new_sources[0]' \
     "./reports/$SLUG/state.json" > tmp.$$ && mv tmp.$$ "./reports/$SLUG/state.json"
+  rm -f /tmp/sigint_findings_$$.json /tmp/sigint_sources_$$.json
   jq -e -f schemas/state.jq "./reports/$SLUG/state.json" > /dev/null
   ```
 
@@ -710,6 +746,30 @@ Where `$LINEAGE_ENTRY_JSON` contains:
   "archived_count": N,
   "delta_from_previous": {delta object or null}
 }
+```
+
+#### All Modes — Update Findings Hashes
+
+After merging, update `findings_hashes.json` with current SHA-256 hashes of all dimension findings files. This enables incremental skip on future runs (Step 3.1).
+
+Iterate over all dimensions from the current session (not a glob — `findings_*.json` would match delta and hash files):
+```bash
+HASHES_JSON="{}"
+for DIM in $ALL_DIMENSIONS; do
+  DIM_FILE="./reports/$SLUG/findings_${DIM}.json"
+  if [ -f "$DIM_FILE" ]; then
+    HASH=$(shasum -a 256 "$DIM_FILE" | cut -d' ' -f1)
+    HASHES_JSON=$(echo "$HASHES_JSON" | jq --arg dim "$DIM" --arg hash "$HASH" '. + {($dim): $hash}')
+  fi
+done
+echo "$HASHES_JSON" | jq '.' > "./reports/$SLUG/findings_hashes.json"
+```
+
+`$ALL_DIMENSIONS` is the full set of dimensions from this session (both changed and skipped), ensuring the hash file covers all dimensions for the next run's comparison.
+
+No separate schema file — validate inline (all values are strings):
+```bash
+jq -e 'to_entries | all(.value | type == "string")' "./reports/$SLUG/findings_hashes.json" > /dev/null
 ```
 
 ### Step 3.5: Write Merged Findings
@@ -864,23 +924,37 @@ Update progress file:
 
 ## Delta Detection Protocol (Update Mode)
 
-When mode is `update`, run delta detection **BEFORE** Phase 3.4 merge. The delta classifications drive the reconciliation logic in Step 3.4:
+When mode is `update`, run delta detection **BEFORE** Phase 3.4 merge. The delta classifications drive the reconciliation logic in Step 3.4.
 
-### Step D.1: Load Previous State
+**Partitioned by dimension**: Delta detection operates per-dimension, not across the full findings set. Since matching requires `dimension` equality, comparing within a single dimension produces identical results to a monolithic comparison while keeping each comparison set small enough for the LLM context window. At 10K findings across 8 dimensions, this reduces context from ~10K findings to ~1,250 per comparison pass.
 
-Read `./reports/{topic_slug}/state.json`. Extract `findings[]` from previous research pass.
+### Step D.1: Load Previous State (Partitioned)
 
-### Step D.2: Compare Findings
+Read `./reports/{topic_slug}/state.json`. For each dimension in the current update, extract that dimension's prior findings using jq:
 
-For each new finding:
-- Match against previous findings by: `dimension` + title similarity (>0.8 threshold)
-- Classify as:
-  - **NEW**: No match in previous findings
-  - **UPDATED**: Match found but details changed (summary, confidence, trend, sources, tags, entities, market_dynamic, provenance)
-  - **CONFIRMED**: Match found, substantially unchanged
+```bash
+jq --arg dim "$DIM" '[.findings[] | select(.dimension == $dim)]' "./reports/$SLUG/state.json"
+```
 
-For each previous finding not matched:
-- Classify as **POTENTIALLY_REMOVED**
+**Skipped dimensions** (from Step 3.1 incremental hash check): Dimensions in `SKIPPED_DIMENSIONS` are bulk-classified as **CONFIRMED** — their findings persist as-is in state.json with `last_confirmed` updated to the current date. No title-similarity matching is needed. This avoids loading unchanged findings into the LLM context entirely.
+
+### Step D.2: Compare Findings (Per-Dimension)
+
+For each dimension in `CHANGED_DIMENSIONS`:
+
+1. Load that dimension's prior findings (from Step D.1 partitioned extract)
+2. Load that dimension's new findings from `findings_{dimension}.json`
+3. Match new findings against prior findings by title similarity (>0.8 threshold)
+4. Classify each new finding:
+   - **NEW**: No match in this dimension's prior findings
+   - **UPDATED**: Match found but details changed (summary, confidence, trend, sources, tags, entities, market_dynamic, provenance)
+   - **CONFIRMED**: Match found, substantially unchanged
+5. For each prior finding in this dimension not matched by any new finding:
+   - Classify as **POTENTIALLY_REMOVED**
+
+Aggregate classifications across all changed dimensions before proceeding to Step D.2.5.
+
+Sequential IDs (`f_{dimension}_{n}`) are hints for human readability, not stable identifiers — they may change across update runs. Always use title similarity as the authoritative match method.
 
 ### Step D.2.5: Compute Delta Detail (UPDATED findings only)
 
@@ -969,10 +1043,11 @@ Write `./reports/{topic_slug}/YYYY-MM-DD-delta.md`:
 ## Summary
 - New findings: {N}
 - Updated findings: {N} (substantive: {N}, metadata: {N}, temporal: {N}, confidence: {N}, source: {N})
-- Confirmed findings: {N}
+- Confirmed findings: {N} ({N} via dimension-level skip, {N} via title match)
 - Potentially removed: {N}
 - Trend reversals: {N}
 - **Newsworthy changes: {N}** (new + high-newsworthiness updates + trend reversals)
+- Dimensions processed: {N} changed, {N} skipped (unchanged)
 
 ## Newsworthy Changes
 {Consolidated list: all NEW findings + UPDATED findings with newsworthiness=high + all TREND_REVERSAL findings, each with one-sentence summary of what is new or changed}
