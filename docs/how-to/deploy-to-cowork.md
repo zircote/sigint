@@ -73,3 +73,9 @@ Ensure the GitHub connector is enabled in **Customize > Connectors** and you hav
 ### "WebSearch unavailable"
 
 Cowork requires web access permissions. Check that your organization's managed settings allow web search and web fetch for plugins.
+
+## See also
+
+- [Commands Reference](../reference/commands.md) — all available commands work identically in Cowork
+- [Configure Plugin](configure-plugin.md) — set up global and project configuration
+- [Troubleshooting](troubleshooting.md) — solutions for common issues

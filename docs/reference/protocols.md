@@ -64,6 +64,7 @@ Every JSON file type has a corresponding schema validator in `schemas/`. Validat
 | `issues-dry-run.json` | `schemas/issues.jq` | issue-architect |
 | `team_status.json` | `schemas/team-status.jq` | orchestrator |
 | `conflicts.json` | `schemas/conflicts.jq` | dimension-analyst, orchestrator |
+| `findings_hashes.json` | inline (`to_entries \| all(.value \| type == "string")`) | orchestrator |
 
 ### Write-then-validate pattern
 

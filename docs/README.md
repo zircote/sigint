@@ -33,6 +33,7 @@ Task-oriented guides for specific goals.
 - [Migrate Configuration](how-to/migrate-config.md) — Convert legacy config to v2.0
 - [Deploy to Cowork](how-to/deploy-to-cowork.md) — Install and configure sigint in Cowork
 - [Troubleshooting](how-to/troubleshooting.md) — Solutions for common issues
+- [Work with Quarantine](how-to/work-with-quarantine.md) — Inspect and resolve quarantined findings
 
 ## Reference
 
@@ -43,6 +44,7 @@ Information-oriented descriptions for lookup.
 - [Skills](reference/skills.md) — All 15 skills (9 methodology + 6 operational)
 - [Configuration](reference/configuration.md) — Config options, file locations, storage structure
 - [Protocols](reference/protocols.md) — Structured Data Protocol and Config Resolution Protocol
+- [Schemas](reference/schemas.md) — All jq schema validators with field definitions
 
 ## Explanation
 
@@ -50,3 +52,4 @@ Understanding-oriented discussion of concepts and design.
 
 - [Architecture](explanation/architecture.md) — Swarm orchestration and coordination systems
 - [Research Methodology](explanation/methodology.md) — Three-valued logic and analytical frameworks
+- [Tag Vocabulary](explanation/tag-vocabulary.md) — Controlled vocabulary design and tag promotion

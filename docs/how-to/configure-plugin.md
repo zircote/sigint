@@ -147,21 +147,7 @@ The context file is loaded by `/sigint:start` and passed to the research orchest
 
 ## Available options
 
-### Defaults block
-
-| Option | Type | Default | Description |
-|--------|------|---------|-------------|
-| `default_repo` | `string or null` | `null` | GitHub repo for issue creation (`owner/repo`) |
-| `report_format` | `markdown, html, or both` | `"markdown"` | Report output format |
-| `audiences` | `string[]` | `["technical"]` | Default report audiences |
-
-### Research block
-
-| Option | Type | Default | Description |
-|--------|------|---------|-------------|
-| `maxDimensions` | `integer` | `5` | Max concurrent research dimensions |
-| `dimensionTimeout` | `integer` | `300` | Seconds per dimension before timeout |
-| `defaultPriorities` | `string[]` | `["competitive","sizing","trends"]` | Default dimension ordering |
+For the full list of configuration fields, types, defaults, and descriptions, see the [Configuration Reference](../reference/configuration.md#configuration-options).
 
 ## Initialize configuration interactively
 
