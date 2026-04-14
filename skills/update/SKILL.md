@@ -52,7 +52,7 @@ If no state.json found:
    - **Topic**: {from --topic, or "auto-detect from single session"}
    - **Dimensions**: {from --dimensions listing each one, or --area mapped to its matching dimension, or "all dimensions from prior elicitation"}
    - **SINCE_DATE**: {from --since, or "none (fetch all available data)"}
-   - **DELTA_ENABLED**: {"false — findings would be replaced wholesale (--no-delta specified)" if --no-delta, or "true — delta detection would classify findings as NEW, UPDATED, CONFIRMED, POTENTIALLY_REMOVED, or TREND_REVERSAL"}
+   - **DELTA_ENABLED**: {"false — findings would be replaced wholesale (--no-delta specified)" if --no-delta, or "true — delta detection would classify findings as NEW, UPDATED, CONFIRMED, POTENTIALLY_REMOVED, or TREND_REVERSAL. UPDATED findings include a `delta_detail` object sub-classifying the change (substantive, temporal, confidence_shift, source_refresh, metadata) and a newsworthiness signal (high/medium/low) for downstream consumers."}
    - **Orchestrator**: research-orchestrator would be spawned in MODE: update
    - **Elicitation**: Prior elicitation from state.json would be reused (not re-run)
    - **Reconciliation**: {If DELTA_ENABLED: "Reconcile merge — replace updated findings, archive removed, add new (not append blindly). A new lineage entry would be added." | If not: "Wholesale replacement — findings replaced entirely, no reconciliation against prior findings."}

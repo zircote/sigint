@@ -876,17 +876,86 @@ For each new finding:
 - Match against previous findings by: `dimension` + title similarity (>0.8 threshold)
 - Classify as:
   - **NEW**: No match in previous findings
-  - **UPDATED**: Match found but details changed (summary, confidence, trend, sources)
+  - **UPDATED**: Match found but details changed (summary, confidence, trend, sources, tags, entities, market_dynamic, provenance)
   - **CONFIRMED**: Match found, substantially unchanged
 
 For each previous finding not matched:
 - Classify as **POTENTIALLY_REMOVED**
+
+### Step D.2.5: Compute Delta Detail (UPDATED findings only)
+
+For each finding classified as **UPDATED**, compute a `delta_detail` object that records exactly what changed and its significance. This enables downstream consumers (report generators, article writers) to filter updates by newsworthiness without re-diffing findings.
+
+**For each UPDATED finding:**
+
+1. **Compare each mutable field** between the prior and new versions:
+   - Fields to compare: `summary`, `confidence`, `trend`, `tags`, `entities`, `sources`, `market_dynamic`, `provenance`
+   - Record all fields that differ in `changed_fields` (array of strings)
+
+2. **Classify `change_category`** based on the dominant change:
+   - `substantive` — summary text changed with new factual content (events, announcements, data points, policy changes)
+   - `temporal` — summary changed only to update time-relative references (dates, countdowns like "2 weeks" → "9 days", deadline proximity)
+   - `confidence_shift` — primary change is the confidence level, possibly with updated `confidence_basis` in provenance
+   - `source_refresh` — sources/evidence updated (new URLs, alive status changes) without meaningful summary content change
+   - `metadata` — only tags, entities, or market_dynamic changed with no summary modification
+
+3. **Generate `summary_diff`** — a brief (1-2 sentence) human-readable description of what specifically changed in the summary text. Set to `null` if the summary is unchanged.
+
+4. **Record `confidence_change`** — if confidence differs between prior and new:
+   ```json
+   {"previous": "<prior value>", "current": "<new value>"}
+   ```
+   Record values exactly as they appear in each finding. If prior used string (`"high"`) and new uses numeric (`0.9`), record both as-is. Set to `null` if confidence is unchanged.
+
+   **Mixed-type comparison guidance**: When comparing string vs numeric confidence, use this mapping for classification purposes: `high` = 0.8+, `medium` = 0.4–0.79, `low` = 0.0–0.39.
+
+5. **Record `trend_change`** — if trend differs: `{"previous": "INC", "current": "DEC"}`. Set to `null` if trend is unchanged. (When trend changed, this finding may also be flagged as TREND_REVERSAL in Step D.3 — both classifications can coexist.)
+
+6. **Assign `newsworthiness`** (high | medium | low):
+
+   **High** — downstream should report:
+   - New factual developments (events, announcements, policy changes) reflected in summary rewrite
+   - Confidence upgraded from low to high with new supporting evidence
+   - Trend reversal co-occurring with summary change
+   - New sources that contradict or significantly extend the prior finding
+
+   **Medium** — downstream may mention:
+   - Summary refined with additional detail but same core finding
+   - Confidence shift within one level (medium→high, low→medium)
+   - New supporting sources that strengthen existing claims
+   - Market dynamic reclassification with summary update
+
+   **Low** — downstream should skip:
+   - Temporal updates only (date arithmetic, deadline countdowns)
+   - Tag or entity changes without summary modification
+   - Source refresh (alive status, URL changes) without content change
+   - Confidence change within 0.1 or within same string level
+
+7. **Write `newsworthiness_basis`** — one sentence explaining why this rating was assigned. This forces explicit reasoning and improves classification consistency.
+
+**Resulting `delta_detail` object on each UPDATED finding:**
+```json
+{
+  "delta_detail": {
+    "changed_fields": ["summary", "confidence"],
+    "change_category": "substantive",
+    "summary_diff": "Updated to reflect House floor vote delay past Easter; previously reported vote was expected before April 5",
+    "confidence_change": {"previous": "medium", "current": "high"},
+    "trend_change": null,
+    "newsworthiness": "high",
+    "newsworthiness_basis": "New factual development — floor vote delayed with Speaker commitment to post-Easter scheduling"
+  }
+}
+```
+
+Validate each UPDATED finding's `delta_detail` against `schemas/delta-findings.jq` field definitions.
 
 ### Step D.3: Detect Trend Reversals
 
 For matched findings where trend direction changed (INC→DEC, INC→CONST, etc.):
 - Flag as **TREND_REVERSAL** with both old and new directions
 - Elevate to high-priority alert
+- Note: a finding can be both TREND_REVERSAL (top-level classification) and carry `delta_detail` with `trend_change` recorded
 
 ### Step D.4: Generate Delta Report
 
@@ -899,28 +968,66 @@ Write `./reports/{topic_slug}/YYYY-MM-DD-delta.md`:
 
 ## Summary
 - New findings: {N}
-- Updated findings: {N}
+- Updated findings: {N} (substantive: {N}, metadata: {N}, temporal: {N}, confidence: {N}, source: {N})
 - Confirmed findings: {N}
 - Potentially removed: {N}
 - Trend reversals: {N}
+- **Newsworthy changes: {N}** (new + high-newsworthiness updates + trend reversals)
+
+## Newsworthy Changes
+{Consolidated list: all NEW findings + UPDATED findings with newsworthiness=high + all TREND_REVERSAL findings, each with one-sentence summary of what is new or changed}
 
 ## New Findings
 {list with summaries}
 
 ## Updated Findings
-{list with what changed}
+
+### Substantive Updates
+{UPDATED findings with change_category=substantive, showing summary_diff}
+
+### Confidence Changes
+{UPDATED findings with change_category=confidence_shift, showing previous → current}
+
+### Temporal Updates
+{UPDATED findings with change_category=temporal, showing summary_diff}
+
+### Metadata & Source Refreshes
+{UPDATED findings with change_category=metadata or source_refresh}
 
 ## Trend Reversals
 {highlighted list with old → new direction}
 
 ## Potentially Removed
 {list flagged for review}
+```
 
-## Confidence Changes
-{findings with >0.1 confidence shift}
+Also write delta findings JSON to `./reports/{topic_slug}/findings_delta_YYYY-MM-DD.json` with `delta_type` and `delta_detail` on each finding. Validate against `schemas/delta-findings.jq`:
+```bash
+jq -e -f schemas/delta-findings.jq "./reports/$SLUG/findings_delta_$DATE.json" > /dev/null
 ```
 
 ### Step D.5: Update State
+
+Compute the structured `delta_from_previous` object:
+```json
+{
+  "new_count": N,
+  "updated_count": N,
+  "confirmed_count": N,
+  "potentially_removed_count": N,
+  "trend_reversal_count": N,
+  "newsworthy_count": N,
+  "update_breakdown": {
+    "substantive": N,
+    "metadata": N,
+    "temporal": N,
+    "confidence_shift": N,
+    "source_refresh": N
+  }
+}
+```
+
+Where `newsworthy_count` = `new_count` + (UPDATED findings with `newsworthiness` = "high") + `trend_reversal_count`.
 
 Append to `state.json.lineage[]` using jq (per Structured Data Protocol):
 ```bash
@@ -929,7 +1036,7 @@ jq --argjson entry '{
   "action": "scheduled_update",
   "dimensions": '"$DIMENSIONS_JSON"',
   "finding_count": '"$FINDING_COUNT"',
-  "delta_from_previous": '"$DELTA_JSON"'
+  "delta_from_previous": '"$DELTA_FROM_PREVIOUS_JSON"'
 }' '.lineage += [$entry]' \
   "./reports/$SLUG/state.json" > tmp.$$ && mv tmp.$$ "./reports/$SLUG/state.json"
 jq -e -f schemas/state.jq "./reports/$SLUG/state.json" > /dev/null

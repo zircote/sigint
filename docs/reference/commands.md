@@ -51,7 +51,7 @@ Refresh data and findings for existing research using swarm orchestration.
 | **Allowed tools** | Read, Write, Bash, Grep, Glob, Agent, TeamCreate, TeamDelete, SendMessage, TaskCreate, TaskUpdate, TaskList, TaskGet, AskUserQuestion |
 | **Delegates to** | research-orchestrator agent (update mode) |
 
-**Behavior:** Loads prior state, spawns dimension-analysts for specified dimensions, runs delta detection protocol (classifying findings as NEW/UPDATED/CONFIRMED/POTENTIALLY_REMOVED/TREND_REVERSAL), merges findings with reconciliation, generates delta report.
+**Behavior:** Loads prior state, spawns dimension-analysts for specified dimensions, runs delta detection protocol (classifying findings as NEW/UPDATED/CONFIRMED/POTENTIALLY_REMOVED/TREND_REVERSAL), sub-classifies UPDATED findings with `delta_detail` (change category and newsworthiness signal), merges findings with reconciliation, generates delta report with Newsworthy Changes section.
 
 ---
 

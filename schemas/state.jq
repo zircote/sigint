@@ -52,5 +52,16 @@ has("lineage")    and (.lineage    | type == "array") and
   has("session_id") and (.session_id | type == "string") and
   has("action") and (.action | type == "string" and valid_action) and
   has("dimensions") and (.dimensions | type == "array") and
-  has("finding_count") and (.finding_count | type == "number")
+  has("finding_count") and (.finding_count | type == "number") and
+
+  # Optional structured delta_from_previous (v0.9.0+)
+  (if has("delta_from_previous") then (.delta_from_previous | . == null or (type == "object" and
+    has("new_count") and (.new_count | type == "number") and
+    has("updated_count") and (.updated_count | type == "number") and
+    has("confirmed_count") and (.confirmed_count | type == "number") and
+    has("potentially_removed_count") and (.potentially_removed_count | type == "number") and
+    has("trend_reversal_count") and (.trend_reversal_count | type == "number") and
+    has("newsworthy_count") and (.newsworthy_count | type == "number") and
+    (if has("update_breakdown") then (.update_breakdown | type == "object") else true end)
+  )) else true end)
 ))

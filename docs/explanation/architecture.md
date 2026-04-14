@@ -83,7 +83,23 @@ When the research-orchestrator runs in update mode (via `/sigint:update`), it cl
 
 Matching uses dimension + title similarity (>0.8 threshold). Sequential IDs like `f_competitive_3` are for human readability, not stable matching.
 
-The delta detection generates a dated delta report (`YYYY-MM-DD-delta.md`) summarizing all classifications, trend reversals, and confidence changes. This report is the primary artifact for understanding what changed between research passes.
+### Delta detail and newsworthiness (v0.9.0+)
+
+UPDATED findings carry a `delta_detail` object that sub-classifies the change and signals newsworthiness for downstream consumers (report generators, article writers):
+
+| Field | Purpose |
+|-------|---------|
+| `changed_fields` | Which mutable fields differ (summary, confidence, trend, tags, entities, sources, market_dynamic, provenance) |
+| `change_category` | Dominant change type: `substantive`, `temporal`, `confidence_shift`, `source_refresh`, or `metadata` |
+| `newsworthiness` | `high` (report), `medium` (mention if relevant), `low` (skip) |
+| `newsworthiness_basis` | One sentence explaining the rating |
+| `summary_diff` | Brief description of what changed in the summary, or null |
+| `confidence_change` | `{previous, current}` values, or null |
+| `trend_change` | `{previous, current}` values, or null |
+
+The lineage entry's `delta_from_previous` includes a structured `update_breakdown` by change category and a `newsworthy_count` (= new + high-newsworthiness updates + trend reversals).
+
+The delta detection generates a dated delta report (`YYYY-MM-DD-delta.md`) and delta findings JSON (`findings_delta_YYYY-MM-DD.json`). The markdown report includes a **Newsworthy Changes** section consolidating all items worth reporting, plus sub-categorized Updated Findings sections. The JSON file is validated against `schemas/delta-findings.jq`.
 
 ## Structured Data Protocol
 

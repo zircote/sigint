@@ -276,6 +276,151 @@
         "Prior elicitation from state.json is reused without re-running the elicitation phase",
         "A delta report summarizing changes is generated or referenced in the output"
       ]
+    },
+    {
+      "id": 9,
+      "prompt": "/sigint:update --topic enterprise-observability --dimensions competitive-landscape. The prior findings include a finding about 'Datadog acquires vendor X' that now has a substantially rewritten summary reflecting a new development: the acquisition closed and integration was announced.",
+      "expected_output": "The UPDATED finding for the Datadog acquisition includes a delta_detail object with change_category=substantive and newsworthiness=high, since the summary reflects a genuinely new factual development",
+      "files": [],
+      "deterministic_checks": [
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "delta_detail",
+          "description": "UPDATED finding includes a delta_detail object"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "change_category",
+          "description": "delta_detail includes a change_category field"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "substantive",
+          "description": "The change is classified as substantive"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "newsworthiness",
+          "description": "delta_detail includes a newsworthiness signal"
+        }
+      ],
+      "expectations": [
+        "UPDATED findings carry a delta_detail object with changed_fields, change_category, and newsworthiness",
+        "A substantive summary rewrite reflecting a new factual development is classified as change_category=substantive",
+        "Substantive updates with new factual content receive newsworthiness=high",
+        "The newsworthiness_basis field explains why this is high newsworthiness"
+      ]
+    },
+    {
+      "id": 10,
+      "prompt": "/sigint:update --topic enterprise-observability --dimensions financial. A prior finding about 'Q1 earnings deadline is in 3 weeks' now says 'Q1 earnings deadline is in 9 days' with no other changes to the summary content.",
+      "expected_output": "The UPDATED finding is classified with change_category=temporal and newsworthiness=low, since only a time-relative reference changed",
+      "files": [],
+      "deterministic_checks": [
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "temporal",
+          "description": "The change is classified as temporal"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "newsworthiness.*(low|Low)",
+          "description": "Temporal-only changes receive low newsworthiness"
+        }
+      ],
+      "expectations": [
+        "A finding whose summary changed only to update a time-relative reference (countdown, date arithmetic) is classified as temporal",
+        "Temporal-only changes receive newsworthiness=low because they are not substantively new information",
+        "The summary_diff describes the temporal shift (e.g., '3 weeks to 9 days')"
+      ]
+    },
+    {
+      "id": 11,
+      "prompt": "/sigint:update --topic enterprise-observability --dimensions market-size. A prior finding had confidence=medium and the new version has confidence=high due to a new authoritative source.",
+      "expected_output": "The UPDATED finding's delta_detail includes a confidence_change object recording the previous and current confidence values",
+      "files": [],
+      "deterministic_checks": [
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "confidence_change",
+          "description": "delta_detail records the confidence change"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "previous",
+          "description": "confidence_change includes the previous value"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "current",
+          "description": "confidence_change includes the current value"
+        }
+      ],
+      "expectations": [
+        "The confidence_change object records {previous: 'medium', current: 'high'} or equivalent",
+        "When confidence is the primary change, change_category is confidence_shift",
+        "A medium-to-high confidence shift receives newsworthiness=medium"
+      ]
+    },
+    {
+      "id": 12,
+      "prompt": "/sigint:update --topic enterprise-observability. The update produces 3 NEW findings, 2 UPDATED findings (1 substantive with high newsworthiness, 1 temporal with low newsworthiness), and 1 TREND_REVERSAL.",
+      "expected_output": "The lineage entry's delta_from_previous includes newsworthy_count=5 (3 new + 1 high-newsworthiness update + 1 trend reversal) and an update_breakdown showing substantive=1 and temporal=1",
+      "files": [],
+      "deterministic_checks": [
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "newsworthy_count",
+          "description": "Lineage entry includes newsworthy_count"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "update_breakdown",
+          "description": "Lineage entry includes update_breakdown by change category"
+        }
+      ],
+      "expectations": [
+        "The delta_from_previous object is structured with counts for each classification type",
+        "newsworthy_count sums new_count + high-newsworthiness UPDATED count + trend_reversal_count",
+        "update_breakdown records the count for each change_category (substantive, temporal, etc.)",
+        "The structured delta_from_previous replaces the prior unstructured string format"
+      ]
+    },
+    {
+      "id": 13,
+      "prompt": "/sigint:update --topic enterprise-observability --dimensions competitive-landscape,market-size. Ensure the delta report includes a Newsworthy Changes section.",
+      "expected_output": "The generated delta report markdown includes a 'Newsworthy Changes' section consolidating all NEW findings, high-newsworthiness UPDATED findings, and TREND_REVERSAL findings",
+      "files": [],
+      "deterministic_checks": [
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "Newsworthy Changes",
+          "description": "Delta report includes the Newsworthy Changes section"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "delta.*(report|md)",
+          "description": "A delta report file is generated"
+        }
+      ],
+      "expectations": [
+        "The delta report markdown has a Newsworthy Changes section near the top of the report",
+        "The Newsworthy Changes section consolidates all items worth reporting for downstream consumers",
+        "The Updated Findings section is sub-categorized by change type (Substantive, Confidence, Temporal, Metadata)"
+      ]
     }
   ]
 }

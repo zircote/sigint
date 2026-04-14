@@ -28,7 +28,7 @@ Orchestrator agent for sigint research sessions. Owns all phase management: team
 **Key capabilities**:
 - Blocking codex review gates at 4 pipeline boundaries (post-findings, post-merge, post-report, post-issues)
 - Quarantine mechanism for gate failures (`quarantine.json`)
-- Delta detection protocol for update mode (NEW/UPDATED/CONFIRMED/POTENTIALLY_REMOVED/TREND_REVERSAL)
+- Delta detection protocol for update mode (NEW/UPDATED/CONFIRMED/POTENTIALLY_REMOVED/TREND_REVERSAL) with finer-grained `delta_detail` on UPDATED findings (change category, newsworthiness signal)
 - Progress file generation (`research-progress.md`) for cross-session continuity
 - Lineage tracking in `state.json` for full provenance chain
 - File-based persistence as default behavior

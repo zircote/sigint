@@ -5,6 +5,23 @@ All notable changes to the Sigint Market Intelligence Plugin will be documented 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.9.0] - 2026-04-14
+
+### Added
+- **Finer-grained delta tracking**: UPDATED findings now carry a `delta_detail` object sub-classifying the change type (`substantive`, `temporal`, `confidence_shift`, `source_refresh`, `metadata`) and a `newsworthiness` signal (`high`/`medium`/`low`) for downstream consumers
+- **Newsworthiness signal**: Each UPDATED finding includes `newsworthiness` (high/medium/low) and `newsworthiness_basis` explaining the rating, enabling article generators and report writers to filter updates by significance
+- **Delta detail fields**: `changed_fields` (which mutable fields differ), `change_category` (dominant change type), `summary_diff` (what changed in the summary), `confidence_change` and `trend_change` (previous/current values)
+- **Structured `delta_from_previous` in lineage**: Lineage entries now include typed counts (`new_count`, `updated_count`, `confirmed_count`, `potentially_removed_count`, `trend_reversal_count`, `newsworthy_count`) and an `update_breakdown` by change category
+- **Newsworthy Changes section in delta report**: Delta report markdown now leads with a consolidated Newsworthy Changes section (all NEW + high-newsworthiness UPDATED + TREND_REVERSAL findings) and sub-categorizes Updated Findings by change type
+- **`schemas/delta-findings.jq`**: New schema validator for `findings_delta_YYYY-MM-DD.json` files, including `delta_type` and `delta_detail` validation
+- **5 new evals** (IDs 9–13): Cover substantive vs temporal classification, confidence shift recording, newsworthy count in lineage, and Newsworthy Changes section in delta report
+
+### Changed
+- **Delta Detection Protocol Step D.2.5**: New sub-step for computing `delta_detail` on UPDATED findings with explicit classification guidance and mixed-type confidence handling
+- **Delta report template**: Restructured with Newsworthy Changes section, sub-categorized Updated Findings (Substantive, Confidence, Temporal, Metadata & Source), and breakdown counts in Summary
+- **`schemas/findings.jq`**: Added optional `delta_type` and `delta_detail` validation (backward compatible)
+- **`schemas/state.jq`**: Added optional structured `delta_from_previous` validation in lineage entries (backward compatible)
+
 ## [0.6.0] - 2026-04-11
 
 ### Removed

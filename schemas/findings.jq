@@ -36,7 +36,19 @@ has("gaps")      and (.gaps      | type == "array" and all(type == "string")) an
     )) and
     has("derivation") and (.derivation | type == "string" and valid_derivation) and
     has("confidence_basis") and (.confidence_basis | type == "string")
-  )
+  ) and
+
+  # Optional delta fields (present in delta output files)
+  (if has("delta_type") then (.delta_type | type == "string" and IN("NEW", "UPDATED", "CONFIRMED", "POTENTIALLY_REMOVED", "TREND_REVERSAL")) else true end) and
+  (if has("delta_detail") then (.delta_detail | type == "object" and
+    has("changed_fields") and (.changed_fields | type == "array" and all(type == "string" and IN("summary", "confidence", "trend", "tags", "entities", "sources", "market_dynamic", "provenance"))) and
+    has("change_category") and (.change_category | type == "string" and IN("substantive", "metadata", "temporal", "confidence_shift", "source_refresh")) and
+    has("newsworthiness") and (.newsworthiness | type == "string" and IN("high", "medium", "low")) and
+    has("newsworthiness_basis") and (.newsworthiness_basis | type == "string") and
+    (if has("summary_diff") then (.summary_diff | type == "string" or . == null) else true end) and
+    (if has("confidence_change") then (.confidence_change | . == null or (type == "object" and has("previous") and has("current"))) else true end) and
+    (if has("trend_change") then (.trend_change | . == null or (type == "object" and has("previous") and has("current"))) else true end)
+  ) else true end)
 )) and
 
 # Validate each source
