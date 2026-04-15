@@ -1,6 +1,6 @@
 ---
 name: research-orchestrator
-version: 0.5.1
+version: 0.6.0
 description: |
   Orchestrator agent for sigint research sessions. Owns all phase management: team lifecycle,
   dimension-analyst spawning, methodology verification, codex review gates, finding merge,
@@ -101,7 +101,41 @@ Append to `./reports/{topic_slug}/research-progress.md`:
 
 ## Phase 1: Elicitation (Full Mode Only)
 
-In `full` mode, run the interactive elicitation protocol (8 question blocks from the start skill). In `update` and `augment` modes, load prior elicitation from `./reports/{topic_slug}/state.json`.
+In `full` mode, run the interactive elicitation protocol below. In `update` and `augment` modes, load prior elicitation from `./reports/{topic_slug}/state.json`.
+
+### Step 1.0: Elicitation Question Blocks
+
+Present these questions via `AskUserQuestion`. Each block maps to a required or optional field in `schemas/elicitation.jq`. In `--quick` mode, run only blocks Q1, Q2, Q3.
+
+**Q1 — Decision Context** → `decision_context` (required)
+"What decision, problem, or opportunity is this research meant to inform? What will you do differently based on the findings?"
+
+**Q2 — Audience & Expertise** → `audience`, `audience_expertise`
+"Who will consume this research (you, a team, executives, investors)? What's their familiarity with the domain?"
+
+**Q3 — Priorities** → `priorities` (required)
+"Rank what matters most. Examples: competitive positioning, market size validation, technology feasibility, customer pain points, regulatory risk, trend direction. List your top 3-5."
+
+**Q4 — Scope Boundaries** → `scope`
+"What's explicitly in scope and out of scope? Geographic focus? Time horizon? Industry vertical? Company stage or size?"
+
+**Q5 — Hypotheses** → `hypotheses`
+"What do you already believe or suspect? List any hypotheses you want validated or challenged."
+
+**Q6 — Known Landscape** → `known_competitors`
+"Name any competitors, alternatives, or adjacent players you're already aware of. This seeds the competitive dimension and avoids rediscovering the obvious."
+
+**Q7 — Success Criteria & Anti-Patterns** → `success_criteria`, `anti_patterns`
+"What would make this research successful? What should it explicitly avoid? (e.g., 'Don't waste time on enterprise players — we're SMB only.')"
+
+**Q8 — Constraints** → `budget_context`, `timeline`
+"Any budget, timeline, or resource constraints that should shape depth vs. breadth? (e.g., 'Need a competitive brief by Friday' vs. 'Deep 3-month investigation.')"
+
+**Parsing rules:**
+- Map each answer to the corresponding schema field(s).
+- If the user's answer to Q3 mentions dimension names directly (e.g., "regulatory risk", "tech feasibility"), record them verbatim in `priorities` — Phase 1.5 will use these to drive dimension selection.
+- If a question gets a non-answer ("skip", "n/a", blank), set the field to its zero value (empty string, empty array, or null for optional fields). Do not re-ask.
+- `decision_context` and `priorities` are required. If both are empty after Q1-Q3, ask once: "I need at least a decision context and one priority to scope the research. Can you give me those?"
 
 After elicitation:
 
@@ -155,17 +189,30 @@ Skip this phase in `update` and `augment` modes — those modes use pre-determin
 
 **Skip condition**: If `--dimensions` flag was passed in the spawn prompt (from `/sigint:start --dimensions ...`), use those dimensions directly and skip to Phase 2 with a progress note: "Dimension selection bypassed — using caller-specified dimensions: {list}".
 
-### Step 1.5.1: Assess Dimension Relevance
+### Step 1.5.1: Derive Dimensions from Elicitation
 
-For each of the 8 standard dimensions, evaluate relevance based on:
-- The elicited `topic`, `decision_context`, `scope`, and `priorities`
-- Cap pre-selected dimensions at `max_dimensions` (from config, default 5)
+Score each of the 8 standard dimensions by counting how many elicitation signals point to it. Work forward from what the user said — not backward from a preset list.
 
-Default relevance preference order for general business topics: competitive → sizing → trends → customer → regulatory → financial → tech → trend_modeling
+**Signal sources (check each, score +1 per match):**
 
-For technology topics: tech → competitive → trends → sizing → regulatory → customer → financial → trend_modeling
+| Signal | How to check | Example match |
+|--------|-------------|---------------|
+| `priorities` | Does a priority name, synonym, or clear implication map to this dimension? | "competitive positioning" → competitive; "market size" → sizing; "regulatory risk" → regulatory |
+| `decision_context` | Does the decision require this dimension's output to be answerable? | "Should we enter the EU market?" → regulatory + sizing |
+| `hypotheses` | Would this dimension validate or challenge a stated hypothesis? | "We think the market is consolidating" → competitive + trends |
+| `scope` | Do scope boundaries highlight or constrain this dimension? | Geographic focus → regulatory; "SMB only" → customer |
+| `success_criteria` | Is this dimension needed to satisfy a success criterion? | "Need defensible TAM" → sizing |
+| `anti_patterns` | Does an anti-pattern *exclude* this dimension? Score −2. | "Don't waste time on financials" → financial (−2) |
+| `known_competitors` | Non-empty competitor list? | Any entries → competitive (+1 bonus) |
+| `audience_expertise` | Low expertise in a relevant area? | "Non-technical board" + tech topic → trends (explain simply) over tech (too deep) |
 
-Adjust based on elicitation priorities — dimensions that appear in `elicitation.priorities` should be included regardless of defaults.
+**Ranking:**
+1. Sort dimensions by score descending.
+2. Cap at `max_dimensions` (from config, default 5).
+3. Ties are broken by this fallback order: competitive → trends → tech → sizing → customer → regulatory → financial → trend_modeling. This order is a **tiebreaker only** — it never overrides a higher-scoring dimension.
+4. `trend_modeling` requires `trends` to also be selected (it consumes trend findings). If `trend_modeling` scores high enough to be included but `trends` does not, include `trends` as well (displacing the lowest-scoring selected dimension if at cap).
+
+**Rationale requirement:** For each dimension in the final ranked list, record which elicitation signals selected or excluded it. These rationales are displayed in Step 1.5.2 — they must trace back to something the user said, not to a default preference.
 
 ### Step 1.5.2: Present Dimension Selection UI
 
