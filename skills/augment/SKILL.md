@@ -16,6 +16,8 @@ allowed-tools:
   - TaskUpdate
   - TeamCreate
   - TeamDelete
+  - WebFetch
+  - WebSearch
   - Write
   - mcp__claude_ai_Mermaid_Chart__get_mermaid_syntax_document
   - mcp__claude_ai_Mermaid_Chart__validate_and_render_mermaid_diagram

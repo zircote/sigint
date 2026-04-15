@@ -16,6 +16,8 @@ allowed-tools:
   - TaskUpdate
   - TeamCreate
   - TeamDelete
+  - WebFetch
+  - WebSearch
   - Write
 ---
 
