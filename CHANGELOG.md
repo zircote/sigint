@@ -5,6 +5,16 @@ All notable changes to the Sigint Market Intelligence Plugin will be documented 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.11.0] - 2026-04-15
+
+### Added
+- **CLAUDE.md**: Documents repo topology (agents/, schemas/, protocols/, skills/, commands/), consumer-repo context, and cross-references #7 for plugin-root resolution
+- **WebFetch and WebSearch** to all research-path allowed-tools: commands (start, update, augment, report), skills (start, update, augment, report), and the research-orchestrator agent — fixes dimension-analysts being blocked from web access at runtime
+
+### Fixed
+- **research-orchestrator tools list**: Agent body references `WebSearch` in methodology verification (Phase 2.5) but tools frontmatter omitted it
+- **Allowed-tools inheritance**: Parent commands/skills now grant `WebFetch`/`WebSearch` so spawned dimension-analysts and report-synthesizers can actually use their declared web tools
+
 ## [0.9.0] - 2026-04-14
 
 ### Added
