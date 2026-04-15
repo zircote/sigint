@@ -8,13 +8,15 @@
       "files": [],
       "deterministic_checks": [
         {
-          "type": "output_contains",
-          "value": "research-orchestrator",
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "research-orchestrator",
           "description": "Delegates to the research-orchestrator agent"
         },
         {
-          "type": "output_contains",
-          "value": "MODE: full",
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "MODE: full",
           "description": "Spawns orchestrator in full mode"
         }
       ],
@@ -32,13 +34,15 @@
       "files": [],
       "deterministic_checks": [
         {
-          "type": "output_contains",
-          "value": "QUICK_MODE",
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "QUICK_MODE",
           "description": "Quick mode flag is passed to the orchestrator"
         },
         {
-          "type": "output_contains",
-          "value": "research-orchestrator",
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "research-orchestrator",
           "description": "Delegates to the research-orchestrator agent"
         }
       ],
@@ -55,8 +59,9 @@
       "files": [],
       "deterministic_checks": [
         {
-          "type": "output_contains",
-          "value": "TOPIC_SLUG",
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "TOPIC_SLUG",
           "description": "Topic slug is passed to the orchestrator"
         }
       ],
@@ -74,8 +79,9 @@
       "files": [],
       "deterministic_checks": [
         {
-          "type": "output_contains",
-          "value": "research-orchestrator",
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "research-orchestrator",
           "description": "Still delegates to orchestrator even with no topic"
         }
       ],
@@ -97,13 +103,15 @@
       ],
       "deterministic_checks": [
         {
-          "type": "output_contains",
-          "value": "MAX_DIMENSIONS",
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "MAX_DIMENSIONS",
           "description": "Max dimensions parameter is passed to orchestrator"
         },
         {
-          "type": "output_contains",
-          "value": "CONFIG",
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "CONFIG",
           "description": "Config is serialized and passed to orchestrator"
         }
       ],
@@ -126,8 +134,9 @@
       ],
       "deterministic_checks": [
         {
-          "type": "output_contains",
-          "value": "state.json",
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "state\\.json",
           "description": "Checks for prior state.json via Glob"
         }
       ],
@@ -145,13 +154,15 @@
       "files": [],
       "deterministic_checks": [
         {
-          "type": "output_contains",
-          "value": "QUICK_MODE",
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "QUICK_MODE",
           "description": "Quick mode is set even with no topic"
         },
         {
-          "type": "output_contains",
-          "value": "research-orchestrator",
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "research-orchestrator",
           "description": "Delegates to orchestrator"
         }
       ],
@@ -169,13 +180,15 @@
       "files": [],
       "deterministic_checks": [
         {
-          "type": "output_contains",
-          "value": "TOPIC:",
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "TOPIC:",
           "description": "Full topic is passed to orchestrator"
         },
         {
-          "type": "output_contains",
-          "value": "TOPIC_SLUG:",
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "TOPIC_SLUG:",
           "description": "Truncated slug is passed to orchestrator"
         }
       ],
@@ -193,8 +206,9 @@
       "files": [],
       "deterministic_checks": [
         {
-          "type": "output_contains",
-          "value": "reports/",
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "reports/",
           "description": "Output references the reports directory"
         }
       ],

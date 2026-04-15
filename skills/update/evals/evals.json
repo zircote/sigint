@@ -421,6 +421,109 @@
         "The Newsworthy Changes section consolidates all items worth reporting for downstream consumers",
         "The Updated Findings section is sub-categorized by change type (Substantive, Confidence, Temporal, Metadata)"
       ]
+    },
+    {
+      "id": 14,
+      "prompt": "/sigint:update --topic enterprise-observability. The session has 600+ findings across 6 dimensions. Ensure the merge does not use --argjson for findings or sources arrays.",
+      "expected_output": "The orchestrator writes findings and sources to temporary files and uses --slurpfile to pass them to jq, avoiding shell ARG_MAX limits that would crash with 500+ findings passed as --argjson command-line arguments",
+      "files": [],
+      "deterministic_checks": [
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "--slurpfile",
+          "description": "Merge command uses --slurpfile to pass findings/sources arrays"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "/tmp/sigint_findings_|sigint_findings_.*\\.json",
+          "description": "Findings are written to a temp file before jq merge"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "rm -f.*sigint_findings|sigint_findings.*rm",
+          "description": "Temp files are cleaned up after the merge"
+        }
+      ],
+      "expectations": [
+        "The merge jq command uses --slurpfile for findings and sources arrays, not --argjson",
+        "Temporary files are created (e.g., /tmp/sigint_findings_$$.json) to hold large arrays before passing to jq",
+        "Temp files are removed after the merge completes",
+        "The same --slurpfile pattern applies to both full-mode and update-mode merges"
+      ]
+    },
+    {
+      "id": 15,
+      "prompt": "/sigint:update --topic enterprise-observability. This is the second update run. The findings_hashes.json file from the prior run exists and shows that 4 of 6 dimensions have unchanged file hashes. Only 2 dimensions have new findings.",
+      "expected_output": "The orchestrator detects that 4 dimensions are unchanged via SHA-256 hash comparison, skips tag normalization and delta detection for those dimensions, bulk-confirms their findings, and reports the skip count. After merge, findings_hashes.json is updated with current hashes for all dimensions.",
+      "files": [],
+      "deterministic_checks": [
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "findings_hashes\\.json",
+          "description": "Orchestrator loads or writes findings_hashes.json"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "shasum -a 256|SHA-256|sha256",
+          "description": "SHA-256 hashes are computed for dimension findings files"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "(skipped|SKIPPED).*dimension|dimension.*(skipped|SKIPPED)|unchanged.*dimension|dimension.*unchanged",
+          "description": "Orchestrator reports skipped dimensions due to unchanged hashes"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "bulk.confirm|CONFIRMED.*skip|skip.*CONFIRMED",
+          "description": "Skipped dimensions are bulk-classified as CONFIRMED without re-processing"
+        }
+      ],
+      "expectations": [
+        "The planned-update display (when no session exists) mentions incremental merge and SHA-256 hash verification",
+        "Dimensions whose findings_*.json hash matches the stored hash are marked SKIPPED and excluded from tag normalization",
+        "Skipped dimensions' findings are bulk-confirmed (last_confirmed updated) without running title-similarity matching",
+        "After merge, findings_hashes.json is rewritten with current hashes covering all dimensions (both changed and skipped)",
+        "The progress file reports: 'Dimensions skipped: [list]' or equivalent skip count"
+      ]
+    },
+    {
+      "id": 16,
+      "prompt": "/sigint:update --topic enterprise-observability. The update processes 8 dimensions: 5 changed, 3 unchanged (skipped by hash). The generated delta report should reflect the partition.",
+      "expected_output": "The delta report Summary section includes 'Dimensions processed: 5 changed, 3 skipped (unchanged)' and the Confirmed findings line shows the skip-confirmed count separately from title-match confirmed findings",
+      "files": [],
+      "deterministic_checks": [
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "[Dd]imensions processed.*changed.*skipped|changed.*skipped.*unchanged",
+          "description": "Delta report summary line reports changed and skipped dimension counts"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "via dimension.level skip|dimension-level skip|dimension.*skip",
+          "description": "Confirmed count distinguishes skip-confirmed from title-match confirmed"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "CHANGED_DIMENSIONS|SKIPPED_DIMENSIONS|changed.*dimensions|skipped.*dimensions",
+          "description": "Orchestrator tracks and reports changed vs skipped dimension sets"
+        }
+      ],
+      "expectations": [
+        "The delta report Summary section includes a 'Dimensions processed: N changed, N skipped (unchanged)' line",
+        "The Confirmed findings count breaks out 'N via dimension-level skip' and 'N via title match' separately",
+        "Delta detection (title-similarity matching) only runs against CHANGED_DIMENSIONS, not against all 8 dimensions",
+        "Skipped dimensions do not appear in the New/Updated/Potentially Removed sections of the delta report"
+      ]
     }
   ]
 }
