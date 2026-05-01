@@ -1,0 +1,166 @@
+{
+  "skill_name": "falsify",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "/sigint:falsify",
+      "expected_output": "Skill finds active research session, creates a team, spawns falsification-analyst, waits for verdicts, applies remediation (quarantine, downgrade, annotate) atomically, writes falsification report and followups queue, then cleans up team.",
+      "files": [
+        {
+          "path": "reports/ai-assistants/state.json",
+          "content": "{\n  \"topic\": \"AI Assistants\",\n  \"topic_slug\": \"ai-assistants\",\n  \"started\": \"2026-04-01T00:00:00Z\",\n  \"status\": \"active\",\n  \"phase\": \"synthesis\",\n  \"elicitation\": {\"scope\": \"AI Assistants\", \"dimensions\": [\"competitive\"]},\n  \"findings\": [{\"id\": \"f_competitive_1\", \"title\": \"Market leaders\", \"summary\": \"Vendor X dominates\", \"dimension\": \"competitive\", \"confidence\": \"high\", \"trend\": \"INC\", \"tags\": [\"competitive-position\"], \"provenance\": {\"claim\": \"Vendor X holds majority market share\", \"sources\": [{\"url\": \"https://example.com\", \"fetched_at\": \"2026-04-01\", \"snippet\": \"...\", \"alive\": true}], \"derivation\": \"synthesis\", \"confidence_basis\": \"single source\"}}],\n  \"sources\": [],\n  \"lineage\": [{\"session_id\": \"s1\", \"action\": \"initial_research\", \"dimensions\": [\"competitive\"], \"finding_count\": 1}]\n}"
+        }
+      ],
+      "deterministic_checks": [
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "TeamCreate.*sigint-ai-assistants-falsify",
+          "description": "TeamCreate is called with the expected team name"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "falsification-analyst",
+          "description": "falsification-analyst agent is spawned"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "TeamDelete|team.*delete",
+          "description": "TeamDelete is called for cleanup"
+        }
+      ],
+      "expectations": [
+        "Skill follows full swarm pattern: TeamCreate → TaskCreate → Agent(team_name) → SendMessage → TeamDelete",
+        "Default scope is `all`, default mode is `block`, query budget 6, claim budget 50",
+        "Web-only constraint communicated to the analyst (no Atlatl, no prior findings as evidence)"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "/sigint:falsify --scope finding:f_competitive_3",
+      "expected_output": "Skill scopes the analyst to a single finding by ID and passes the scope through to the spawned agent.",
+      "files": [
+        {
+          "path": "reports/test/state.json",
+          "content": "{\"topic\":\"T\",\"topic_slug\":\"test\",\"started\":\"2026-04-01\",\"status\":\"active\",\"phase\":\"synthesis\",\"elicitation\":{},\"findings\":[],\"sources\":[],\"lineage\":[]}"
+        }
+      ],
+      "deterministic_checks": [
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "finding:f_competitive_3",
+          "description": "Single-finding scope is passed through"
+        }
+      ],
+      "expectations": [
+        "Scope `finding:<id>` is parsed and forwarded to the agent",
+        "Working set size is 1; no claim budget warning is shown"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "/sigint:falsify --mode advisory",
+      "expected_output": "Skill runs in advisory mode — annotates findings without blocking even when verdicts are `falsified`. Falsified findings are still quarantined.",
+      "files": [
+        {
+          "path": "reports/test/state.json",
+          "content": "{\"topic\":\"T\",\"topic_slug\":\"test\",\"started\":\"2026-04-01\",\"status\":\"active\",\"phase\":\"synthesis\",\"elicitation\":{},\"findings\":[],\"sources\":[],\"lineage\":[]}"
+        }
+      ],
+      "deterministic_checks": [
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "advisory",
+          "description": "Advisory mode is referenced"
+        }
+      ],
+      "expectations": [
+        "advisory mode does NOT halt downstream phases on `falsified`",
+        "Quarantine still occurs for `falsified` findings"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "/sigint:falsify",
+      "expected_output": "When no research session exists, the skill informs the user and suggests /sigint:start.",
+      "files": [],
+      "deterministic_checks": [
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "/sigint:start",
+          "description": "Error message suggests /sigint:start"
+        }
+      ],
+      "expectations": [
+        "No active session detected",
+        "No TeamCreate or Agent spawn occurs"
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "/sigint:falsify --claim-budget 5",
+      "expected_output": "When working set exceeds claim budget, skill prompts user to either increase budget, narrow scope, or cancel — does not silently truncate.",
+      "files": [
+        {
+          "path": "reports/big/state.json",
+          "content": "{\"topic\":\"Big\",\"topic_slug\":\"big\",\"started\":\"2026-04-01T00:00:00Z\",\"status\":\"active\",\"phase\":\"synthesis\",\"elicitation\":{},\"findings\":[{\"id\":\"f_a_1\"},{\"id\":\"f_a_2\"},{\"id\":\"f_a_3\"},{\"id\":\"f_a_4\"},{\"id\":\"f_a_5\"},{\"id\":\"f_a_6\"},{\"id\":\"f_a_7\"},{\"id\":\"f_a_8\"},{\"id\":\"f_a_9\"},{\"id\":\"f_a_10\"}],\"sources\":[],\"lineage\":[]}"
+        }
+      ],
+      "deterministic_checks": [
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "AskUserQuestion|increase.*budget|narrow.*scope",
+          "description": "User is prompted before truncation"
+        }
+      ],
+      "expectations": [
+        "Working-set-vs-budget mismatch surfaces a user prompt",
+        "Skill does NOT silently truncate"
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "/sigint:falsify",
+      "expected_output": "Skill produces fixtures demonstrating each verdict class. Each verdict triggers its mapped remediation: `falsified`→quarantine, `weakened`→downgrade+narrow, `survived`→annotate, `inconclusive`→annotate.",
+      "files": [
+        {
+          "path": "reports/verdicts/state.json",
+          "content": "{\"topic\":\"V\",\"topic_slug\":\"verdicts\",\"started\":\"2026-04-01T00:00:00Z\",\"status\":\"active\",\"phase\":\"synthesis\",\"elicitation\":{},\"findings\":[{\"id\":\"f_competitive_1\",\"title\":\"F\",\"summary\":\"falsified case\",\"dimension\":\"competitive\",\"confidence\":\"high\",\"trend\":\"INC\",\"tags\":[\"competitive-position\"],\"provenance\":{\"claim\":\"X\",\"sources\":[],\"derivation\":\"synthesis\",\"confidence_basis\":\"\"}},{\"id\":\"f_competitive_2\",\"title\":\"W\",\"summary\":\"weakened case\",\"dimension\":\"competitive\",\"confidence\":\"high\",\"trend\":\"INC\",\"tags\":[\"recommendation\"],\"provenance\":{\"claim\":\"Y\",\"sources\":[],\"derivation\":\"synthesis\",\"confidence_basis\":\"\"}},{\"id\":\"f_competitive_3\",\"title\":\"S\",\"summary\":\"survived case\",\"dimension\":\"competitive\",\"confidence\":\"medium\",\"trend\":\"CONST\",\"tags\":[\"competitive-position\"],\"provenance\":{\"claim\":\"Z\",\"sources\":[],\"derivation\":\"synthesis\",\"confidence_basis\":\"\"}},{\"id\":\"f_competitive_4\",\"title\":\"I\",\"summary\":\"inconclusive case\",\"dimension\":\"competitive\",\"confidence\":\"low\",\"trend\":\"DEC\",\"tags\":[\"competitive-position\"],\"provenance\":{\"claim\":\"W\",\"sources\":[],\"derivation\":\"synthesis\",\"confidence_basis\":\"\"}}],\"sources\":[],\"lineage\":[{\"session_id\":\"s1\",\"action\":\"initial_research\",\"dimensions\":[\"competitive\"],\"finding_count\":4}]}"
+        }
+      ],
+      "deterministic_checks": [
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "falsified.*weakened.*survived.*inconclusive|verdicts",
+          "description": "Verdict roll-up appears"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "quarantine|post-falsification",
+          "description": "Quarantine action occurs for falsified"
+        },
+        {
+          "type": "regex_match",
+          "file": "transcript.md",
+          "pattern": "falsification-followups",
+          "description": "Followups queue is written"
+        }
+      ],
+      "expectations": [
+        "All four verdict classes are present in the report",
+        "Falsified findings are removed from active findings[] and added to quarantine.json with gate=post-falsification",
+        "Weakened findings have confidence downgraded one level and disconfirming sources appended to provenance",
+        "Survived and inconclusive findings get falsification_attempts annotation only",
+        "falsification-followups.json is created and validates against schemas/falsification-followups.jq"
+      ]
+    }
+  ]
+}

@@ -5,6 +5,24 @@ All notable changes to the Sigint Market Intelligence Plugin will be documented 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.10.3] - 2026-05-01
+
+### Added
+- **Adversarial falsification (`/sigint:falsify`)**: New skill performs adversarial assessment of research findings via web-only disconfirming search. Decomposes findings into atomic claims, generates hybrid template + LLM-counter-hypothesis queries, executes adversarial WebSearch/WebFetch, and assigns ordinal verdicts (`falsified`, `weakened`, `survived`, `inconclusive`)
+- **Mandatory remediation loop**: Falsified findings are quarantined with `gate: "post-falsification"`; weakened findings have confidence downgraded one level and disconfirming sources appended in-place; a `falsification-followups.json` queue feeds `/sigint:issues` with retraction/comment actions
+- **`falsification-analyst` agent**: New adversarial subagent that treats each finding as a hypothesis under test; web-only constraint, helpfulness-bias warning, one-round-per-session rule, and bounded-epistemics caveat
+- **Phase 3.6 falsification gate**: `research-orchestrator` invokes the falsify skill between post-merge codex review and progress rendering. Block-mode by default — any `falsified` verdict halts downstream phases. Configurable via `sigint.config.json` `global.falsify.enabled`
+- **`schemas/falsification-report.jq`** and **`schemas/falsification-followups.jq`**: New validators
+- **`docs/how-to/falsify-findings.md`**: How-to with verdict→remediation table, scopes, followups workflow, and troubleshooting
+- **6 evals** for the falsify skill covering each verdict class, scope variants, advisory mode, missing-session error, and budget overflow handling
+
+### Changed
+- **`schemas/findings.jq`**: Added optional `provenance.falsification_attempts[]` and top-level `requires_issue_followup` fields (backward compatible)
+- **`schemas/quarantine.jq`**: Added `post-falsification` to the `gate` enum
+- **`schemas/state.jq`**: Added `falsification` to the lineage `valid_action` enum
+- **`agents/issue-architect.md` v0.2.0**: Reads `falsification-followups.json` if present and processes each item via `open_issue` / `comment_issue` / `close_issue` / `annotate` actions
+- **`agents/research-orchestrator.md` v0.6.0**: Added Phase 3.6 falsification gate with skip conditions, block/advisory mode handling, and progress logging
+
 ## [0.9.0] - 2026-04-14
 
 ### Added

@@ -6,7 +6,7 @@ def valid_phase: IN("discovery", "analysis", "synthesis", "complete", "augmented
 def valid_confidence: IN("high", "medium", "low");
 def valid_trend: IN("INC", "DEC", "CONST");
 def valid_derivation: IN("direct_quote", "synthesis", "extrapolation");
-def valid_action: IN("initial_research", "scheduled_update", "augment");
+def valid_action: IN("initial_research", "scheduled_update", "augment", "falsification");
 
 (type == "object") and
 has("topic")      and (.topic      | type == "string" and length > 0) and

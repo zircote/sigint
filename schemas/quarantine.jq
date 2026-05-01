@@ -8,7 +8,7 @@ has("items")          and (.items          | type == "array" and all(
   has("finding_id")          and (.finding_id          | type == "string") and
   has("original_dimension")  and (.original_dimension  | type == "string") and
   has("reason")              and (.reason              | type == "string" and length > 0) and
-  has("gate")                and (.gate                | type == "string" and IN("post-findings", "post-merge")) and
+  has("gate")                and (.gate                | type == "string" and IN("post-findings", "post-merge", "post-falsification")) and
   has("gate_timestamp")      and (.gate_timestamp      | type == "string") and
   has("original_finding")    and (.original_finding    | type == "object")
 ))

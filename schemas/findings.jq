@@ -35,8 +35,27 @@ has("gaps")      and (.gaps      | type == "array" and all(type == "string")) an
       has("alive") and (.alive | type == "boolean")
     )) and
     has("derivation") and (.derivation | type == "string" and valid_derivation) and
-    has("confidence_basis") and (.confidence_basis | type == "string")
+    has("confidence_basis") and (.confidence_basis | type == "string") and
+    # Optional adversarial falsification attempts (one entry per round)
+    (if has("falsification_attempts") then (.falsification_attempts | type == "array" and all(
+      type == "object" and
+      has("attempted_at") and (.attempted_at | type == "string") and
+      has("scope")        and (.scope        | type == "string") and
+      has("claims")       and (.claims       | type == "array" and all(
+        type == "object" and
+        has("claim_id")               and (.claim_id               | type == "string") and
+        has("claim_text")             and (.claim_text             | type == "string") and
+        has("falsification_criteria") and (.falsification_criteria | type == "string") and
+        has("queries_executed")       and (.queries_executed       | type == "array" and all(type == "string")) and
+        has("disconfirming_sources")  and (.disconfirming_sources  | type == "array") and
+        has("verdict")                and (.verdict                | type == "string" and IN("falsified", "weakened", "survived", "inconclusive")) and
+        has("verdict_basis")          and (.verdict_basis          | type == "string") and
+        has("confidence_delta")       and (.confidence_delta       | type == "string" and IN("quarantine", "downgrade_one_level", "unchanged", "upgrade_one_level"))
+      ))
+    )) else true end)
   ) and
+  # Optional flag: this finding needs a downstream issue followup (set by /sigint:falsify)
+  (if has("requires_issue_followup") then (.requires_issue_followup | type == "boolean") else true end) and
 
   # Optional delta fields (present in delta output files)
   (if has("delta_type") then (.delta_type | type == "string" and IN("NEW", "UPDATED", "CONFIRMED", "POTENTIALLY_REMOVED", "TREND_REVERSAL")) else true end) and

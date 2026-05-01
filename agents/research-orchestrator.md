@@ -1,6 +1,6 @@
 ---
 name: research-orchestrator
-version: 0.5.1
+version: 0.6.0
 description: |
   Orchestrator agent for sigint research sessions. Owns all phase management: team lifecycle,
   dimension-analyst spawning, methodology verification, codex review gates, finding merge,
@@ -76,6 +76,7 @@ TaskCreate("Phase 2.5: Methodology Verification")
 TaskCreate("Phase 2.75: Post-Findings Codex Review")
 TaskCreate("Phase 3: Merge Findings")
 TaskCreate("Phase 3.5: Post-Merge Codex Review")
+TaskCreate("Phase 3.6: Falsification Gate")
 TaskCreate("Phase 4: Summary + Cleanup")
 ```
 
@@ -830,6 +831,146 @@ Agent(
 On failure: quarantine flagged findings, update state.json and quarantine.json.
 
 Update progress file.
+
+---
+
+## Phase 3.6: Falsification Gate
+
+**BLOCKING GATE** (when any claim is `falsified`). Adversarial assessment of merged findings via web-only disconfirming search. Spawned automatically before progress rendering. Distinct from codex review: codex asks "are sources real?", falsification asks "are claims defeasible?". Both gates coexist.
+
+### Step 3.6.1: Spawn Falsification-Analyst Into the Existing Team
+
+Do NOT invoke the standalone `/sigint:falsify` skill from inside the orchestrator (it would create a nested team via its own `TeamCreate`). Instead, spawn the `falsification-analyst` agent directly into the existing `sigint-{topic_slug}-research` team and inline the remediation steps that the standalone skill performs in its Phase 3.
+
+Read budgets from config (or use defaults):
+
+```bash
+QUERY_BUDGET=$(jq -r '.global.falsify.query_budget // 6' sigint.config.json 2>/dev/null || echo 6)
+CLAIM_BUDGET=$(jq -r '.global.falsify.claim_budget // 50' sigint.config.json 2>/dev/null || echo 50)
+```
+
+Create the gate task and spawn the analyst:
+
+```
+TaskCreate({
+  subject: "Phase 3.6: Falsify findings (block mode, scope=all)",
+  owner: "falsification-analyst",
+  description: "Adversarial falsification of merged findings"
+})
+```
+
+```
+Agent(
+  subagent_type: "sigint:falsification-analyst",
+  team_name: "sigint-{topic_slug}-research",
+  name: "falsification-analyst",
+  run_in_background: true,
+  prompt: """
+    Task Discovery Protocol:
+    1. TaskList → find tasks owned by 'falsification-analyst'
+    2. TaskGet → read task description
+    3. Follow your agent definition Steps 1–8
+    4. When done: TaskUpdate(taskId, status: 'completed') and SendMessage to 'team-lead'
+
+    PARAMETERS:
+    - TOPIC_SLUG: {topic_slug}
+    - REPORTS_DIR: {reports_dir}
+    - SCOPE: all
+    - QUERY_BUDGET: {QUERY_BUDGET}
+    - CLAIM_BUDGET: {CLAIM_BUDGET}
+    - taskId: {falsifyTaskId}
+
+    Web-only constraint: use ONLY WebSearch/WebFetch for evidence — no internal memory, no prior findings as evidence.
+
+    Write to (date = today UTC, ISO YYYY-MM-DD):
+    - {reports_dir}/falsification_attempts_all.json
+    - {reports_dir}/YYYY-MM-DD-falsification-report.json (validates schemas/falsification-report.jq)
+    - {reports_dir}/YYYY-MM-DD-falsification-report.md
+  """
+)
+
+SendMessage(to: "falsification-analyst", message: "Task #{falsifyTaskId} assigned. Start now.")
+```
+
+Wait for the analyst's SendMessage with `verdicts`, `blocking`, and file paths.
+
+### Step 3.6.1a: Inline Remediation (Performed by Orchestrator)
+
+After receiving the analyst's results, the orchestrator applies remediation atomically — same logic as the standalone skill's Phase 3:
+
+1. **Merge `falsification_attempts` into state.json findings** — append per-finding attempts to `provenance.falsification_attempts` (do not replace prior rounds):
+
+   ```bash
+   jq --slurpfile attempts "$REPORTS_DIR/falsification_attempts_all.json" '
+     .findings |= map(
+       . as $f |
+       ($attempts[0].claims | map(select(.claim_id | startswith($f.id + "_c")))) as $matched |
+       if ($matched | length) > 0 then
+         .provenance.falsification_attempts = ((.provenance.falsification_attempts // []) + [{
+           attempted_at: $attempts[0].attempted_at,
+           scope: $attempts[0].scope,
+           claims: $matched
+         }])
+       else . end
+     )' "$REPORTS_DIR/state.json" > tmp.$$ && mv tmp.$$ "$REPORTS_DIR/state.json"
+   jq -e -f schemas/state.jq "$REPORTS_DIR/state.json" > /dev/null
+   ```
+
+2. **Apply per-finding verdict actions** (see standalone skill Phase 3.3 for exact jq commands):
+   - `falsified` → remove from `findings[]`, append to `quarantine.json` with `gate: "post-falsification"`.
+   - `weakened` → downgrade confidence one level (`high→medium`, `medium→low`, `low→quarantine`); append disconfirming sources to `provenance.sources`; append qualifier to `summary`; set `requires_issue_followup: true` if original `confidence == "high"` OR `market_dynamic` is non-empty (these are the highest-impact findings whose weakening warrants a downstream issue update).
+   - `survived` → annotate only; optional confidence upgrade if `confidence_delta == "upgrade_one_level"`.
+   - `inconclusive` → annotate only.
+
+3. **Build dated followups queue** — write to `$REPORTS_DIR/$(date -u +%Y-%m-%d)-falsification-followups.json` (date-prefixed to avoid clobbering across multiple gate runs in a single session). Validate with `schemas/falsification-followups.jq`.
+
+4. **Append `falsification` lineage entry** to state.json (see schema-required `dimensions` and `finding_count` fields).
+
+### Step 3.6.2: Skip Conditions
+
+Skip Phase 3.6 entirely when:
+
+- No findings exist in `state.json` (nothing to falsify)
+- `sigint.config.json` has `global.falsify.enabled: false`
+- The skill has already run for this session (check the most recent lineage entry — if `action == "falsification"` and `dimensions` matches the current set, skip)
+
+Log skip reason to progress file:
+```markdown
+## {ISO_DATE} — Falsification Gate Skipped
+- Reason: {no findings | disabled in config | already run this session}
+```
+
+### Step 3.6.3: Gate Decision
+
+Read the falsification report's verdict roll-up:
+```bash
+FALSIFIED=$(jq '.verdicts.falsified' "$REPORTS_DIR/$(date -u +%Y-%m-%d)-falsification-report.json")
+```
+
+- **If `FALSIFIED > 0`**: Gate fails. The falsified findings have already been quarantined by the skill. Continue to Phase 3.75 with the cleaned findings (downstream report/issue phases see only the surviving + weakened-with-narrowed-scope findings). Set a flag in state.json to mark report generation as conditional:
+  ```bash
+  jq --arg flag "true" '.gate_conditions.falsification_failed = $flag' \
+    "$REPORTS_DIR/state.json" > tmp.$$ && mv tmp.$$ "$REPORTS_DIR/state.json"
+  ```
+- **If `FALSIFIED == 0`**: Gate passes. Continue to Phase 3.75.
+
+In both cases, `weakened` findings have been narrowed in-place and downgraded one confidence level by the skill — no orchestrator action required.
+
+### Step 3.6.4: Update Progress File
+
+Append to `$REPORTS_DIR/research-progress.md`:
+
+```markdown
+## {ISO_DATE} — Falsification Gate
+- Claims evaluated: {N}
+- Verdicts: falsified={N}, weakened={N}, survived={N}, inconclusive={N}
+- Quarantined (post-falsification): {N}
+- Downgraded (weakened): {N}
+- Followups queued: {N} (see falsification-followups.json)
+- Gate: {pass|fail}
+- Mode: block
+- Epistemic caveat: survived = {N} adversarial queries/claim executed without disconfirmation; not proof of truth.
+```
 
 ---
 

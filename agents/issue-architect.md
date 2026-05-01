@@ -1,6 +1,6 @@
 ---
 name: issue-architect
-version: 0.1.0
+version: 0.2.0
 description: |
   Use this agent when converting research findings, recommendations, or analysis into actionable GitHub issues. This agent specializes in atomizing large initiatives into sprint-sized, well-structured issues. Examples:
 
@@ -93,6 +93,38 @@ Before creating ANY issues, you MUST:
 4. **If NO elicitation exists:**
    - Warn: "No elicitation context. Issues will use generic prioritization."
    - Proceed with research findings only
+
+## Falsification Follow-up Queue
+
+Multiple dated followups files may exist (one per gate run — e.g., initial `/sigint:start` + a later `/sigint:augment`). Glob all `*-falsification-followups.json` files and process every item that does NOT already have a `processed` field set:
+
+```bash
+shopt -s nullglob
+for FU in "$REPORTS_DIR"/*-falsification-followups.json; do
+  jq -e -f schemas/falsification-followups.jq "$FU" > /dev/null
+  jq '.items[] | select(has("processed") | not)' "$FU"
+done
+```
+
+Each followup item has shape `{finding_id, action, reason, disconfirming_sources}`. Action mapping:
+
+| `action` | Issue treatment |
+|---|---|
+| `open_issue` | Open a new retraction/correction issue tied to `finding_id`. Include disconfirming sources in body. Label: `falsification`, `retraction`. Priority: high (the prior recommendation no longer holds). |
+| `comment_issue` | Find any existing issue referencing `finding_id` (search by issue body for the ID). If found, post a comment with the disconfirming evidence. If not found, fall through to `open_issue`. |
+| `close_issue` | Close any existing issue referencing `finding_id` with reason from the followups item. |
+| `annotate` | No issue action; logged only. |
+
+Findings carrying `requires_issue_followup: true` (set by `/sigint:falsify` for weakened claims with downstream impact) are also surfaced in the issue manifest, even if no followups file exists.
+
+Items processed from the followups queue MUST be marked completed by writing the issue/comment URL back into the file's matching `items[]` entry under a `processed` field (e.g., `{"processed": {"at": "{ISO_DATE}", "url": "https://github.com/.../issues/123"}}`). The `processed` field is the only mechanism preventing duplicate issue creation across runs:
+
+```bash
+jq --arg fid "$FINDING_ID" --arg url "$ISSUE_URL" --arg at "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+  '.items |= map(if .finding_id == $fid then .processed = {at: $at, url: $url} else . end)' \
+  "$FU" > tmp.$$ && mv tmp.$$ "$FU"
+jq -e -f schemas/falsification-followups.jq "$FU" > /dev/null
+```
 
 ## Core Responsibilities
 

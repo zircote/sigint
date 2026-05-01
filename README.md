@@ -2,7 +2,7 @@
 
 [![Claude Code Plugin](https://img.shields.io/badge/Claude_Code-Plugin-06b6d4?style=flat-square&logo=anthropic&logoColor=white)](https://github.com/anthropics/claude-code)
 [![License: MIT](https://img.shields.io/badge/License-MIT-8b5cf6?style=flat-square)](LICENSE)
-[![Version](https://img.shields.io/badge/version-0.8.1-22c55e?style=flat-square)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-0.10.3-22c55e?style=flat-square)](CHANGELOG.md)
 
 Comprehensive market research toolkit for Claude Code with report generation, GitHub issue creation, and trend-based analysis.
 
@@ -71,6 +71,7 @@ For organization-wide deployment and detailed setup, see the [Cowork deployment 
 | `/sigint:augment <area>` | Deep-dive into specific area |
 | `/sigint:update` | Refresh existing research data |
 | `/sigint:report` | Generate comprehensive report |
+| `/sigint:falsify` | Adversarially falsify findings (web-only disconfirming search) and remediate (quarantine, downgrade, queue followups) |
 | `/sigint:issues` | Create GitHub issues from findings |
 | `/sigint:resume` | Resume previous research session |
 | `/sigint:status` | Show current research state |
@@ -83,6 +84,7 @@ For organization-wide deployment and detailed setup, see the [Cowork deployment 
 - **source-chunker**: RLM processor for large documents — partitions, analyzes chunks, synthesizes
 - **issue-architect**: Converts findings to sprint-sized GitHub issues
 - **report-synthesizer**: Generates multi-format reports with visualizations
+- **falsification-analyst**: Adversarially attempts to disconfirm findings via web-only search; assigns ordinal verdicts (`falsified`/`weakened`/`survived`/`inconclusive`)
 
 ## Skills (Research Methodologies)
 
@@ -121,8 +123,36 @@ Reports include:
     ├── YYYY-MM-DD-research.md
     ├── YYYY-MM-DD-report.md
     ├── YYYY-MM-DD-report.html
+    ├── YYYY-MM-DD-falsification-report.md
+    ├── YYYY-MM-DD-falsification-report.json
+    ├── YYYY-MM-DD-falsification-followups.json
     └── YYYY-MM-DD-issues.json
 ```
+
+## Adversarial Falsification
+
+`sigint:falsify` treats every finding as a hypothesis under test. It generates disconfirming queries via a hybrid template + LLM-counter-hypothesis strategy, executes web-only adversarial search (no internal memory, no prior findings as evidence), and assigns one of four ordinal verdicts per atomic claim:
+
+| Verdict | Remediation |
+|---------|-------------|
+| `falsified` | Move finding to `quarantine.json` with `gate: "post-falsification"`; queue retraction issue |
+| `weakened` | Downgrade confidence one level; narrow summary; append disconfirming source; queue follow-up comment on existing issue |
+| `survived` | Annotate `provenance.falsification_attempts`; optional confidence upgrade if multiple credible non-disconfirming sources |
+| `inconclusive` | Annotate only |
+
+The skill runs as **Phase 3.6** inside the research-orchestrator pipeline (between post-merge codex review and progress rendering) when invoked via `/sigint:start` or `/sigint:update`. It can also run standalone:
+
+```bash
+/sigint:falsify                                 # block-mode, all findings
+/sigint:falsify --scope dimension:competitive   # one dimension
+/sigint:falsify --scope finding:f_competitive_3 # one finding
+/sigint:falsify --mode advisory                 # annotate without halting
+/sigint:falsify --query-budget 4 --claim-budget 30
+```
+
+**Bounded epistemics**: a `survived` verdict is not proof of truth — it means N adversarial queries per claim were executed without finding disconfirming evidence. The falsification report always includes the actual search budget used so readers can judge how exhaustive the attempt was.
+
+**One-round rule**: findings that already carry `provenance.falsification_attempts` from the current session are skipped (no recursive falsification).
 
 ## Configuration
 
