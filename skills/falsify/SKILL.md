@@ -114,7 +114,7 @@ Agent(
        a. TaskUpdate(taskId, status: "completed")
        b. SendMessage(to: "team-lead", message: {...}, summary: "Falsification complete: ...")
     5. NEVER commit via git
-    6. Use ONLY WebSearch/WebFetch for evidence — no Atlatl memory, no prior findings as evidence
+    6. Use ONLY WebSearch/WebFetch for evidence — no internal memory, no prior findings as evidence
 
     PARAMETERS:
     - TOPIC_SLUG: {topic_slug}

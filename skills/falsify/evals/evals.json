@@ -34,7 +34,7 @@
       "expectations": [
         "Skill follows full swarm pattern: TeamCreate → TaskCreate → Agent(team_name) → SendMessage → TeamDelete",
         "Default scope is `all`, default mode is `block`, query budget 6, claim budget 50",
-        "Web-only constraint communicated to the analyst (no Atlatl, no prior findings as evidence)"
+        "Web-only constraint communicated to the analyst (no internal memory, no prior findings as evidence)"
       ]
     },
     {

@@ -313,7 +313,7 @@
     {
       "id": 9,
       "prompt": "--repo testorg/testrepo create issues from my edge case research",
-      "expected_output": "The SKILL.md file contains NO references to Atlatl, blackboard, mcp__atlatl, recall_memories, capture_memory, inject_context, or blackboard scope annotations. The allowed-tools list contains only standard orchestration tools (Agent, Bash, Glob, Grep, Read, Write, SendMessage, TaskCreate, TaskGet, TaskList, TaskUpdate, TeamCreate, TeamDelete, AskUserQuestion).",
+      "expected_output": "The SKILL.md file contains no references to external memory MCP tooling, blackboard persistence, memory recall/capture operations, context injection, or blackboard scope annotations. The allowed-tools list contains only standard orchestration tools (Agent, Bash, Glob, Grep, Read, Write, SendMessage, TaskCreate, TaskGet, TaskList, TaskUpdate, TeamCreate, TeamDelete, AskUserQuestion).",
       "files": [
         {
           "path": "reports/edge-case-testing/state.json",
@@ -347,8 +347,8 @@
         }
       ],
       "expectations": [
-        "The skill execution contains no references to Atlatl, blackboard, or memory tools",
-        "The allowed-tools in the skill frontmatter do not include any mcp__atlatl tools",
+        "The skill execution contains no references to external memory MCP tooling, blackboard persistence, or memory tools",
+        "The allowed-tools in the skill frontmatter do not include any external memory MCP tools",
         "The repo format validation accepts testorg/testrepo as a valid owner/repo pattern",
         "The full swarm lifecycle completes: TeamCreate → TaskCreate → Agent → SendMessage → TeamDelete"
       ]
