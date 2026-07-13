@@ -17,5 +17,5 @@ permissions:
 jobs:
   automerge:
     if: github.actor == 'dependabot[bot]'
-    uses: zircote/.github/.github/workflows/reusable-dependabot-automerge.yml@5a805176eb4f3f22cba7bb0a25d46dc7306872e3 # pin to main SHA
+    uses: zircote/.github/.github/workflows/reusable-dependabot-automerge.yml@98cdea888a91e42874418e7173a265d6a546bc27 # pin to main SHA
     secrets: inherit
