@@ -1,7 +1,7 @@
 ---
 description: Manually initialize or reload research context for sigint
 version: 0.1.0
-argument-hint: [--full] [--topic <topic>]
+argument-hint: "[--full] [--topic <topic>]"
 allowed-tools: Bash, Glob, Grep, Read, Write
 ---
 
